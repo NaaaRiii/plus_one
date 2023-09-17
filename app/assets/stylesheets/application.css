@@ -1,15 +1,84 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
+/* CSSのリセット（消さないでください） */
+html, body,
+ul, ol, li,
+h1, h2, h3, h4, h5, h6, p,
+form, input, div {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "UD デジタル 教科書体 N-R", "UD Digi Kyokasho NP-R";
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.header{
+  position: fixed;
+  /*background-color: #26d0c9;
+  color: #fff;
+  height: 90px;*/
+}
+
+.flex_header{
+  background-color: #26d0c9;
+  color: #fff;
+  height: 90px;
+}
+
+.flex_header-logo {
+  font-size: 36px;
+  float: left;
+  padding: 0 40px;
+  line-height: 90px;
+}
+
+.flex_list {
+  display: flex;
+  height: 90px;
+}
+
+.flex_list li {
+  display: flex;
+  padding: 33px 20px;
+}
+
+.footer {
+  border-top: 1px solid #eee;
+  clear: left;
+  background: #26d0c9;
+}
+
+.up20{
+  padding-top: 20px;
+}
+
+.footer_copyright{
+  font-size: 0.6rem;
+}
+
+.main{
+  background: #f9fbfe;
+}
+
+.pg-container{
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px 0;
+  min-height: 300px;
+  letter-spacing: .04em;
+}
+
+.dashboard-container {
+  display: flex;
+  max-width: 1170px;
+  margin: 0  auto;
+  padding: 0 2.8%;
+}
+

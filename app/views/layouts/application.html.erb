@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Home | Plus ONE</title>
+    <title>Plus ONE</title>
+    <%# レスポンシブデザインに対応 %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="utf-8">
+    <%# CSRF攻撃を防ぐ %>
     <%= csrf_meta_tags %>
+    <%# クロスサイトスクリプティング（XSS）などの特定の種類の攻撃を防ぐためのブラウザの機能 %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   </head>
-
   <body>
-    <%= yield %>
+    <%# header用のパーシャル %>
+    <%= render 'layouts/header' %>
+    <%# containerがmainの役割をしてる %>
+    <div class="main">
+      <div id="dashbord">
+      <%= yield%>
+        <div>
+          <div class="pg-container">
+            <div class="dashboard-container">
+              <div class="dashboard_left-container">
+              </div>
+              <div class="dashboard_right-container">
+              </div>
+            </div>
+          </div>
+         </div>
+      </div>
+      <%= render 'layouts/footer' %>
+    </div>
   </body>
 </html>
