@@ -74,3 +74,10 @@ end
 
 gem 'mysql2'
 gem 'dotenv-rails'
+
+group :development do
+  gem 'rubocop'
+  gem 'rubocop-rails'
+end
+
+gem "bcrypt", "3.1.18"

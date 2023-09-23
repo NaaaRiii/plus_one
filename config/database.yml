@@ -1,32 +1,21 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
-default: &default
-  adapter: sqlite3
+default: &default #アンカー
+  adapter: mysql2
+  encoding: utf8
   pool: 5
-  timeout: 5000
+  username: <%= ENV['DATABASE_DEV_USER'] %>
+  password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
+  host: <%= ENV['DATABASE_DEV_HOST'] %>
 
 development:
-   adapter: mysql2
-   encoding: utf8
-   database: <%= ENV['DATABASE_DEV_NAME'] %>
-   pool: 5
-   username: <%= ENV['DATABASE_DEV_USER'] %>
-   password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
-   host: <%= ENV['DATABASE_DEV_HOST'] %>
+  <<: *default #エイリアス・ハッシュのマージ
+  database: plusonedb_development
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: plusone_test
+  <<: *default #エイリアス・ハッシュのマージ
+  database: plusonedb_test
 
 production:
-  <<: *default
-  database: plusone_production
-  username: plusone
-  password: <%= ENV['plusone_DATABASE_PASSWORD'] %>
+  <<: *default #エイリアス・ハッシュのマージ
+  database: plusonedb_production
+  username: <%= ENV['DATABASE_DEV_USER'] %>
+  password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
