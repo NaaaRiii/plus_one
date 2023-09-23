@@ -1,5 +1,7 @@
 default: &default #アンカー
   adapter: mysql2
+  #socket: /var/run/mysqld/mysqld.sock
+  socket: /tmp/mysql.sock
   encoding: utf8
   pool: 5
   username: <%= ENV['DATABASE_DEV_USER'] %>
