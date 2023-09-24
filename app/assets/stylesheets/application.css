@@ -22,7 +22,7 @@ a {
 
 
 .flex_header{
-  position: fixed;
+  /*position: fixed;*/
   background-color: #26d0c9;
   color: #fff;
   height: 90px;
