@@ -18,6 +18,9 @@
     <%# containerがmainの役割をしてる %>
     <div class="main">
       <div id="dashbord">
+      <% flash.each do |message_type, message| %>
+        <div class="alert alert-<%= message_type %>"><%= message %></div>
+      <% end %>
       <%= yield%>
         <div>
           <div class="pg-container">
@@ -30,6 +33,9 @@
           </div>
          </div>
       </div>
+      <pre class="debug-info">
+      <%= debug(params) if Rails.env.development? %>
+      </pre>
       <%= render 'layouts/footer' %>
     </div>
   </body>
