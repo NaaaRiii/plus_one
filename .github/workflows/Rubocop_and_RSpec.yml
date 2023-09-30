@@ -1,5 +1,5 @@
 name: Run Rubocop and RSpec Actions
-on: [push, pull_request]
+on: push
 
 jobs:
   Job-Rubocop:
@@ -48,9 +48,9 @@ jobs:
         run: bundle exec rails db:create RAILS_ENV=test
 
       - name: Database migrate
-        run: bundle exec ridgepole --config config/database.yml --file db/Schemafile --apply --env test
+        # run: bundle exec ridgepole --config config/database.yml --file db/Schemafile --apply --env test
         # マイグレーションファイルでの管理方法の場合は以下
-        # run: bundle exec rails db:migrate RAILS_ENV=test
+        run: bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run tests
         run: bundle exec rspec
