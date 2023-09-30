@@ -9,4 +9,8 @@ class User < ApplicationRecord
                           uniqueness: true
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
+
+  has_many :goals
+  has_many :small_goals
+  has_many :tasks
 end
