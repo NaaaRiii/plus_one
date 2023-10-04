@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_29_112942) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_04_115131) do
   create_table "goals", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -23,6 +23,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_112942) do
     t.bigint "goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "difficulty"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
     t.index ["user_id"], name: "index_small_goals_on_user_id"
   end
@@ -32,6 +33,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_112942) do
     t.bigint "small_goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "completed", default: false
     t.index ["small_goal_id"], name: "index_tasks_on_small_goal_id"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
@@ -42,6 +44,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_112942) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
+    t.integer "exp"
+    t.integer "rank"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
