@@ -1,5 +1,8 @@
 name: Run Rubocop and RSpec Actions
-on: push
+on: 
+  push:
+    branches-ignore:
+      - '**'
 
 jobs:
   Job-Rubocop:
