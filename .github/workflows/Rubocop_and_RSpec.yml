@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Setup Ruby Env
         uses: ruby/setup-ruby@v1
@@ -32,11 +32,11 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Setup Ruby Env
         uses: ruby/setup-ruby@v1
@@ -49,7 +49,7 @@ jobs:
 
       - name: Database migrate
         # run: bundle exec ridgepole --config config/database.yml --file db/Schemafile --apply --env test
-        # マイグレーションファイルでの管理方法の場合は以下
+        # If you are using migration files to manage your database schema, use the following command instead
         run: bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run tests
