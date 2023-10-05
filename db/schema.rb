@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_04_115131) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_05_120405) do
   create_table "goals", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -19,23 +19,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_04_115131) do
   end
 
   create_table "small_goals", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.bigint "goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "difficulty"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
-    t.index ["user_id"], name: "index_small_goals_on_user_id"
   end
 
   create_table "tasks", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.bigint "small_goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "completed", default: false
     t.index ["small_goal_id"], name: "index_tasks_on_small_goal_id"
-    t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
@@ -51,7 +47,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_04_115131) do
 
   add_foreign_key "goals", "users"
   add_foreign_key "small_goals", "goals"
-  add_foreign_key "small_goals", "users"
   add_foreign_key "tasks", "small_goals"
-  add_foreign_key "tasks", "users"
 end
