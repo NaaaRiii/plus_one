@@ -10,19 +10,7 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
 
-  has_many :goals       , dependent: :destroy
-  has_many :small_goals , dependent: :destroy
-  has_many :tasks       , dependent: :destroy
-
-  # GPTの提案
-  #def add_exp(points)
-  #  self.exp += points
-  #  while self.exp >= current_rank_required_exp
-  #    self.exp -= current_rank_required_exp
-  #    self.rank += 1
-  #  end
-  #  save!
-  #end
+  has_many :goals, class_name: 'Goal', dependent: :destroy
 
   # 『update_columnsを使ってDBに保存するが、バリデーションは行わない』を試す
   def add_exp(points)

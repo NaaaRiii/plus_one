@@ -1,9 +1,11 @@
 class SmallGoal < ApplicationRecord
-  belongs_to :user
-  belongs_to :goal
-  has_many :tasks
+  belongs_to  :goal
+  has_many    :tasks, class_name: 'Task', dependent: :destroy
 
-  # GPTの提案
+  def user
+    goal.user
+  end
+
   DIFFICULTY_MULTIPLIERS = {
     "ものすごく簡単" => 0.5,
     "簡単" => 0.7,
@@ -11,10 +13,6 @@ class SmallGoal < ApplicationRecord
     "難しい" => 1.2,
     "とても難しい" => 1.5
   }
-
-  #def complete
-  #  user.add_exp(exp_for_small_goal)
-  #end
 
   def complete
     if tasks.all?(&:completed) # すべてのタスクが完了しているか確認
