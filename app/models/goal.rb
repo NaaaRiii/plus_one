@@ -1,9 +1,6 @@
 class Goal < ApplicationRecord
   belongs_to  :user
   has_many    :small_goals, class_name: 'SmallGoal', dependent: :destroy
-  # GPT曰く以下は冗長で不要
-  #has_many   :small_goals
-  #has_many   :tasks
 
   # GPTの提案
   def complete

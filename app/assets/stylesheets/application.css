@@ -8,6 +8,7 @@ form, input, div {
 }
 
 body {
+  margin-top: 90px;
   font-family: "UD デジタル 教科書体 N-R", "UD Digi Kyokasho NP-R";
 }
 
@@ -22,7 +23,11 @@ a {
 
 
 .flex_header{
-  /*position: fixed;*/
+  position: fixed;
+  top: 0;
+  left: 0;      /* ビューポートの左端に配置 */
+  width: 100%;  /* ビューポートの全幅に広げる */
+  z-index: 1000; /* 他の要素よりも前面に表示するためのz-indexの値 */
   background-color: #26d0c9;
   color: #fff;
   height: 90px;
@@ -40,12 +45,21 @@ a {
   height: 90px;
 }
 
+.logged_in {
+  font-size: 15px;
+  float: left;
+  padding: 0 10px;
+  line-height: 90px;
+  color: darkred;
+}
+
 .flex_list li {
   display: flex;
   padding: 33px 20px;
 }
 
 .footer {
+  width: 100%;
   border-top: 1px solid #eee;
   clear: left;
   background: #26d0c9;
@@ -86,3 +100,41 @@ a {
   margin: 0;
 }
 
+
+/* フォーム関連のスタイル */
+
+.form-control {
+  display: block; /* ブロック要素として全幅を占めるように */
+  /*width: 100%; 幅を最大化 ←今はいらない*/
+  margin: 10px 0; /* 上下にマージンを設定 */
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+}
+
+label {
+  display: block; /* ラベルをブロック要素として */
+  margin-top: 15px; /* 上にマージンを追加 */
+  margin-bottom: 5px; /* 下に少しマージンを追加 */
+}
+
+.btn {
+  display: block; /* ボタンもブロック要素として */
+  /*width: 100%; 幅を最大化 ←今はいらない*/
+  padding: 10px 15px;
+  margin-top: 20px; /* 上にマージンを追加 */
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  width: 10%;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}

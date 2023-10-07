@@ -1,16 +1,20 @@
 <div class="flex_header">
-  <%#<header class="header">%>
-    <div>
-      <div class="flex_header-logo">
-        <%= link_to "Plus ONE", root_path, id: "logo" %>
-      </div>
-      <nav class="flex_header-list">
-        <ul class="flex_list">
-          <li><%= link_to "About",   '#' %></li>
-          <li><%= link_to "How To",   '#' %></li>
-          <li><%= link_to "Log In",   '#' %></li>
-        </ul>
-      </nav>
+  <div>
+    <div class="flex_header-logo">
+      <%= link_to "Plus ONE", root_path, id: "logo" %>
     </div>
-  <%#</header>%>
+    <nav class="flex_header-list">
+      <% if logged_in? %>
+        <div class="logged_in">You are Logged In
+        <%= link_to "Log out", logout_path,
+                                       data: { "turbo-method": :delete } %>
+        </div>
+      <% else %>
+        <ul class="flex_list">
+          <li><%= link_to "Sign Up",    signup_path %></li>
+          <li><%= link_to "Log In",     login_path %></li>
+        </ul>
+      <% end %>
+    </nav>
+  </div>
 </div>
