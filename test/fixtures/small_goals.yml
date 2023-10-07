@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  goal: one
+  goal_id: 1 # これはgoalモデルとの関連を示すIDである必要があります
+  difficulty: "普通" # 必要であれば適切な値を設定してください
 
 two:
-  user: two
-  goal: two
+  goal_id: 2 # これもgoalモデルとの関連を示すIDである必要があります
+  difficulty: "難しい" # 必要であれば適切な値を設定してください

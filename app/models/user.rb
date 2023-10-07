@@ -10,6 +10,13 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }
 
+  # 渡された文字列のハッシュ値を返す
+  def User.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                  BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
+  end
+
   has_many :goals, class_name: 'Goal', dependent: :destroy
 
   # 『update_columnsを使ってDBに保存するが、バリデーションは行わない』を試す
@@ -24,7 +31,6 @@ class User < ApplicationRecord
   
 
   def current_rank_required_exp
-    #(self.rank - 1) * 5
     self.rank * 5
   end
   

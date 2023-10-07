@@ -1,9 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  small_goal: one
+  small_goal_id: 1 # これはsmall_goalsテーブルとの関連を示すIDである必要があります
 
 two:
-  user: two
-  small_goal: two
+  small_goal_id: 2 # これもsmall_goalsテーブルとの関連を示すIDである必要があります
