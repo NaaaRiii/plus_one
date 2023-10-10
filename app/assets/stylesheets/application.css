@@ -51,6 +51,9 @@ a {
   padding: 0 10px;
   line-height: 90px;
   color: darkred;
+  display: flex;
+  align-items: center; 
+  gap: 15px;
 }
 
 .flex_list li {
