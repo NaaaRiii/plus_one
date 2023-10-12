@@ -4,6 +4,7 @@
       <%= link_to "Plus ONE", root_path, id: "logo" %>
     </div>
     <nav class="flex_header-list">
+      <%= link_to "ゲストログイン", guest_login_path, method: :get %>
       <% if logged_in? %>
         <div class="logged_in">
         <span>You are Logged In</span>
