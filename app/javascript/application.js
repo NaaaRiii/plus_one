@@ -2,3 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "custom/menu"
+import jquery from "jquery"
+window.$ = jquery
+
+import './goals.js';

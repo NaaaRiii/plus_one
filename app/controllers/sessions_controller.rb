@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
         reset_session
         params[:session][:remember_me] == '1' ? remember(user) : forget(user)
         log_in user
-        redirect_to forwarding_url || user
+        redirect_to forwarding_url || dashboard_path
       else
         message  = "Account not activated. "
         message += "Check your email for the activation link."
