@@ -4,12 +4,10 @@ Rails.application.routes.draw do
   get     "/login",             to: "sessions#new"
   post    "/login",             to: "sessions#create"
   get     "/dashboard",         to: "dashboards#index"
-  get     "/goals",             to: "goals#new"
-  post    "/goals",             to: "goals#create"
   delete  "/logout",            to: "sessions#destroy"
   post    "/guest_login",       to: "guest_sessions#create"
 
-  resources :goals do
+  resources :goals, only: [:show, :index] do
     resources :small_goals do
       resources :tasks
     end

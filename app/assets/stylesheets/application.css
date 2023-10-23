@@ -89,7 +89,6 @@ a {
 }
 
 .dashboard-container {
-  display: flex;
   max-width: 1170px;
   margin: 0  auto;
   padding: 0 2.8%;
@@ -116,16 +115,17 @@ a {
 }
 
 label {
-  display: block; /* ラベルをブロック要素として */
-  margin-top: 15px; /* 上にマージンを追加 */
-  margin-bottom: 5px; /* 下に少しマージンを追加 */
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
 }
 
 .btn {
-  display: block; /* ボタンもブロック要素として */
+  display: block;
   text-align: center;
   padding: 10px 10px;
-  margin-top: 20px; /* 上にマージンを追加 */
+  margin-top: 20px;
+  margin-bottom: 10px;
   border-radius: 3px;
   border: none;
   cursor: pointer;

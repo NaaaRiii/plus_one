@@ -3,6 +3,7 @@ class GoalsController < ApplicationController
   authenticate_user_for_actions [:new, :create]
 
   def index
+    @goals = current_user.goals
   end
 
   def new
@@ -18,6 +19,11 @@ class GoalsController < ApplicationController
       puts @goal.errors.full_messages
       render 'new'
     end
+  end
+
+  def show
+    @goal = Goal.find(params[:id])
+    @small_goals = @goal.small_goals
   end
 
   #後ほど、editと合わせて実装する

@@ -1,0 +1,9 @@
+<h1><%= @goal.title %></h1>
+<p><%= @goal.content %></p>
+
+<h2>Small Goals</h2>
+<ul>
+  <% @small_goals.each do |small_goal| %>
+    <li><%= small_goal.content %></li>
+  <% end %>
+</ul>
