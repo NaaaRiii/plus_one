@@ -123,8 +123,8 @@ label {
 
 .btn {
   display: block; /* ボタンもブロック要素として */
-  /*width: 100%; 幅を最大化 ←今はいらない*/
-  padding: 10px 15px;
+  text-align: center;
+  padding: 10px 10px;
   margin-top: 20px; /* 上にマージンを追加 */
   border-radius: 3px;
   border: none;
@@ -136,6 +136,7 @@ label {
   background-color: #007bff;
   color: white;
   transition: background-color 0.3s;
+  white-space: nowrap;
 }
 
 .btn-primary:hover {

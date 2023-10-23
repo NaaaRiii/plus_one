@@ -12,6 +12,7 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <%# header用のパーシャル %>
@@ -19,17 +20,20 @@
     <%# containerがmainの役割をしてる %>
     <div class="main">
       <div id="dashbord">
-      <% flash.each do |message_type, message| %>
+        <% flash.each do |message_type, message| %>
         <div class="alert alert-<%= message_type %>"><%= message %></div>
-      <% end %>
-      <%= yield%>
+        <% end %>
+        <%#<% if user_signed_in? %>
+          <!-- ログイン後のコード -->
+          <%#<%= render 'path_to_logged_in_template' %>
+        <%#<% else %>
+          <!-- ログイン前のコード -->
+          <%= yield%>
+          <%#<%= render 'path_to_logged_out_template' %>
+          <%#<% end %>
         <div>
           <div class="pg-container">
             <div class="dashboard-container">
-              <div class="dashboard_left-container">
-              </div>
-              <div class="dashboard_right-container">
-              </div>
             </div>
           </div>
          </div>

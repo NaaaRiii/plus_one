@@ -59,7 +59,6 @@ class User < ApplicationRecord
     end
     update_columns(exp: new_exp, rank: self.rank)
   end
-  
 
   def current_rank_required_exp
     self.rank * 5
@@ -87,5 +86,4 @@ class User < ApplicationRecord
       self.activation_token  = User.new_token
       self.activation_digest = User.digest(activation_token)
     end
-  
 end

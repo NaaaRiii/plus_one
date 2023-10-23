@@ -1,0 +1,19 @@
+<h1>Welcome to your dashboard</h1>
+
+<p>Here's some information about your account:</p>
+
+<ul>
+  <li>Name: <%= current_user.name %></li>
+  <%#<li>Email: <%= current_user.email %></li>
+  <li>Account created at: <%= current_user.created_at.strftime("%B %d, %Y") %></li>
+</ul>
+
+<p>Here are your recent activities:</p>
+
+<div>
+  <div class="pg-container">
+    <div class="dashboard-container">
+      <%= link_to "Set Goal!", goals_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>
