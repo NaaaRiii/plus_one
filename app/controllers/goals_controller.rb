@@ -26,9 +26,25 @@ class GoalsController < ApplicationController
     @small_goals = @goal.small_goals
   end
 
-  #後ほど、editと合わせて実装する
-  #def update
-  #end
+  def edit
+    @goal = Goal.find(params[:id])
+    @small_goals = @goal.small_goals
+  end
+
+  def update
+    @goal = Goal.find(params[:id])
+    if @goal.update(goal_params)
+      redirect_to dashboard_path, notice: "目標を更新しました。"
+    else
+      render 'edit'
+    end
+  end
+
+  def destroy
+    @goal = Goal.find(params[:id])
+    @goal.destroy
+    redirect_to dashboard_path, notice: "目標を削除しました。"
+  end
 
   private
 

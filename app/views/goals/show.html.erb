@@ -7,3 +7,10 @@
     <li><%= small_goal.content %></li>
   <% end %>
 </ul>
+
+<%= link_to "Edit", edit_goal_path(@goal) %>
+<%= link_to "Delete", goal_path(@goal), method: :delete, data: { confirm: "Are you sure?" } %>
+
+<%= link_to "New Small Goal", new_goal_small_goal_path(@goal), class: "btn btn-primary" %>
+<%= link_to "Back", goals_path, class: "btn btn-primary" %>
+```
