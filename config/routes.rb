@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   delete  "/logout",            to: "sessions#destroy"
   post    "/guest_login",       to: "guest_sessions#create"
 
-  resources :goals, only: [:show, :index] do
+  resources :goals do
     resources :small_goals do
       resources :tasks
     end

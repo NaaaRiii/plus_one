@@ -1,0 +1,30 @@
+<h1>Let's Edit Small Goals</h1>
+<%= form_with(model: @goal) do |f| %>
+<%#<%= render 'shared/error_messages', object: @user %>
+
+  <%= f.label :title %>
+  <%= f.text_field :title, class: 'goal-title' %>
+
+  <%= f.label :content %>
+  <%= f.text_field :content, class: 'goal-content' %>
+
+  <%= f.label :difficulty %>
+  <%= f.select :difficulty, options_for_select([["ものすごく簡単"], ["簡単"], ["普通"], ["難しい"], ["とても難しい"]]) , include_blank: "選択して下さい"%>
+
+  <%= f.label :deadline %>
+  <%= f.date_field :deadline, class: 'goal-deadline' %>
+
+  <%= f.fields_for :small_goals do |small_goal_form| %>
+    <%= small_goal_form.label :content, "Small goal" %>
+    <%= small_goal_form.text_field :content, class: 'goal-small_goal' %>
+  <% end %>
+
+  <div id="small-goals-container">
+  <!-- 新しい入力欄がここに追加される -->
+  </div>
+
+  <button type="button" id="add-small-goal">Small goalの追加</button>
+  <button type="button" id="remove-small-goal">Small goalの削除</button>
+
+  <%= f.submit "設定", class: "btn btn-primary" %>
+<% end %>
