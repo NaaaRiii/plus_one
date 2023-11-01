@@ -133,3 +133,8 @@ label {
 .btn-primary:hover {
   background-color: #0056b3;
 }
+
+footer{
+  position: absolute;/*←絶対位置*/
+  bottom: 0; /*下に固定*/
+}
