@@ -15,7 +15,7 @@ document.addEventListener("turbo:load", function() {
   });
 
   $("#remove-small-goal").click(function() {
-    if($("#small-goals-container > div").length > 1) {
+    if($("#small-goals-container > div").length > 0 ) {
       $("#small-goals-container > div:last-child").remove();
       // 3. counterの値をデクリメントせず、単純にインクリメントし続ける
       // counter--; この行を削除

@@ -1,6 +1,5 @@
-<h1>Let's Add Small Goals</h1>
-<%#<%= form_with(model:@new_goal_small_goal ) do |f| %>
-<%= form_with(model:@small_goal, url: goal_small_goals_path(@goal) ) do |f| %>
+<h1>Let's Edit Small Goals</h1>
+<%= form_with(model: [@goal, @small_goal]) do |f| %>
 <%#<%= render 'shared/error_messages', object: @user %>
 
   <%= f.label :title, "Small Goal's Title" %>
@@ -19,7 +18,7 @@
   <button type="button" id="remove-task">Taskの削除</button>
 
   <%= f.label :difficulty %>
-  <%= f.select :difficulty, options_for_select([["ものすごく簡単"], ["簡単"], ["普通"], ["難しい"], ["とても難しい"]]), { include_blank: "選択して下さい" }, { class: 'small_goal-difficulty' } %>
+  <%= f.select :difficulty, options_for_select([["ものすごく簡単"], ["簡単"], ["普通"], ["難しい"], ["とても難しい"]], @goal.difficulty), { include_blank: "選択して下さい" }, { class: 'small_goal-difficulty' } %>
 
   <%= f.label :deadline %>
   <%= f.date_field :deadline, class: 'small_goal-deadline' %>

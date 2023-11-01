@@ -94,15 +94,6 @@ a {
   padding: 0 2.8%;
 }
 
-.debug-info {
-  background-color: #ff6347;
-  clear: both;
-  float: left;
-  width: 100%;
-  margin: 0;
-}
-
-
 /* フォーム関連のスタイル */
 
 .form-control {

@@ -1,24 +1,21 @@
 document.addEventListener("turbo:load", function() {
-  // 1. カウンター変数counterの初期値を動的に設定
-  let counter = $("#small-goals-container > div").length;
+  let counter = $("#tasks-container > div").length;
 
-  $("#add-small-goal").click(function() {
-    console.log('Add button was clicked!');
+  $("#add-task").click(function() {
+    console.log('Add task button was clicked!');
     counter++;
-    let smallGoalField = `
-      <div id="small-goal-${counter}">
-        <label for="goal_small_goals_attributes_${counter}_content">Small goal</label>
-        <input type="text" name="goal[small_goals_attributes][${counter}][content]" id="goal_small_goals_attributes_${counter}_content" class="goal-small_goal">
+    let taskField = `
+      <div id="task-${counter}">
+        <label for="small_goal_tasks_attributes_${counter}_content">Task</label>
+        <input type="text" name="small_goal[tasks_attributes][${counter}][content]" id="small_goal_tasks_attributes_${counter}_content" class="task-content">
       </div>
     `;
-    $("#small-goals-container").append(smallGoalField);
+    $("#tasks-container").append(taskField);
   });
 
-  $("#remove-small-goal").click(function() {
-    if($("#small-goals-container > div").length > 1) {
-      $("#small-goals-container > div:last-child").remove();
-      // 3. counterの値をデクリメントせず、単純にインクリメントし続ける
-      // counter--; この行を削除
+  $("#remove-task").click(function() {
+    if($("#tasks-container > div").length > 0) {
+      $("#tasks-container > div:last-child").remove();
     }
   });
 });

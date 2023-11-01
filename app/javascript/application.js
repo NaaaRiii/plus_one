@@ -6,3 +6,7 @@ import jquery from "jquery"
 window.$ = jquery
 
 import './goals.js';
+import './small_goals.js';
+
+//import Rails from "@rails/ujs"
+//Rails.start()
