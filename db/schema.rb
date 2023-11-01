@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_21_050401) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_31_104540) do
   create_table "goals", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -27,7 +27,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_21_050401) do
     t.bigint "goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "content"
+    t.text "title"
+    t.string "difficulty"
+    t.datetime "deadline"
+    t.string "task"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 
@@ -36,6 +39,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_21_050401) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "completed", default: false
+    t.text "content"
     t.index ["small_goal_id"], name: "index_tasks_on_small_goal_id"
   end
 

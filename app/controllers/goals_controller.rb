@@ -14,7 +14,7 @@ class GoalsController < ApplicationController
   def create
     @goal = current_user.goals.build(goal_params)
     if @goal.save
-      redirect_to dashboard_path, notice: "目標を保存しました。"
+      redirect_to new_goal_small_goal_path(@goal), notice: "目標を保存しました。次にsmall_goalを作成しましょう。これは目標を達成するための小さな目標です。"
     else
       puts @goal.errors.full_messages
       render 'new'
@@ -34,7 +34,7 @@ class GoalsController < ApplicationController
   def update
     @goal = Goal.find(params[:id])
     if @goal.update(goal_params)
-      redirect_to dashboard_path, notice: "目標を更新しました。"
+      redirect_to @goal, notice: "Goal was successfully updated."
     else
       render 'edit'
     end
@@ -43,13 +43,13 @@ class GoalsController < ApplicationController
   def destroy
     @goal = Goal.find(params[:id])
     @goal.destroy
-    redirect_to dashboard_path, notice: "目標を削除しました。"
+    redirect_to goals_path, notice: "Goal was successfully deleted."
   end
 
   private
 
   def goal_params
-    params.require(:goal).permit(:title, :content, :difficulty, :deadline, :small_goal, small_goals_attributes: [:id, :content, :_destroy])
+    params.require(:goal).permit(:title, :content, :deadline, small_goals_attributes: [:id, :title, :difficulty, :deadline, { tasks_attributes: [:id, :content] }])
   end
 
 end
