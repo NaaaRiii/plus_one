@@ -1,25 +1,29 @@
 <h1><%= @goal.title   %></h1>
 <p> <%= @goal.content %></p>
 
-<p>Difficulty: <%= @goal.difficulty %></p>
 <p>Deadline: <%= @goal.deadline %></p>
 
 <h2>Small Goals</h2>
-<ul>
-  <% @small_goals.each do |small_goal| %>
-    <li>
-      <%= small_goal.title %>
-      <%= link_to "Edit small goals", edit_goal_small_goal_path(@goal, small_goal), data: { turbo_method: "get" } %>
 
-      <h3>Tasks</h3>
-      <ul>
-        <% small_goal.tasks.each do |task| %>
-          <li><%= task.content %></li>
-        <% end %>
-      </ul>
-    </li>
-  <% end %>
-</ul>
+<% @small_goals.each do |small_goal| %>
+  <div data-small-goal-id="<%= small_goal.id %>" class="small-goal">
+    <h3><%= small_goal.title %></h3>
+    <div class="small-goal-complete-button" style="display: none;">
+      <%= button_tag "完了", type: "button", class: "complete-button", data: { small_goal_id: small_goal.id } %>
+    </div>
+    <p>Difficulty: <%= small_goal.difficulty %></p>
+    <p>Deadline: <%= small_goal.deadline.strftime("%Y-%m-%d") %></p>
+    <ul>
+      <% small_goal.tasks.each do |task| %>
+        <li>
+          <%= check_box_tag "tasks[#{task.id}][completed]", task.id, task.completed, class: "task-checkbox", data: { small_goal_id: small_goal.id } %>
+          <%= task.content %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 
 <%= link_to "Edit Goal", edit_goal_path(@goal), data: { turbo_method: "get" } %>
 <%= link_to "Delete Goal", goal_path(@goal), data: { turbo_method: "delete", turbo_confirm: "Are You Sure?" } %>

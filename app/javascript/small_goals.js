@@ -1,6 +1,6 @@
 document.addEventListener("turbo:load", function() {
   let counter = $("#tasks-container > div").length;
-
+  console.log('JavaScriptが読み込まれました。');
   $("#add-task").click(function() {
     console.log('Add task button was clicked!');
     counter++;

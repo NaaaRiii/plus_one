@@ -15,18 +15,22 @@ class SmallGoal < ApplicationRecord
     "とても難しい" => 1.5
   }
 
-  def complete
-    if tasks.all?(&:completed) # すべてのタスクが完了しているか確認
-      user.add_exp(exp_for_small_goal) # 経験値を加算
-      return true
-    else
-      errors.add(:base, 'タスクが完了してません!')
-      return false
-    end
+  #def complete
+  #  if tasks.all?(&:completed) # すべてのタスクが完了しているか確認
+  #    user.add_exp(exp_for_small_goal) # 経験値を加算
+  #    return true
+  #  else
+  #    errors.add(:base, 'タスクが完了してません!')
+  #    return false
+  #  end
+  #end
+
+  def completed?
+    tasks.all?(&:completed)
   end
 
-  def exp_for_small_goal
-    total_tasks_exp = tasks.sum(&:exp_for_task)
-    (total_tasks_exp * DIFFICULTY_MULTIPLIERS[difficulty]).to_i
-  end
+  #def exp_for_small_goal
+  #  total_tasks_exp = tasks.sum(&:exp_for_task)
+  #  (total_tasks_exp * DIFFICULTY_MULTIPLIERS[difficulty]).to_i
+  #end
 end

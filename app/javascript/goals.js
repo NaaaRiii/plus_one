@@ -1,24 +1,41 @@
-document.addEventListener("turbo:load", function() {
-  // 1. カウンター変数counterの初期値を動的に設定
-  let counter = $("#small-goals-container > div").length;
+//document.addEventListener('turbo:load', function() {
+//  // タスクのチェックボックスにイベントリスナーを設定
+//  const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+//  taskCheckboxes.forEach(function(checkbox) {
+//    checkbox.addEventListener('change', function() {
+//      const smallGoalId = checkbox.dataset.smallGoalId;
+//      const smallGoalDiv = document.querySelector(`div[data-small-goal-id="${smallGoalId}"]`);
+//      const allTaskCheckboxes = smallGoalDiv.querySelectorAll('.task-checkbox');
+//      const allCompleted = Array.from(allTaskCheckboxes).every(chk => chk.checked);
 
-  $("#add-small-goal").click(function() {
-    console.log('Add button was clicked!');
-    counter++;
-    let smallGoalField = `
-      <div id="small-goal-${counter}">
-        <label for="goal_small_goals_attributes_${counter}_content">Small goal</label>
-        <input type="text" name="goal[small_goals_attributes][${counter}][content]" id="goal_small_goals_attributes_${counter}_content" class="goal-small_goal">
-      </div>
-    `;
-    $("#small-goals-container").append(smallGoalField);
-  });
+//      // すべてのタスクが完了している場合は、Small goalのチェックボックスを表示
+//      const smallGoalCheckboxDiv = smallGoalDiv.querySelector('.small-goal-checkbox');
+//      if (allCompleted) {
+//        smallGoalCheckboxDiv.style.display = 'block';
+//      } else {
+//        smallGoalCheckboxDiv.style.display = 'none';
+//      }
+//    });
+//  });
+//});
 
-  $("#remove-small-goal").click(function() {
-    if($("#small-goals-container > div").length > 0 ) {
-      $("#small-goals-container > div:last-child").remove();
-      // 3. counterの値をデクリメントせず、単純にインクリメントし続ける
-      // counter--; この行を削除
-    }
+document.addEventListener('turbo:load', function() {
+  // タスクのチェックボックスにイベントリスナーを設定
+  const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+  taskCheckboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const smallGoalId = checkbox.dataset.smallGoalId;
+      const smallGoalDiv = document.querySelector(`div[data-small-goal-id="${smallGoalId}"]`);
+      const allTaskCheckboxes = smallGoalDiv.querySelectorAll('.task-checkbox');
+      const allCompleted = Array.from(allTaskCheckboxes).every(chk => chk.checked);
+
+      // すべてのタスクが完了している場合は、完了ボタンを表示
+      const smallGoalCompleteButton = smallGoalDiv.querySelector('.small-goal-complete-button');
+      if (allCompleted) {
+        smallGoalCompleteButton.style.display = 'block';
+      } else {
+        smallGoalCompleteButton.style.display = 'none';
+      }
+    });
   });
 });
