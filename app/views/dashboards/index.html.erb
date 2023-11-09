@@ -5,10 +5,18 @@
 <ul>
   <li>Name: <%= current_user.name %></li>
   <%#<li>Email: <%= current_user.email %></li>
-  <li>Account created at: <%= current_user.created_at.strftime("%B %d, %Y") %></li>
 </ul>
 
 <p>Here are your recent activities:</p>
+
+<% @small_goals.each do |small_goal| %>
+  <div data-small-goal-id="<%= small_goal.id %>" class="small-goal">
+  <% if small_goal.completed %>
+    <%= small_goal.title %>
+      <span>完了!</span>
+  <% end %>
+  </div>
+<% end %>
 
 <div>
   <div class="pg-container">

@@ -9,6 +9,9 @@ Rails.application.routes.draw do
 
   resources :goals do
     resources :small_goals do
+      member do
+        put :complete
+      end
       resources :tasks
     end
   end

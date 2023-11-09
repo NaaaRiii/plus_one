@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+  has_many :activities, dependent: :destroy
+  has_many :goals, class_name: 'Goal', dependent: :destroy
+  has_many :small_goals, through: :goals, dependent: :destroy
+
   attr_accessor :remember_token, :activation_token
   before_save   :downcase_email
   before_create :create_activation_digest
@@ -48,17 +52,17 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
-  has_many :goals, class_name: 'Goal', dependent: :destroy
+  
 
   # 『update_columnsを使ってDBに保存するが、バリデーションは行わない』を試す
-  def add_exp(points)
-    new_exp = self.exp + points
-    while new_exp >= current_rank_required_exp
-      new_exp -= current_rank_required_exp
-      self.rank += 1
-    end
-    update_columns(exp: new_exp, rank: self.rank)
-  end
+  #def add_exp(points)
+  #  new_exp = self.exp + points
+  #  while new_exp >= current_rank_required_exp
+  #    new_exp -= current_rank_required_exp
+  #    self.rank += 1
+  #  end
+  #  update_columns(exp: new_exp, rank: self.rank)
+  #end
 
   def current_rank_required_exp
     self.rank * 5
@@ -73,6 +77,20 @@ class User < ApplicationRecord
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
   end
+
+  # 経験値とランクのロジック
+  def add_exp(amount)
+    self.exp ||= 0
+    self.rank ||= 1
+    self.exp += amount
+    while self.exp >= self.rank * 5
+      self.exp -= self.rank * 5
+      self.rank += 1
+    end
+    save
+  end
+
+
 
   private
 
