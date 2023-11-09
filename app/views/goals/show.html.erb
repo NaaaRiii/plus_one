@@ -1,5 +1,5 @@
-<h1><%= @goal.title   %></h1>
-<p> <%= @goal.content %></p>
+<h1>Goal Title:<%= @goal.title %></h1>
+<h3>Goal Content:</h3><p><%= @goal.content %></p>
 
 <p>Deadline: <%= @goal.deadline %></p>
 
@@ -7,20 +7,30 @@
 
 <% @small_goals.each do |small_goal| %>
   <div data-small-goal-id="<%= small_goal.id %>" class="small-goal">
-    <h3><%= small_goal.title %></h3>
-    <div class="small-goal-complete-button" style="display: none;">
-      <%= button_tag "完了", type: "button", class: "complete-button", data: { small_goal_id: small_goal.id } %>
-    </div>
+    <h3>Small Goal Title:</h3>
+      <%= small_goal.title %>
+      <% if small_goal.completed %>
+        <span>完了!</span>
+      <% else %>
+        <!-- 新規に作成された small_goal にはまだ未完了のタスクが存在するはずなので、それに基づいてボタンの表示を制御します -->
+        <div class="small-goal-complete-button" style="<%= 'display: none;' unless small_goal.tasks.any?(&:completed) %>">
+          <%= button_to "完了", complete_goal_small_goal_path(goal_id: @goal.id, id: small_goal.id), method: :put, remote: true, class: "small-goal-complete-button" %>
+        </div>
+      <% end %>
+    
     <p>Difficulty: <%= small_goal.difficulty %></p>
     <p>Deadline: <%= small_goal.deadline.strftime("%Y-%m-%d") %></p>
-    <ul>
-      <% small_goal.tasks.each do |task| %>
-        <li>
-          <%= check_box_tag "tasks[#{task.id}][completed]", task.id, task.completed, class: "task-checkbox", data: { small_goal_id: small_goal.id } %>
-          <%= task.content %>
-        </li>
-      <% end %>
-    </ul>
+    <!-- タスクのリスト表示 -->
+    <% unless small_goal.completed %>
+      <ul>
+        <% small_goal.tasks.each do |task| %>
+          <li>
+            <%= check_box_tag "tasks[#{task.id}][completed]", task.id, task.completed, class: "task-checkbox", data: { small_goal_id: small_goal.id } %>
+            <%= task.content %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
   </div>
 <% end %>
 

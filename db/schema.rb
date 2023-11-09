@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_03_121524) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_08_112217) do
+  create_table "activities", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "goal_title"
+    t.string "small_goal_title"
+    t.integer "exp_gained"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
   create_table "goals", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -30,6 +40,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_03_121524) do
     t.string "difficulty"
     t.datetime "deadline"
     t.string "task"
+    t.boolean "completed", default: false
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 
@@ -48,8 +59,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_03_121524) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
-    t.integer "exp"
-    t.integer "rank"
+    t.integer "exp", default: 0
+    t.integer "rank", default: 1
     t.string "remember_digest"
     t.string "activation_digest"
     t.boolean "activated", default: false
@@ -57,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_03_121524) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "activities", "users"
   add_foreign_key "goals", "users"
   add_foreign_key "small_goals", "goals"
   add_foreign_key "tasks", "small_goals"

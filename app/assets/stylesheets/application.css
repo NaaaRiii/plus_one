@@ -20,8 +20,6 @@ a {
   text-decoration: none;
 }
 
-
-
 .flex_header{
   position: fixed;
   top: 0;
@@ -61,11 +59,16 @@ a {
   padding: 33px 20px;
 }
 
-.footer {
+footer{
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  border-top: 1px solid #eee;
-  clear: left;
-  background: #26d0c9;
+  background-color: #26d0c9;
+}
+
+.main{
+  background: #f9fbfe;
 }
 
 .up20{
@@ -74,10 +77,6 @@ a {
 
 .footer_copyright{
   font-size: 0.6rem;
-}
-
-.main{
-  background: #f9fbfe;
 }
 
 .pg-container{
@@ -132,9 +131,4 @@ label {
 
 .btn-primary:hover {
   background-color: #0056b3;
-}
-
-footer{
-  position: absolute;/*←絶対位置*/
-  bottom: 0; /*下に固定*/
 }

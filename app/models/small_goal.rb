@@ -7,13 +7,24 @@ class SmallGoal < ApplicationRecord
     goal.user
   end
 
-  DIFFICULTY_MULTIPLIERS = {
-    "ものすごく簡単" => 0.5,
-    "簡単" => 0.7,
-    "普通" => 1.0,
-    "難しい" => 1.2,
-    "とても難しい" => 1.5
-  }
+  #DIFFICULTY_MULTIPLIERS = {
+  #  "ものすごく簡単" => 0.5,
+  #  "簡単" => 0.7,
+  #  "普通" => 1.0,
+  #  "難しい" => 1.2,
+  #  "とても難しい" => 1.5
+  #}
+
+  def calculate_exp
+    difficulty_multiplier = {
+      "ものすごく簡単" => 0.5,
+      "簡単" => 0.7,
+      "普通" => 1.0,
+      "難しい" => 1.2,
+      "とても難しい" => 1.5
+    }
+    self.tasks.count * difficulty_multiplier[self.difficulty]
+  end
 
   #def complete
   #  if tasks.all?(&:completed) # すべてのタスクが完了しているか確認
