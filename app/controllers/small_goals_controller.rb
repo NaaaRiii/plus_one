@@ -1,4 +1,6 @@
 class SmallGoalsController < ApplicationController
+  before_action :set_goal
+  before_action :set_small_goal, only: [:update]
   include UserAuthenticatable
   authenticate_user_for_actions [:new, :create]
 
@@ -24,22 +26,20 @@ class SmallGoalsController < ApplicationController
     @small_goal = @goal.small_goals.find(params[:id])
   end
 
-  #def complete
-  #  small_goal = SmallGoal.find(params[:id])
-  #  exp_gained = small_goal.calculate_exp
-  #  current_user.add_exp(exp_gained)
-
-  #  # Activity レコードを作成
-  #  current_user.activities.create(
-  #    goal_title: small_goal.goal.title,
-  #    small_goal_title: small_goal.title,
-  #    exp_gained: exp_gained )
-  #  redirect_to dashboard_path, notice: "Small goal completed successfully!"
-  #end
+  def update
+    if @small_goal.update(small_goal_params)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @goal, notice: "Small goal was successfully updated." }
+      end
+    else
+      render :edit
+    end
+  end
 
   def complete
     small_goal = SmallGoal.find(params[:id])
-    if small_goal.update(completed: true)
+    if small_goal.update(completed: true, completed_time: Time.current)
       # 成功した場合
       exp_gained = small_goal.calculate_exp
       current_user.add_exp(exp_gained)
@@ -61,8 +61,15 @@ class SmallGoalsController < ApplicationController
 
   private
 
-  def small_goal_params
-    params.require(:small_goal).permit(:title, :difficulty, :deadline, :task, tasks_attributes: [:id, :content, :_destroy])
+  def set_goal
+    @goal = current_user.goals.find(params[:goal_id])
   end
 
+  def set_small_goal
+    @small_goal = @goal.small_goals.find(params[:id])
+  end
+
+  def small_goal_params
+    params.require(:small_goal).permit(:title, :difficulty, :deadline, :completed, :completed_time, :task, tasks_attributes: [:id, :completed, :content, :_destroy])
+  end
 end
