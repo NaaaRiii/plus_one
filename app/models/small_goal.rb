@@ -7,14 +7,6 @@ class SmallGoal < ApplicationRecord
     goal.user
   end
 
-  #DIFFICULTY_MULTIPLIERS = {
-  #  "ものすごく簡単" => 0.5,
-  #  "簡単" => 0.7,
-  #  "普通" => 1.0,
-  #  "難しい" => 1.2,
-  #  "とても難しい" => 1.5
-  #}
-
   def calculate_exp
     difficulty_multiplier = {
       "ものすごく簡単" => 0.5,
@@ -25,16 +17,6 @@ class SmallGoal < ApplicationRecord
     }
     self.tasks.count * difficulty_multiplier[self.difficulty]
   end
-
-  #def complete
-  #  if tasks.all?(&:completed) # すべてのタスクが完了しているか確認
-  #    user.add_exp(exp_for_small_goal) # 経験値を加算
-  #    return true
-  #  else
-  #    errors.add(:base, 'タスクが完了してません!')
-  #    return false
-  #  end
-  #end
 
   def completed?
     tasks.all?(&:completed)

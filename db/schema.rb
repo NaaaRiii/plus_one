@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_08_112217) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -41,6 +41,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_112217) do
     t.datetime "deadline"
     t.string "task"
     t.boolean "completed", default: false
+    t.datetime "completed_time"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 

@@ -24,7 +24,7 @@ class GoalsController < ApplicationController
   def show
     @goal = Goal.find(params[:id])
     @small_goals = @goal.small_goals
-    @completed_small_goals = @small_goals.where(small_goal_id: @small_goals.select(&:completed), completed: true)
+    @completed_small_goals = @small_goals.select(&:completed)
   end
 
   def edit
