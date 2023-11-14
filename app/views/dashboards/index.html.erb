@@ -17,6 +17,10 @@
   <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
     <%= latest_completed_goal.title %>
     <span><strong>完了!</strong></span>
+<% if latest_completed_goal && latest_completed_goal.completed_time > 5.hours.ago %>
+  <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
+    <%= latest_completed_goal.title %>
+    <span>完了!</span>
     <%= latest_completed_goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
   </div>
 <% end %>
