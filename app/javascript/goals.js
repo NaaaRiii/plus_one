@@ -1,3 +1,38 @@
+export function setupTaskCheckboxes() {
+  const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+
+  taskCheckboxes.forEach(function(checkbox, index) {
+    checkbox.addEventListener('change', function() {
+      const smallGoalId = checkbox.dataset.smallGoalId;
+      if (!smallGoalId) {
+        console.error('Error: No smallGoalId found for this checkbox.');
+        return;
+      }
+
+      const smallGoalDiv = document.querySelector(`div[data-small-goal-id="${smallGoalId}"]`);
+      if (!smallGoalDiv) {
+        console.error(`Error: No .small-goal div found for smallGoalId ${smallGoalId}.`);
+        return;
+      }
+
+      const allTaskCheckboxes = smallGoalDiv.querySelectorAll('.task-checkbox');
+      const allCompleted = Array.from(allTaskCheckboxes).every(chk => chk.checked);
+
+      const smallGoalCompleteButton = smallGoalDiv.querySelector('.small-goal-complete-button');
+      if (!smallGoalCompleteButton) {
+        console.error('Error: No .small-goal-complete-button found.');
+        return;
+      }
+
+      if (allCompleted) {
+        smallGoalCompleteButton.style.display = 'block';
+      } else {
+        smallGoalCompleteButton.style.display = 'none';
+      }
+    });
+  });
+}
+
 document.addEventListener('turbo:load', function() {
   console.log('turbo:load event triggered - setting up event listeners');
   // タスクのチェックボックスにイベントリスナーを設定

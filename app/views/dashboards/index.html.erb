@@ -8,16 +8,14 @@
 
 <p>Here are your recent activities:</p>
 
-<% @small_goals.each do |small_goal| %>
-  <% if small_goal.completed %>
-    <div data-small-goal-id="<%= small_goal.id %>" class="small-goal">
-      <%= small_goal.title %>
-      <span>完了!</span>
-      <% if small_goal.completed_time %>
-        <%= small_goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
-      <% end %>
-    </div>
-  <% end %>
+<% latest_completed_goal = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(&:completed_time) %>
+
+<% if latest_completed_goal && latest_completed_goal.completed_time > 5.hours.ago %>
+  <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
+    <%= latest_completed_goal.title %>
+    <span>完了!</span>
+    <%= latest_completed_goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
+  </div>
 <% end %>
 
 <div>

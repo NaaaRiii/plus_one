@@ -7,9 +7,14 @@ form, input, div {
   padding: 0;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin-top: 90px;
   font-family: "UD デジタル 教科書体 N-R", "UD Digi Kyokasho NP-R";
+  padding: 0;
 }
 
 li {
@@ -60,8 +65,8 @@ a {
 }
 
 footer{
-  /*position: absolute;*/
-  position: fixed;
+  position: sticky;
+  top: 100vh;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -70,6 +75,7 @@ footer{
 
 .main{
   background: #f9fbfe;
+  min-height: calc(100vh - 50px);
 }
 
 .up20{
