@@ -6,11 +6,13 @@
   <li>Name: <%= current_user.name %></li>
 </ul>
 
+<h2>Your exp: <%= (@total_exp * 10).floor / 10.0 %></h2>
+
 <p>Here are your recent activities:</p>
 
 <% latest_completed_goal = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(&:completed_time) %>
 
-<% if latest_completed_goal && latest_completed_goal.completed_time > 5.hours.ago %>
+<% if latest_completed_goal %>
   <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
     <%= latest_completed_goal.title %>
     <span>完了!</span>

@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :goals, class_name: 'Goal', dependent: :destroy
   has_many :small_goals, through: :goals, dependent: :destroy
+  has_many :tasks, through: :small_goals, dependent: :destroy
 
   attr_accessor :remember_token, :activation_token
   before_save   :downcase_email
@@ -89,8 +90,6 @@ class User < ApplicationRecord
     end
     save
   end
-
-
 
   private
 
