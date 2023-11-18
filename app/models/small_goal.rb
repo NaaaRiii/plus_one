@@ -33,7 +33,7 @@ class SmallGoal < ApplicationRecord
     RANK_UP_EXPERIENCE.size + 1
   end
 
-  def total_exp
-    tasks.count + calculate_exp
-  end
+  #def total_exp
+  #  tasks.count + calculate_exp
+  #end
 end

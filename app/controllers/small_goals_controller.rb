@@ -40,22 +40,23 @@ class SmallGoalsController < ApplicationController
   def complete
     small_goal = SmallGoal.find(params[:id])
     if small_goal.update(completed: true, completed_time: Time.current)
-      # 成功した場合
-      exp_gained = small_goal.calculate_exp
-      current_user.add_exp(exp_gained)
-  
+      # exp の計算
+      exp_gained = calculate_exp_for_small_goal(small_goal)
+
+      # total_exp が nil の場合、0 を初期値として設定
+      current_user.total_exp += exp_gained.to_f
+      current_user.save
+
       # Activity レコードを作成
       current_user.activities.create(
         goal_title: small_goal.goal.title,
         small_goal_title: small_goal.title,
         exp_gained: exp_gained
       )
-  
-      # リダイレクトして成功メッセージを表示
+
       redirect_to dashboard_path, notice: "Small goal completed successfully!"
     else
-      # 更新に失敗した場合、エラーメッセージを表示
-      redirect_to dashboard_path, alert: "There was a problem completing the small goal: #{small_goal.errors.full_messages.to_sentence}."
+      redirect_to dashboard_path, alert: "There was a problem completing the small goal."
     end
   end
 
@@ -71,5 +72,14 @@ class SmallGoalsController < ApplicationController
 
   def small_goal_params
     params.require(:small_goal).permit(:title, :difficulty, :deadline, :completed, :completed_time, :task, tasks_attributes: [:id, :completed, :content, :_destroy])
+  end
+
+  def calculate_exp_for_small_goal(small_goal)
+    task_count = small_goal.tasks.count
+    difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]
+    exp = (task_count * difficulty_multiplier).round(1)
+    logger.debug "Calculating exp for small goal: #{small_goal.id}"
+    logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
+    exp
   end
 end

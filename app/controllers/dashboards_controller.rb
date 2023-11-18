@@ -2,11 +2,13 @@ class DashboardsController < ApplicationController
   include UserAuthenticatable
   authenticate_user_for_actions [:index]
   def index
+    @current_user = current_user
     @activities = current_user.activities.order(created_at: :desc)
     @small_goals = current_user.small_goals.includes(:goal)
     @completed_small_goals = current_user.activities.where(completed: true)
     logger.debug "Completed activities: #{@completed_activities.inspect}"
-    @total_exp = current_user.small_goals.sum { |goal| calculate_exp_for_small_goal(goal) }
+    @total_exp = current_user.activities.sum(:exp)
+    logger.debug "Total exp for user #{current_user.id}: #{@total_exp}"
   end
 
   def calculate_total_exp(user)
@@ -15,13 +17,13 @@ class DashboardsController < ApplicationController
 
   private
 
-  DIFFICULTY_MULTIPLIERS = {
-    "ものすごく簡単" => 0.5,
-    "簡単" => 0.7,
-    "普通" => 1.0,
-    "難しい" => 1.2,
-    "とても難しい" => 1.5
-  }.freeze
+  #DIFFICULTY_MULTIPLIERS = {
+  #  "ものすごく簡単" => 0.5,
+  #  "簡単" => 0.7,
+  #  "普通" => 1.0,
+  #  "難しい" => 1.2,
+  #  "とても難しい" => 1.5
+  #}.freeze
 
   def calculate_exp_for_small_goal(small_goal)
     task_count = small_goal.tasks.count
