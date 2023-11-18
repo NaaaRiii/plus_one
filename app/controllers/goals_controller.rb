@@ -55,16 +55,22 @@ class GoalsController < ApplicationController
       redirect_to goal_path(@goal)
     else
       @goal.update(completed: true)
-      total_exp = calculate_exp(@goal)
-      flash[:goal_completed] = "Goal 達成おめでとう! 獲得EXP: #{total_exp}"
-      redirect_to dashboard_path
-  
+      #total_exp = calculate_exp(@goal)
+
+      # small goalsのexpを集計し、3を掛ける
+      total_exp_gained = @goal.small_goals.sum { |sg| sg.exp } * 3
+      current_user.total_exp += total_exp_gained
+      current_user.save
+
       Activity.create(
         user: current_user,
         goal: @goal,
-        exp: total_exp,
+        exp_gained: total_exp_gained,
         completed_at: Time.current
       )
+
+      flash[:goal_completed] = "Goal 達成おめでとう! 獲得EXP: #{total_exp_gained}"
+      redirect_to dashboard_path
     end
   end
 
