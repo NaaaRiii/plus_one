@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_18_100743) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -18,6 +18,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
     t.integer "exp_gained"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "small_goal_id"
+    t.integer "goal_id"
+    t.float "exp"
+    t.datetime "completed_at"
     t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
@@ -29,6 +33,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
     t.string "title"
     t.date "deadline"
     t.string "small_goal"
+    t.boolean "completed"
     t.index ["user_id"], name: "index_goals_on_user_id"
   end
 
@@ -42,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
     t.string "task"
     t.boolean "completed", default: false
     t.datetime "completed_time"
+    t.integer "exp"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 
@@ -66,6 +72,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_122540) do
     t.string "activation_digest"
     t.boolean "activated", default: false
     t.datetime "activated_at"
+    t.decimal "total_exp", precision: 10, scale: 2
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

@@ -65,6 +65,12 @@ class User < ApplicationRecord
   #  update_columns(exp: new_exp, rank: self.rank)
   #end
 
+  # ユーザーの総合計経験値を計算する
+  def add_exp(amount)
+    self.total_exp += amount
+    save
+  end
+
   def current_rank_required_exp
     self.rank * 5
   end
@@ -80,16 +86,16 @@ class User < ApplicationRecord
   end
 
   # 経験値とランクのロジック
-  def add_exp(amount)
-    self.exp ||= 0
-    self.rank ||= 1
-    self.exp += amount
-    while self.exp >= self.rank * 5
-      self.exp -= self.rank * 5
-      self.rank += 1
-    end
-    save
-  end
+  #def add_exp(amount)
+  #  self.exp ||= 0
+  #  self.rank ||= 1
+  #  self.exp += amount
+  #  while self.exp >= self.rank * 5
+  #    self.exp -= self.rank * 5
+  #    self.rank += 1
+  #  end
+  #  save
+  #end
 
   private
 

@@ -6,8 +6,13 @@ Rails.application.routes.draw do
   get     "/dashboard",         to: "dashboards#index"
   delete  "/logout",            to: "sessions#destroy"
   post    "/guest_login",       to: "guest_sessions#create"
+  #put '/goals/:id/complete', to: 'goals#complete', as: 'complete_goal'
+  put     "/dashboard",         to: "dashboards#index"
 
   resources :goals do
+    member do
+      put :complete
+    end
     resources :small_goals do
       member do
         put :complete

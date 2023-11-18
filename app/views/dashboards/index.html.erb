@@ -1,3 +1,9 @@
+<% if flash[:goal_completed] %>
+  <div class="alert alert-success">
+    <p><%= flash[:goal_completed] %></p>
+  </div>
+<% end %>
+
 <h1>Welcome to your dashboard</h1>
 
 <p>Here's some information about your account:</p>
@@ -6,7 +12,8 @@
   <li>Name: <%= current_user.name %></li>
 </ul>
 
-<h2>Your exp: <%= (@total_exp * 10).floor / 10.0 %></h2>
+<h2>Your EXP: <%= @current_user.total_exp %></h2>
+<h2>Your Rank: <%= @current_user.rank %></h2>
 
 <p>Here are your recent activities:</p>
 
@@ -15,7 +22,7 @@
 <% if latest_completed_goal %>
   <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
     <%= latest_completed_goal.title %>
-    <span>完了!</span>
+    <span><strong>完了!</strong></span>
     <%= latest_completed_goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
   </div>
 <% end %>
