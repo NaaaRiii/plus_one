@@ -71,8 +71,21 @@ class User < ApplicationRecord
     save
   end
 
-  def current_rank_required_exp
-    self.rank * 5
+  # ランクを計算するメソッド
+  def calculate_rank
+    # ランクアップに必要な経験値の初期値は 5
+    exp_required = 5
+
+    # 現在のランクを初期化（最低ランクは 1）
+    current_rank = 1
+
+    # total_exp が exp_required を超えるごとにランクアップ
+    while total_exp >= exp_required
+      current_rank += 1
+      exp_required += 5  # 次のランクアップに必要な経験値を増加
+    end
+
+    current_rank
   end
 
   # アカウントを有効にする
