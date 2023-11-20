@@ -17,14 +17,6 @@ class DashboardsController < ApplicationController
 
   private
 
-  #DIFFICULTY_MULTIPLIERS = {
-  #  "ものすごく簡単" => 0.5,
-  #  "簡単" => 0.7,
-  #  "普通" => 1.0,
-  #  "難しい" => 1.2,
-  #  "とても難しい" => 1.5
-  #}.freeze
-
   def calculate_exp_for_small_goal(small_goal)
     task_count = small_goal.tasks.count
     difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]

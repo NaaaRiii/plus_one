@@ -52,16 +52,18 @@ class GoalsController < ApplicationController
     @goal.update(completed: true)
     if @goal.small_goals.any? { |sg| !sg.completed }
       flash[:alert] = "まだやるべきことがあるのでは？"
+      render json: { success: false, message: "エラーが発生しました" }
       redirect_to goal_path(@goal)
     else
       @goal.update(completed: true)
-      #total_exp = calculate_exp(@goal)
 
       # small goalsのexpを集計し、3を掛ける
       total_exp_gained = @goal.small_goals.sum { |sg| sg.exp } * 3
+      logger.debug "Small goals exp: " + @goal.small_goals.map { |sg| sg.exp.to_s }.join(", ")
+      logger.debug "Total exp gained (3 times the sum): #{total_exp_gained}"
       current_user.total_exp += total_exp_gained
+      
       current_user.save
-
       Activity.create(
         user: current_user,
         goal: @goal,
@@ -69,8 +71,8 @@ class GoalsController < ApplicationController
         completed_at: Time.current
       )
 
-      flash[:goal_completed] = "Goal 達成おめでとう! 獲得EXP: #{total_exp_gained}"
-      redirect_to dashboard_path
+      redirect_to dashboard_path, notice: "Goal 達成おめでとう! 獲得EXP: #{total_exp_gained}"
+
     end
   end
 
