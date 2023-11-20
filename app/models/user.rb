@@ -73,6 +73,8 @@ class User < ApplicationRecord
 
   # ランクを計算するメソッド
   def calculate_rank
+    total_exp ||= 0
+
     # ランクアップに必要な経験値の初期値は 5
     exp_required = 5
 
