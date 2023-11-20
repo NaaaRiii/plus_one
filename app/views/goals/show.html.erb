@@ -1,13 +1,15 @@
 <h1>Goal Title:</h1>
-<h2><%= @goal.title %></h2>
+<%# Goal達成ボタンの追加 %>
 <% if @goal.completed %>
   <p>このGoalは達成しました!</p>
 <% else %>
-  <div id="custom-confirm" data-goal-id="<%= @goal.id %>">
-    <p>このGoalは達成しましたか?</p>
-    <button id="confirm-yes">はい、達成しました！</button>
-    <button id="confirm-no">いいえ、まだやるべきことがあります。</button>
-  </div>
+  <p>このGoalを完了しますか?</p>
+  <%# 未完了のSmall Goalが存在するかどうかをチェック %>
+  <% if @small_goals.any? { |sg| !sg.completed } %>
+    <%= button_to 'Goalを達成する', complete_goal_path(@goal), method: :put, disabled: true, class: "btn btn-success" %>
+  <% else %>
+    <%= button_to 'Goalを達成する', complete_goal_path(@goal), method: :put, class: "btn btn-success" %>
+  <% end %>
 <% end %>
 
 <h3>Goal Content:</h3><p><%= @goal.content %></p>
@@ -52,60 +54,3 @@
 
 <%= link_to "New Small Goal", new_goal_small_goal_path(@goal), class: "btn btn-primary" %>
 <%= link_to "Back", goals_path, class: "btn btn-primary" %>
-
-<script>
-document.addEventListener('turbo:load', function() {
-  // 'はい'ボタンの処理
-  const confirmYesButton = document.getElementById('confirm-yes');
-  if (confirmYesButton) {
-    confirmYesButton.addEventListener('click', function() {
-      const customConfirmElement = document.getElementById('custom-confirm');
-      if (!customConfirmElement) {
-        console.error('Element with id "custom-confirm" not found.');
-        return;
-      }
-      const goalId = customConfirmElement.getAttribute('data-goal-id');
-      const goalCompleteUrl = `/goals/${goalId}/complete`;
-
-      fetch(goalCompleteUrl, {
-        method: 'PUT',
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        },
-        credentials: 'same-origin'
-      })
-      .then(response => {
-        if (response.ok) {
-          // ボタンを非表示にする
-          confirmYesButton.style.display = 'none';
-          confirmNoButton.style.display = 'none';
-
-          // 達成メッセージを表示
-          const successMessage = document.createElement('p');
-          successMessage.textContent = 'このGoalは達成しました!';
-          document.getElementById('goal-title').insertAdjacentElement('beforebegin', successMessage);
-
-          window.location.href = '/dashboard'; // ダッシュボードにリダイレクト
-        } else {
-          throw new Error('サーバーからの応答がありません。');
-        }
-      })
-      .catch(error => {
-        alert('エラーが発生しました。' + error.toString());
-      });
-    });
-  } else {
-    console.error('confirm-yes ボタンが見つかりません。');
-  }
-
-  // 'いいえ'ボタンの処理
-  const confirmNoButton = document.getElementById('confirm-no');
-  if (confirmNoButton) {
-    confirmNoButton.addEventListener('click', function() {
-      document.getElementById('custom-confirm').style.display = 'none';
-    });
-  } else {
-    console.error('confirm-no ボタンが見つかりません。');
-  }
-});
-</script>

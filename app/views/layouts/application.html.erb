@@ -37,3 +37,12 @@
     </div>
   </body>
 </html>
+
+<script>
+  document.addEventListener('turbo:visit', function() {
+    const flashMessages = document.querySelectorAll('.alert');
+    flashMessages.forEach(function(msg) {
+        msg.style.display = 'none';
+    });
+  });
+</script>

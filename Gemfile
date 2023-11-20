@@ -83,3 +83,7 @@ end
 gem "bcrypt", "3.1.18"
 
 gem 'rails-controller-testing'
+
+group :development, :test do
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+end
