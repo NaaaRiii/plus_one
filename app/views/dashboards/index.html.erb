@@ -13,10 +13,7 @@
 
 <% latest_completed_goal = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(&:completed_time) %>
 
-<% if latest_completed_goal %>
-  <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
-    <%= latest_completed_goal.title %>
-    <span><strong>完了!</strong></span>
+
 <% if latest_completed_goal && latest_completed_goal.completed_time > 5.hours.ago %>
   <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
     <%= latest_completed_goal.title %>
