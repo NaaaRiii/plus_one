@@ -61,8 +61,8 @@ class GoalsController < ApplicationController
       total_exp_gained = @goal.small_goals.sum { |sg| sg.exp } * 3
       logger.debug "Small goals exp: " + @goal.small_goals.map { |sg| sg.exp.to_s }.join(", ")
       logger.debug "Total exp gained (3 times the sum): #{total_exp_gained}"
-      current_user.total_exp += total_exp_gained
-      
+      # total_exp が nil の場合、0 を初期値として設定
+      current_user.total_exp = current_user.total_exp.to_f + total_exp_gained
       current_user.save
       Activity.create(
         user: current_user,

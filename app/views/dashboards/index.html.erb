@@ -11,15 +11,24 @@
 
 <p>Here are your recent activities:</p>
 
-<% latest_completed_goal = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(&:completed_time) %>
+<%# 最新の完了アイテムを取得（時間制限なし） %>
+<% latest_completed_goals = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(5, &:completed_time) %>
 
+<%# すべてのアイテムが5時間以上前の場合、最新のものを含めて表示 %>
+<% if latest_completed_goals.empty? || latest_completed_goals.all? { |goal| goal.completed_time <= 2.minutes.ago } %>
+  <% latest_completed_goal = @small_goals.select { |goal| goal.completed && goal.completed_time }.max_by(&:completed_time) %>
+  <% latest_completed_goals = [latest_completed_goal] unless latest_completed_goal.nil? %>
+<% end %>
 
-<% if latest_completed_goal && latest_completed_goal.completed_time > 5.hours.ago %>
-  <div data-small-goal-id="<%= latest_completed_goal.id %>" class="small-goal">
-    <%= latest_completed_goal.title %>
-    <span>完了!</span>
-    <%= latest_completed_goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
-  </div>
+<% latest_completed_goals.each do |goal| %>
+  <%# 2以内に完了したもの、または表示するアイテムがない場合のみ表示 ※検証のため2分に設定 %>
+  <% if goal.completed_time > 2.minutes.ago || latest_completed_goals.count == 1 %>
+    <div data-small-goal-id="<%= goal.id %>" class="small-goal">
+      <%= goal.title %>
+      <span><strong>完了!</strong></span>
+      <%= goal.completed_time.strftime("%Y-%m-%d %H:%M") %>
+    </div>
+  <% end %>
 <% end %>
 
 <div>
@@ -30,4 +39,3 @@
     </div>
   </div>
 </div>
-
