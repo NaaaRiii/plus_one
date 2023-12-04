@@ -2,6 +2,7 @@ class SmallGoalsController < ApplicationController
   before_action :set_goal
   before_action :set_small_goal, only: [:update]
   include UserAuthenticatable
+  include DifficultyMultiplier
   authenticate_user_for_actions [:new, :create]
 
   def new
