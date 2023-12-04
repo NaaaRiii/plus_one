@@ -5,7 +5,7 @@ default: &default #アンカー
   #pool: 5
   username: <%= ENV['DATABASE_DEV_USER'] %>
   password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
-  socket: /var/run/mysqld/mysqld.sock
+  socket: /tmp/mysql.sock
 
 development:
   <<: *default #エイリアス・ハッシュのマージ

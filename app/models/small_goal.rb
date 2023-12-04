@@ -1,13 +1,6 @@
 class SmallGoal < ApplicationRecord
   before_save :calculate_exp
-
-  DIFFICULTY_MULTIPLIERS = {
-    "ものすごく簡単" => 0.5,
-    "簡単" => 0.7,
-    "普通" => 1.0,
-    "難しい" => 1.2,
-    "とても難しい" => 1.5
-  }.freeze
+  include DifficultyMultiplier
 
   def calculate_rank_up_experience(max_rank = 120)
     experiences = [0, 5]
@@ -28,13 +21,6 @@ class SmallGoal < ApplicationRecord
     end
     calculate_rank_up_experience.size + 1
   end
-
-  #def rank
-  #  RANK_UP_EXPERIENCE.each_with_index do |exp, index|
-  #    return index + 1 if total_exp < exp
-  #  end
-  #  RANK_UP_EXPERIENCE.size + 1
-  #end
 
   # 経験値の追加メソッド（難易度に応じて経験値を調整する）
   def add_experience(points, difficulty)

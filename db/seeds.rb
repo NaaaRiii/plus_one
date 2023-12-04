@@ -23,3 +23,6 @@ small_goal = goal.small_goals.create!(title: "Sample Small Goal", difficulty: "�
 3.times do |i|
   small_goal.tasks.create!(content: "Task #{i + 1}")
 end
+
+#total_expを0に設定
+user.update(total_exp: 0)
