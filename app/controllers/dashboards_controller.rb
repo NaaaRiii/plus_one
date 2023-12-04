@@ -1,5 +1,6 @@
 class DashboardsController < ApplicationController
   include UserAuthenticatable
+  include DifficultyMultiplier
   authenticate_user_for_actions [:index]
   def index
     @current_user = current_user
@@ -9,15 +10,11 @@ class DashboardsController < ApplicationController
     logger.debug "Completed activities: #{@completed_activities.inspect}"
     @total_exp = current_user.activities.sum(:exp)
     logger.debug "Total exp for user #{current_user.id}: #{@total_exp}"
-    #@current_user.total_exp = @total_exp
-    # ユーザーの総経験値を計算
-    total_exp = calculate_total_exp(current_user)
-    # ユーザーの total_exp を更新して保存
-    current_user.update(total_exp: total_exp)
+    @calculate_rank = current_user.rank
   end
 
   def calculate_total_exp(user)
-    user.tasks.sum(:exp) + user.small_goals.sum { |goal| goal.tasks.count * difficulty_multiplier(goal.difficulty) }
+    user.tasks.sum(:exp) + user.small_goals.sum { |goal| goal.tasks.count * get_multiplier(goal.difficulty) }
   end
 
   private
