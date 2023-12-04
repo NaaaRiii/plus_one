@@ -29,13 +29,6 @@ class SmallGoal < ApplicationRecord
     calculate_rank_up_experience.size + 1
   end
 
-  #def rank
-  #  RANK_UP_EXPERIENCE.each_with_index do |exp, index|
-  #    return index + 1 if total_exp < exp
-  #  end
-  #  RANK_UP_EXPERIENCE.size + 1
-  #end
-
   # 経験値の追加メソッド（難易度に応じて経験値を調整する）
   def add_experience(points, difficulty)
     multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0

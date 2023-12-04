@@ -9,7 +9,11 @@ class DashboardsController < ApplicationController
     logger.debug "Completed activities: #{@completed_activities.inspect}"
     @total_exp = current_user.activities.sum(:exp)
     logger.debug "Total exp for user #{current_user.id}: #{@total_exp}"
-    @current_user.total_exp = @total_exp
+    #@current_user.total_exp = @total_exp
+    # ユーザーの総経験値を計算
+    total_exp = calculate_total_exp(current_user)
+    # ユーザーの total_exp を更新して保存
+    current_user.update(total_exp: total_exp)
   end
 
   def calculate_total_exp(user)
