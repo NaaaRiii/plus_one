@@ -53,18 +53,6 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
-  
-
-  # 『update_columnsを使ってDBに保存するが、バリデーションは行わない』を試す
-  #def add_exp(points)
-  #  new_exp = self.exp + points
-  #  while new_exp >= current_rank_required_exp
-  #    new_exp -= current_rank_required_exp
-  #    self.rank += 1
-  #  end
-  #  update_columns(exp: new_exp, rank: self.rank)
-  #end
-
   # ユーザーの総合計経験値を計算する
   def add_exp(amount)
     self.total_exp += amount
@@ -73,19 +61,41 @@ class User < ApplicationRecord
 
   # ランクを計算するメソッド
   def calculate_rank
+    #total_exp ||= 0
+    total_exp = 0
     # ランクアップに必要な経験値の初期値は 5
     exp_required = 5
 
     # 現在のランクを初期化（最低ランクは 1）
     current_rank = 1
 
-    # total_exp が exp_required を超えるごとにランクアップ
+    # total_exp が exp_required 以上の場合にランクアップ
     while total_exp >= exp_required
       current_rank += 1
       exp_required += 5  # 次のランクアップに必要な経験値を増加
     end
 
     current_rank
+  end
+
+  def calculate_rank_up_experience(max_rank = 120)
+    experiences = [0, 5]
+    increment = 10
+
+    (3..max_rank).each do |rank|
+      increment += 5 if (rank - 2) % 5 == 0
+      experiences << experiences.last + increment
+    end
+
+    experiences
+  end
+
+  def rank
+    total_exp = self.total_exp 
+    calculate_rank_up_experience.each_with_index do |exp, index|
+      return index + 1 if total_exp < exp
+    end
+    calculate_rank_up_experience.size + 1
   end
 
   # アカウントを有効にする
@@ -97,18 +107,6 @@ class User < ApplicationRecord
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
   end
-
-  # 経験値とランクのロジック
-  #def add_exp(amount)
-  #  self.exp ||= 0
-  #  self.rank ||= 1
-  #  self.exp += amount
-  #  while self.exp >= self.rank * 5
-  #    self.exp -= self.rank * 5
-  #    self.rank += 1
-  #  end
-  #  save
-  #end
 
   private
 

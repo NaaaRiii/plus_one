@@ -40,3 +40,5 @@
 /.rubocop_todo.yml
 
 /.rubocop.yml
+
+node_modules/

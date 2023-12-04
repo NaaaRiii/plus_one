@@ -2,6 +2,7 @@ class SmallGoalsController < ApplicationController
   before_action :set_goal
   before_action :set_small_goal, only: [:update]
   include UserAuthenticatable
+  include DifficultyMultiplier
   authenticate_user_for_actions [:new, :create]
 
   def new
@@ -44,7 +45,7 @@ class SmallGoalsController < ApplicationController
       exp_gained = calculate_exp_for_small_goal(small_goal)
 
       # total_exp が nil の場合、0 を初期値として設定
-      current_user.total_exp += exp_gained.to_f
+      current_user.total_exp = current_user.total_exp.to_f + exp_gained.to_f
       current_user.save
 
       # Activity レコードを作成
