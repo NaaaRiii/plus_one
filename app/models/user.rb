@@ -59,43 +59,32 @@ class User < ApplicationRecord
     save
   end
 
-  # ランクを計算するメソッド
-  def calculate_rank
-    #total_exp ||= 0
-    total_exp = 0
-    # ランクアップに必要な経験値の初期値は 5
-    exp_required = 5
-
-    # 現在のランクを初期化（最低ランクは 1）
-    current_rank = 1
-
-    # total_exp が exp_required 以上の場合にランクアップ
-    while total_exp >= exp_required
-      current_rank += 1
-      exp_required += 5  # 次のランクアップに必要な経験値を増加
-    end
-
-    current_rank
-  end
-
+  # ランクアップに必要な経験値を計算するメソッド
   def calculate_rank_up_experience(max_rank = 120)
     experiences = [0, 5]
     increment = 10
 
     (3..max_rank).each do |rank|
-      increment += 5 if (rank - 2) % 5 == 0
+      increment += 5 if ((rank - 2) % 5).zero?
       experiences << experiences.last + increment
     end
 
     experiences
   end
 
-  def rank
-    total_exp = self.total_exp 
-    calculate_rank_up_experience.each_with_index do |exp, index|
-      return index + 1 if total_exp < exp
+  # ランクを計算するメソッド
+  def calculate_rank
+    total_exp = self.total_exp || 0.0
+    experiences = calculate_rank_up_experience
+  
+    # ランク1の場合を特別に扱う
+    return 1 if total_exp < experiences[1]
+  
+    experiences.each_with_index do |exp, index|
+      return index if total_exp < exp
     end
-    calculate_rank_up_experience.size + 1
+  
+    experiences.size
   end
 
   # アカウントを有効にする
