@@ -2,26 +2,6 @@ class SmallGoal < ApplicationRecord
   before_save :calculate_exp
   include DifficultyMultiplier
 
-  def calculate_rank_up_experience(max_rank = 120)
-    experiences = [0, 5]
-    increment = 10
-
-    (3..max_rank).each do |rank|
-      increment += 5 if (rank - 2) % 5 == 0
-      experiences << experiences.last + increment
-    end
-
-    experiences
-  end
-
-  def rank
-    total_exp = self.total_exp 
-    calculate_rank_up_experience.each_with_index do |exp, index|
-      return index + 1 if total_exp < exp
-    end
-    calculate_rank_up_experience.size + 1
-  end
-
   # 経験値の追加メソッド（難易度に応じて経験値を調整する）
   def add_experience(points, difficulty)
     multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0

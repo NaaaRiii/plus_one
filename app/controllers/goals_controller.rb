@@ -1,5 +1,6 @@
 class GoalsController < ApplicationController
   include UserAuthenticatable
+  include DifficultyMultiplier
   authenticate_user_for_actions [:new, :create]
 
   def index
@@ -63,7 +64,9 @@ class GoalsController < ApplicationController
       logger.debug "Total exp gained (3 times the sum): #{total_exp_gained}"
       # total_exp が nil の場合、0 を初期値として設定
       current_user.total_exp = current_user.total_exp.to_f + total_exp_gained
+
       current_user.save
+
       Activity.create(
         user: current_user,
         goal: @goal,
@@ -87,5 +90,6 @@ class GoalsController < ApplicationController
       multiplier = DIFFICULTY_MULTIPLIERS[sg.difficulty] || 1.0
       sg.completed && sg.exp ? (sg.exp * multiplier) : 0
     end
-  end  
+  end
 end
+

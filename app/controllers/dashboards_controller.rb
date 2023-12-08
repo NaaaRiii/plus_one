@@ -10,7 +10,6 @@ class DashboardsController < ApplicationController
     logger.debug "Completed activities: #{@completed_activities.inspect}"
     @total_exp = current_user.activities.sum(:exp)
     logger.debug "Total exp for user #{current_user.id}: #{@total_exp}"
-    @calculate_rank = current_user.rank
   end
 
   def calculate_total_exp(user)
