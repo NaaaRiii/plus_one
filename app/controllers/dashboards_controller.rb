@@ -9,7 +9,6 @@ class DashboardsController < ApplicationController
     @completed_small_goals = current_user.activities.where(completed: true)
     logger.debug "Completed activities: #{@completed_activities.inspect}"
     @total_exp = current_user.activities.sum(:exp)
-    logger.debug "Total exp for user #{current_user.id}: #{@total_exp}"
   end
 
   def calculate_total_exp(user)

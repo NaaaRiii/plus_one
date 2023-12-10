@@ -17,10 +17,10 @@ user.goals.destroy_all
 goal = user.goals.create!(title: "Sample Goal", content: "This is a sample goal.", deadline: Time.zone.now + 7.days)
 
 # サンプルSmall Goal
-small_goal = goal.small_goals.create!(title: "Sample Small Goal", difficulty: "難しい", deadline: Time.zone.now + 5.days)
+small_goal = goal.small_goals.create!(title: "Sample Small Goal", difficulty: "とても難しい", deadline: Time.zone.now + 5.days)
 
 # サンプルTasks
-3.times do |i|
+20.times do |i|
   small_goal.tasks.create!(content: "Task #{i + 1}")
 end
 
