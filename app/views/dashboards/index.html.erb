@@ -9,6 +9,17 @@
 <h2>Your EXP: <%= @current_user.total_exp %></h2>
 <h2>Your Rank: <%= @current_user.calculate_rank %></h2>
 
+<% current_rank = @current_user.calculate_rank %>
+<% if current_rank >= 10 && current_rank % 10 > 0 %>
+  <!-- ランクが10以上で、かつ10の倍数未満（例：10〜19、20〜29など）の場合にモーダルを表示 -->
+  <div id="modal" class="modal" data-user-rank="<%= @user_rank %>" style="display:none;">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <iframe src="http://localhost:4000" width="600" height="450"></iframe>
+    </div>
+  </div>
+<% end %>
+
 <p>Here are your recent activities:</p>
 
 <%# 最新の完了アイテムを取得（時間制限なし） %>

@@ -4,11 +4,11 @@ class DashboardsController < ApplicationController
   authenticate_user_for_actions [:index]
   def index
     @current_user = current_user
+    @total_exp = current_user.activities.sum(:exp)
+    @user_rank = @current_user.calculate_rank
     @activities = current_user.activities.order(created_at: :desc)
     @small_goals = current_user.small_goals.includes(:goal)
     @completed_small_goals = current_user.activities.where(completed: true)
-    logger.debug "Completed activities: #{@completed_activities.inspect}"
-    @total_exp = current_user.activities.sum(:exp)
   end
 
   def calculate_total_exp(user)
