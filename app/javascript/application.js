@@ -7,10 +7,4 @@ window.$ = jquery
 
 import "goals"
 import "small_goals"
-
-
-//import './goals.js';
-//import './small_goals.js';
-
-//import Rails from "@rails/ujs"
-//Rails.start()
+import "dashboards"
