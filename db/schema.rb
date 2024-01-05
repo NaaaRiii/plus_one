@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_04_115003) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_27_094004) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -35,6 +35,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_04_115003) do
     t.string "small_goal"
     t.boolean "completed"
     t.index ["user_id"], name: "index_goals_on_user_id"
+  end
+
+  create_table "roulette_texts", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "number"
+    t.string "text"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_roulette_texts_on_user_id"
   end
 
   create_table "small_goals", charset: "utf8mb3", force: :cascade do |t|
@@ -73,11 +82,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_04_115003) do
     t.boolean "activated", default: false
     t.datetime "activated_at"
     t.decimal "total_exp", precision: 10, scale: 2, default: "0.0"
+    t.integer "last_roulette_rank"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "activities", "users"
   add_foreign_key "goals", "users"
+  add_foreign_key "roulette_texts", "users"
   add_foreign_key "small_goals", "goals"
   add_foreign_key "tasks", "small_goals"
 end

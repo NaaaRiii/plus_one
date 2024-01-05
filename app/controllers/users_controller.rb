@@ -36,6 +36,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_rank
+    new_rank = params[:new_rank].to_i
+    if current_user.update(last_roulette_rank: new_rank)
+      render json: { success: true }
+    else
+      render json: { success: false }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def user_params

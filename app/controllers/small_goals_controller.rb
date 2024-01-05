@@ -48,6 +48,8 @@ class SmallGoalsController < ApplicationController
       current_user.total_exp = current_user.total_exp.to_f + exp_gained.to_f
       current_user.save
 
+      #current_user.update_rank
+
       # Activity レコードを作成
       current_user.activities.create(
         goal_title: small_goal.goal.title,
