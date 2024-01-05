@@ -153,17 +153,23 @@ label {
 }
 
 .modal-content {
+  position: fixed;
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 10% 20%;
   padding: 20px;
+  padding-bottom: 50px;
   border: 1px solid #888;
-  width: 80%;
+  width: 500px;
 }
 
 .close-button {
+  position: absolute;
+  left: 50%;
+  bottom: 1%;
+  transform: translate(-50%, -50%);
   color: #aaa;
-  float: right;
-  font-size: 28px;
+  /*background-color: black;*/
+  font-size: 20px;
   font-weight: bold;
 }
 

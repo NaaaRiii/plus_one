@@ -1,0 +1,2 @@
+module RouletteTextsHelper
+end
