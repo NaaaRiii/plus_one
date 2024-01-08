@@ -38,11 +38,16 @@
       <ul>
         <% small_goal.tasks.each do |task| %>
           <li>
-            <%= check_box_tag "tasks[#{task.id}][completed]", task.id, task.completed, class: "task-checkbox", data: { small_goal_id: small_goal.id } %>
-            <%= task.content %>
+            <label for="tasks_<%= task.id %>" onclick="">
+              <%= check_box_tag "tasks[#{task.id}][completed]", task.id, task.completed, class: "task-checkbox", data: { small_goal_id: small_goal.id }, id: "tasks_#{task.id}" %>
+              <%= task.content %>
+            </label>
           </li>
         <% end %>
       </ul>
+      <%# 不要になったら削除 %>
+      <%= button_tag "Check All", type: "button", id: "check-all-tasks" %>
+      <%# 不要になったら削除 %>
     <% end %>
     <div>*******************</div>
   </div>

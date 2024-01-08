@@ -34,15 +34,30 @@ export function setupTaskCheckboxes() {
 }
 
 document.addEventListener('turbo:load', function() {
-  console.log('turbo:load event triggered - setting up event listeners');
-  // タスクのチェックボックスにイベントリスナーを設定
+  // 各小目標のタスクのチェック状態を確認する関数
+  function checkTasksAndToggleCompleteButton(smallGoalDiv) {
+    const allTaskCheckboxes = smallGoalDiv.querySelectorAll('.task-checkbox');
+    const allCompleted = Array.from(allTaskCheckboxes).every(chk => chk.checked);
+    
+    const smallGoalCompleteButton = smallGoalDiv.querySelector('.small-goal-complete-button');
+    if (smallGoalCompleteButton) {
+      if (allCompleted) {
+        smallGoalCompleteButton.style.display = 'block';
+      } else {
+        smallGoalCompleteButton.style.display = 'none';
+      }
+    }
+  }
+
+  // ページ読み込み時に各小目標についてチェックを行う
+  document.querySelectorAll('.small-goal').forEach(smallGoalDiv => {
+    checkTasksAndToggleCompleteButton(smallGoalDiv);
+  });
+
   const taskCheckboxes = document.querySelectorAll('.task-checkbox');
-  console.log(`Found ${taskCheckboxes.length} task checkboxes.`); // チェックボックスの数を出力
 
   taskCheckboxes.forEach(function(checkbox, index) {
-    console.log(`Setting up change listener for checkbox ${index + 1}.`); // イベントリスナー設定のログ
     checkbox.addEventListener('change', function() {
-      console.log(`Checkbox ${index + 1} changed. Checking completion status.`); // チェックボックスが変更されたことをログに出力
       const smallGoalId = checkbox.dataset.smallGoalId;
       if (!smallGoalId) {
         console.error('Error: No smallGoalId found for this checkbox.'); // smallGoalIdがない場合のエラーログ
@@ -56,7 +71,6 @@ document.addEventListener('turbo:load', function() {
       }
 
       const allTaskCheckboxes = smallGoalDiv.querySelectorAll('.task-checkbox');
-      console.log(`There are ${allTaskCheckboxes.length} checkboxes in this small goal.`); // small goal内のチェックボックス数をログに出力
       const allCompleted = Array.from(allTaskCheckboxes).every(chk => chk.checked);
       console.log(`All tasks completed: ${allCompleted}`); // すべてのタスクが完了しているかのログ
 
@@ -74,6 +88,35 @@ document.addEventListener('turbo:load', function() {
         console.log('Not all tasks are completed. Hiding the complete button.'); // すべて完了していなければ完了ボタンを非表示にするログ
         smallGoalCompleteButton.style.display = 'none';
       }
+    });
+  });
+});
+
+//すべてにチェックを入れるボタン 不要になったら削除
+document.addEventListener('turbo:load', function() {
+  document.getElementById('check-all-tasks').addEventListener('click', function() {
+    document.querySelectorAll('.task-checkbox').forEach(function(checkbox) {
+      checkbox.checked = true;
+    });
+  });
+});
+//すべてにチェックを入れるボタン 不要になったら削除
+
+document.addEventListener('turbo:load', function() {
+  document.querySelectorAll('.task-checkbox').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      console.log('Checkbox changed!');
+      const taskId = this.value;
+      const completed = this.checked;
+      // Ajaxを使用してサーバーに状態更新を送信
+      fetch(`/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ completed: completed })
+      });
     });
   });
 });

@@ -19,11 +19,21 @@ class RouletteTextsController < ApplicationController
     end
   end
 
+  def edit
+    @roulette_text = RouletteText.find(params[:id])
+  end
+
   def update
-    if @roulette_text.update(roulette_text_params)
-      render json: @roulette_text
+    if current_user.tickets > 0
+      if @roulette_text.update(roulette_text_params)
+        current_user.tickets -= 1
+        current_user.save
+        render json: @roulette_text # または適切なリダイレクト
+      else
+        render json: @roulette_text.errors, status: :unprocessable_entity
+      end
     else
-      render json: @roulette_text.errors, status: :unprocessable_entity
+      render json: { error: "You do not have enough tickets to edit." }, status: :forbidden
     end
   end
 

@@ -67,7 +67,7 @@ class GoalsController < ApplicationController
 
       current_user.save
 
-      #current_user.update_rank
+      current_user.update_tickets
 
       Activity.create(
         user: current_user,

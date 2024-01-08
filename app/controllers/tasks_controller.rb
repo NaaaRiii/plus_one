@@ -12,6 +12,8 @@ class TasksController < ApplicationController
   end
 
   def update
+    task = Task.find(params[:id])
+    task.update(completed: params[:completed])
   end
 
   def destroy

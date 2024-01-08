@@ -34,9 +34,13 @@ small_goal = goal.small_goals.create!(title: "Sample Small Goal", difficulty: "�
 20.times do |i|
   small_goal.tasks.create!(content: "Task #{i + 1}")
 end
-#total_expを0に設定
+
 user.update(total_exp: 0.0)
 user.update(last_roulette_rank: 0.0)
+
+User.find_each do |u|
+  u.update(tickets: 0)
+end
 
 #user = User.find(7)
 
