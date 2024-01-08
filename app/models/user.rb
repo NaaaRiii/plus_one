@@ -91,10 +91,23 @@ class User < ApplicationRecord
     new_rank = calculate_rank
     last_rank = self.last_roulette_rank || 0
   
+    Rails.logger.debug "Updating rank: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
+  
     if new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
-      # 新しいランクが前回のルーレット表示時の10の位を超えた場合のみ更新
       self.last_roulette_rank = new_rank
       self.save
+    end
+  end
+
+  def update_tickets
+    new_rank = calculate_rank
+    last_rank = self.last_roulette_rank || 0
+  
+    if new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
+      self.tickets += 1
+      self.save
+  
+      Rails.logger.debug "Tickets incremented: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
     end
   end
 

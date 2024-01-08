@@ -1,0 +1,16 @@
+<h1>Edit your Roulette</h1>
+
+<h2>Number of tickets: <%= current_user.tickets %></h2>
+
+<%# 編集用のフォーム %>
+<div id="edit-roulette-text-form" style="display: none;">
+  <%= form_with(model: @roulette_text, url: roulette_texts_path(@roulette_text), method: :patch) do |f| %>
+    <%= select_tag :number, options_for_select((1..12).to_a), include_blank: true %>
+    <%= f.text_field :content, class: "roulette-text" %>
+    <%= f.submit "Save Changes" %>
+  <% end %>
+</div>
+
+<%# チケットを使って編集するボタン %>
+<%= button_tag "Edit text using tickets", type: "button", id: "edit-text-button", class: "btn btn-primary" %>
+

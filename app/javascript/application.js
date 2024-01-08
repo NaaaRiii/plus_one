@@ -8,3 +8,4 @@ window.$ = jquery
 import "goals"
 import "small_goals"
 import "dashboards"
+import "roulette_texts"

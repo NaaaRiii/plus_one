@@ -29,5 +29,6 @@ Rails.application.routes.draw do
   end
   resources :users
   resources :account_activations, only: [:edit]
-  resources :roulette_texts, only: [:show, :create, :update, :destroy]
+  resources :tasks, only: [:update]
+  resources :roulette_texts, only: [:edit, :show, :create, :update, :destroy]
 end
