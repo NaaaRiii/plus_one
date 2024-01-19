@@ -45,6 +45,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def tickets
+    if current_user
+      render json: { tickets: current_user.tickets }
+    else
+      render json: { tickets: 0 }
+    end
+  end
+
   private
 
   def user_params

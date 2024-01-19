@@ -1,4 +1,4 @@
-<h1>Goal Title:</h1>
+<h1>Goal Title:</h1><h3><%= @goal.title %></h3>
 <%# Goal達成ボタンの追加 %>
 <% if @goal.completed %>
   <p>このGoalは達成しました!</p>
@@ -12,16 +12,14 @@
   <% end %>
 <% end %>
 
-<h3>Goal Content:</h3><p><%= @goal.content %></p>
+<h2>Goal Content:</h2><h3><%= @goal.content %></h3>
 
 <p>Deadline: <%= @goal.deadline %></p>
 
-<h2>Small Goals</h2>
-
 <% @small_goals.each do |small_goal| %>
   <div data-small-goal-id="<%= small_goal.id %>" class="small-goal">
-    <h3>Small Goal Title:</h3>
-      <%= small_goal.title %>
+    <h2>Small Goal Title:</h2>
+      <h3><%= small_goal.title %></h3>
       <% if small_goal.completed %>
         <span><strong>完了!</strong></span>
       <% else %>

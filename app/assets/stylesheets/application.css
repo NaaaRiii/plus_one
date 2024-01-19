@@ -140,6 +140,19 @@ label {
   background-color: #0056b3;
 }
 
+/* 無効化されたボタンのスタイル */
+button[disabled] {
+  color: #6c757d; /* テキストの色 */
+  background-color: #e9ecef; /* 背景色 */
+  border-color: #dee2e6; /* ボーダーの色 */
+}
+
+/* オプション: ホバー時のスタイルも無効化する場合 */
+button[disabled]:hover {
+  background-color: #e9ecef; /* 背景色を変更しない */
+  cursor: not-allowed; /* カーソルを変更 */
+}
+
 .modal {
   /*display: none;*/
   position: fixed;
@@ -178,4 +191,8 @@ label {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.changed {
+  color: red;
 }

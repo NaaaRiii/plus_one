@@ -8,8 +8,9 @@ Rails.application.routes.draw do
   post    "/guest_login",       to: "guest_sessions#create"
   #put '/goals/:id/complete', to: 'goals#complete', as: 'complete_goal'
   put     "/dashboard",         to: "dashboards#index"
-  get 'roulette_texts/:number', to: 'roulette_texts#show'
-  post 'users/update_rank', to: 'users#update_rank'
+  get "roulette_texts/:number", to: "roulette_texts#show"
+  post "users/update_rank", to: "users#update_rank"
+  get "/users/tickets", to: "users#tickets"
 
   resources :goals do
     member do
@@ -30,5 +31,5 @@ Rails.application.routes.draw do
   resources :users
   resources :account_activations, only: [:edit]
   resources :tasks, only: [:update]
-  resources :roulette_texts, only: [:edit, :show, :create, :update, :destroy]
+  resources :roulette_texts
 end

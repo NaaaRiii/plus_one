@@ -6,7 +6,18 @@ document.addEventListener('turbo:load', function() {
     editButton.addEventListener('click', function() {
       editForm.style.display = 'block'; // フォームを表示
     });
-  } else {
-    console.error('Edit button or form not found');
   }
 });
+
+
+document.addEventListener('turbolinks:load', function() {
+  const form = document.getElementById('edit-roulette-text-form');
+  if (form) {
+    form.addEventListener('submit', function(event) {
+      // ここで非同期通信のロジックを実装
+      // 非同期通信が成功したら、以下の行でテキストフィールドをリセット
+      form.querySelector('.roulette-text').value = '';
+    });
+  }
+});
+

@@ -111,6 +111,16 @@ class User < ApplicationRecord
     end
   end
 
+  # チケットを使う
+  def use_ticket
+    if tickets > 0
+      self.tickets -= 1
+      save
+    else
+      false
+    end
+  end
+
   # アカウントを有効にする
   def activate
     update_columns(activated: true, activated_at: Time.zone.now)
