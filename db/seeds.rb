@@ -35,12 +35,13 @@ small_goal = goal.small_goals.create!(title: "Sample Small Goal", difficulty: "�
   small_goal.tasks.create!(content: "Task #{i + 1}")
 end
 
-user.update(total_exp: 0.0)
-user.update(last_roulette_rank: 0.0)
+#user.update(total_exp: 0.0)
+#user.update(last_roulette_rank: 0.0)
+user.update(tickets: 2)
 
-User.find_each do |u|
-  u.update(tickets: 0)
-end
+#User.find_each do |u|
+#  u.update(tickets: 0)
+#end
 
 #user = User.find(7)
 
@@ -58,3 +59,9 @@ end
 #  { number: 11, text: "サンプルテキスト11", user: user },
 #  { number: 12, text: "サンプルテキスト12", user: user },
 #])
+
+(1..12).each do |number|
+  RouletteText.find_or_create_by(number: number) do |roulette_text|
+    roulette_text.content = "サンプルテキスト #{number}"
+  end
+end
