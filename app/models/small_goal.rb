@@ -1,4 +1,8 @@
 class SmallGoal < ApplicationRecord
+  belongs_to :goal
+  has_many :tasks, class_name: 'Task', dependent: :destroy
+  accepts_nested_attributes_for :tasks, allow_destroy: true, reject_if: :all_blank
+
   before_save :calculate_exp
   include DifficultyMultiplier
 
@@ -7,10 +11,6 @@ class SmallGoal < ApplicationRecord
     multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0
     self.total_exp += points * multiplier
   end
-
-  belongs_to :goal
-  has_many :tasks, class_name: 'Task', dependent: :destroy
-  accepts_nested_attributes_for :tasks, allow_destroy: true, reject_if: :all_blank
 
   def user
     goal.user

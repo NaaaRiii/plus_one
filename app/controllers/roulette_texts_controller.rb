@@ -44,7 +44,6 @@ class RouletteTextsController < ApplicationController
     if current_user.use_ticket
       if @roulette_text.update(roulette_text_params)
         flash[:notice] = "Number: #{@roulette_text.number} を #{@roulette_text.text} に変更しました。"
-        flash[:changed_roulette_text_id] = @roulette_text.id
         redirect_to edit_roulette_text_path(@roulette_text)
       else
         render json: @roulette_text.errors, status: :unprocessable_entity
