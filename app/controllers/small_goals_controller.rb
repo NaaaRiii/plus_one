@@ -45,7 +45,12 @@ class SmallGoalsController < ApplicationController
       exp_gained = calculate_exp_for_small_goal(small_goal)
 
       # total_exp が nil の場合、0 を初期値として設定
-      current_user.total_exp = current_user.total_exp.to_f + exp_gained.to_f
+      #current_user.total_exp = current_user.total_exp.to_f + exp_gained.to_f
+      #current_user.save
+
+      # ユーザーの総経験値を更新
+      current_user.total_exp ||= 0  # total_exp が nil の場合、0 を初期値として設定
+      current_user.total_exp += exp_gained
       current_user.save
 
       #current_user.update_rank
@@ -54,7 +59,8 @@ class SmallGoalsController < ApplicationController
       current_user.activities.create(
         goal_title: small_goal.goal.title,
         small_goal_title: small_goal.title,
-        exp_gained: exp_gained
+        exp_gained: exp_gained,
+        completed_at: Time.current
       )
 
       redirect_to dashboard_path, notice: "Small goal completed successfully!"

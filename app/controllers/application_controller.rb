@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   include SessionsHelper
 
-  DIFFICULTY_MULTIPLIERS = {
+  Y_MULTIPLIERS = {
     "ものすごく簡単" => 0.5,
     "簡単" => 0.7,
     "普通" => 1.0,

@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_07_033511) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_16_101532) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
     t.string "small_goal_title"
-    t.integer "exp_gained"
+    t.decimal "exp_gained", precision: 10, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "small_goal_id"
