@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   post "users/update_rank", to: "users#update_rank"
   get "/users/tickets", to: "users#tickets"
 
+  get '/api/weekly_exp', to: 'activities#weekly_exp'
+
   resources :goals do
     member do
       put :complete
