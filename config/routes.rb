@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "/users/tickets", to: "users#tickets"
 
   get '/api/weekly_exp', to: 'activities#weekly_exp'
+  get '/api/daily_exp',  to: 'activities#daily_exp'
 
   resources :goals do
     member do
@@ -25,11 +26,15 @@ Rails.application.routes.draw do
       resources :tasks
     end
   end
+
   namespace :api do
-    namespace :v1 do
-      resources :users, only: [:show]
-    end
+    post 'login', to: 'authentication#login'
+    get 'current_user', to: 'current_users#show'
+    delete 'logout', to: 'sessions#destroy'
+    #get 'users/:id', to: 'users#show', to: 'users#show'
   end
+  
+
   resources :users
   resources :account_activations, only: [:edit]
   resources :tasks, only: [:update]

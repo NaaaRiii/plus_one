@@ -1,6 +1,8 @@
 class Task < ApplicationRecord
   belongs_to :small_goal
   belongs_to :user
+
+  validates :content, length: { maximum: 50 }, presence: { message: "Please set the content" }
   
   def user
     small_goal.goal.user

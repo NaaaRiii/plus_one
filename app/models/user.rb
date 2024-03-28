@@ -16,6 +16,12 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
+  # JWTトークンを生成するメソッド
+  def generate_auth_token
+    payload = { user_id: id }
+    JWT.encode(payload, Rails.application.secrets.secret_key_base, 'HS256')
+  end
+  
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :

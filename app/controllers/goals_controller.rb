@@ -15,10 +15,14 @@ class GoalsController < ApplicationController
   def create
     @goal = current_user.goals.build(goal_params)
     if @goal.save
-      redirect_to new_goal_small_goal_path(@goal), notice: "目標を保存しました。次にsmall_goalを作成しましょう。これは目標を達成するための小さな目標です。"
+      redirect_to new_goal_small_goal_path(@goal), notice: "Goal is saved. Next, let's create a small_goal. This is a small goal to achieve your goal."
     else
-      puts @goal.errors.full_messages
-      render 'new'
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("error_explanation", partial: "shared/error_messages", locals: { object: @goal })
+        end
+      end
     end
   end
 

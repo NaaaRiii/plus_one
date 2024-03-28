@@ -17,8 +17,12 @@ class SmallGoalsController < ApplicationController
     if @small_goal.save
       redirect_to goal_path(@goal), notice: "目標とsmall_goalを保存しました。確認してみましょう。"
     else
-      puts @small_goal.errors.full_messages
-      render 'new'
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("error_explanation", partial: "shared/error_messages", locals: { object: @small_goal })
+        end
+      end
     end
   end
 
