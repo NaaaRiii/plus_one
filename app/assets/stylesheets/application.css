@@ -103,9 +103,8 @@ footer{
 /* フォーム関連のスタイル */
 
 .form-control {
-  display: block; /* ブロック要素として全幅を占めるように */
-  /*width: 100%; 幅を最大化 ←今はいらない*/
-  margin: 10px 0; /* 上下にマージンを設定 */
+  display: block;
+  margin: 10px 0;
   padding: 10px;
   border: 1px solid #ced4da;
   border-radius: 3px;

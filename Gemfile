@@ -96,3 +96,9 @@ group :development, :test do
 end
 
 gem 'groupdate'
+
+group :test do
+  gem 'shoulda-matchers', '~> 4.0'
+end
+
+gem 'jwt'

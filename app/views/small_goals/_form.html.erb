@@ -1,0 +1,48 @@
+<%= form_with(model: @small_goal, url: goal_small_goals_path(@goal), local: true) do |f| %>
+  <% if @small_goal.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@small_goal.errors.count, "error") %> prohibited this small goal from being saved:</h2>
+
+      <ul>
+      <% @small_goal.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- フォームのフィールド -->
+  <div class="field">
+    <%= f.label :title, "Small Goal's Title" %>
+    <%= f.text_field :title, class: 'small_goal-title' %>
+  </div>
+
+  <!-- tasksのfields_forとその他のフィールドをここに追加 -->
+  <div class="field">
+    <%= f.fields_for :tasks do |task_fields| %>
+      <%= task_fields.label :content, "Task" %>
+      <%= task_fields.text_field :content, class: 'small_goal-task' %>
+    <% end %>
+  </div>
+
+  <div id="tasks-container">
+    <!-- 新しいタスクの入力欄がここに追加される -->
+  </div>
+
+  <button type="button" id="add-task">Taskの追加</button>
+  <button type="button" id="remove-task">Taskの削除</button>
+
+  <div class="field">
+    <%= f.label :difficulty %>
+    <%= f.select :difficulty, options_for_select([["ものすごく簡単"], ["簡単"], ["普通"], ["難しい"], ["とても難しい"]]), { include_blank: "選択して下さい" }, { class: 'small_goal-difficulty' } %>
+  </div>
+
+  <div class="field">
+    <%= f.label :deadline %>
+    <%= f.date_field :deadline, class: 'small_goal-deadline' %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "設定", class: "btn btn-primary" %>
+  </div>
+<% end %>

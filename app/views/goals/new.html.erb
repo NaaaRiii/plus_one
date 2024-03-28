@@ -1,16 +1,19 @@
-<h1>Let's Set Goals</h1>
-<%= form_with(model: @goal) do |f| %>
-<%#<%= render 'shared/error_messages', object: @user %>
+<div id="goal_form">
+  <h1>Let's Set Goals</h1>
+  <%= form_with(model: @goal) do |f| %>
+  <div id="error_explanation">
+    <%= render 'shared/error_messages', object: @goal %>
+  </div>
 
-  <%= f.label :title, "Goal's Title" %>
-  <%= f.text_field :title, class: "goal-title" %>
+    <%= f.label :title, "Goal's Title" %>
+    <%= f.text_field :title, class: "goal-title" %>
 
-  <%= f.label :content %>
-  <%= f.text_field :content, class: "goal-content" %>
+    <%= f.label :content %>
+    <%= f.text_field :content, class: "goal-content" %>
 
-  <%= f.label :deadline %>
-  <%= f.date_field :deadline, class: "goal-deadline" %>
+    <%= f.label :deadline %>
+    <%= f.date_field :deadline, class: "goal-deadline" %>
 
-  <%= f.submit "設定", class: "btn btn-primary" %>
-<% end %>
-
+    <%= f.submit "設定", class: "btn btn-primary" %>
+  <% end %>
+</div>

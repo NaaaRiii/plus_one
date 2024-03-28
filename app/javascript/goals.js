@@ -120,3 +120,12 @@ document.addEventListener('turbo:load', function() {
     });
   });
 });
+
+//一瞬表示されるエラーメッセージを非表示にする 期待通りではない
+//document.addEventListener("turbo:load", function() {
+//  console.log('Turbo loaded!!!');
+//  const errorExplanation = document.getElementById("error_explanation");
+//  if (errorExplanation) {
+//    errorExplanation.innerHTML = '';
+//  }
+//});
