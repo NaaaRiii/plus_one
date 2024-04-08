@@ -4,23 +4,39 @@ module Api
 
     def show
       if @current_user
-        latest_completed_goals = @current_user.small_goals
-                                  .where(completed: true)
-                                  .where('completed_time > ?', 24.hours.ago)
-                                  .order(completed_time: :desc)
-                                  .limit(5)
-  
-        # レスポンスデータの構造を作成
+        # 24時間以内に完了した small_goals を取得
+        latest_completed_goals_within_24h = @current_user.small_goals
+                                              .where(completed: true)
+                                              .where('completed_time > ?', 24.hours.ago)
+                                              .order(completed_time: :desc)
+                                              .limit(5)
+
+        # 24時間以内に完了したものがなければ、最新の完了したものを取得
+        if latest_completed_goals_within_24h.empty?
+          latest_completed_goal = @current_user.small_goals
+                                    .where(completed: true)
+                                    .order(completed_time: :desc)
+                                    .first
+          # 最新の完了したものが存在する場合、その1つだけを含む配列を作成
+          latest_completed_goals = latest_completed_goal.present? ? [latest_completed_goal] : []
+        else
+          latest_completed_goals = latest_completed_goals_within_24h
+        end
+      
+        # 他のユーザーデータとともにlatest_completed_goalsをレスポンスに含める
         response_data = {
           id: @current_user.id,
           name: @current_user.name,
           email: @current_user.email,
           totalExp: @current_user.total_exp,
           rank: @current_user.calculate_rank,
+          goals: @current_user.goals.as_json(include: :small_goals),
+          tasks: @current_user.tasks,
+          rouletteTexts: @current_user.roulette_texts,
+          tickets: @current_user.tickets,
           latestCompletedGoals: latest_completed_goals.as_json(only: [:id, :title, :completed_time])
         }
-  
-        # response_data を使用してレスポンスを返す
+    
         render json: response_data
       else
         render json: { error: "User not found" }, status: :not_found

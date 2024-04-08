@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :goals, class_name: 'Goal', dependent: :destroy
   has_many :small_goals, through: :goals, dependent: :destroy
   has_many :tasks, through: :small_goals, dependent: :destroy
+  has_many :roulette_texts, dependent: :destroy
 
   attr_accessor :remember_token, :activation_token
   before_save   :downcase_email

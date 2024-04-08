@@ -1,6 +1,7 @@
 module Api
   class UsersController < ApplicationController
     before_action :set_current_user
+    before_action :authenticate_user
 
     def show
       if @current_user
@@ -15,6 +16,7 @@ module Api
           name: @current_user.name,
           totalExp: @current_user.total_exp,
           rank: @current_user.calculate_rank,
+          tickets: @current_user.tickets,
           latestCompletedGoals: latest_completed_goals.as_json(only: [:id, :title, :completed_time])
         }
   
