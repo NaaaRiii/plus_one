@@ -31,7 +31,11 @@ Rails.application.routes.draw do
     post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
     delete 'logout', to: 'sessions#destroy'
-    #get 'users/:id', to: 'users#show', to: 'users#show'
+    resources :roulette_texts do
+      collection do
+        get :tickets
+      end
+    end
   end
   
 
