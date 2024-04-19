@@ -89,7 +89,7 @@ class SmallGoalsController < ApplicationController
 
   def calculate_exp_for_small_goal(small_goal)
     task_count = small_goal.tasks.count
-    difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]
+    difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty] || 1.0
     exp = (task_count * difficulty_multiplier).round(1)
     logger.debug "Calculating exp for small goal: #{small_goal.id}"
     logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
