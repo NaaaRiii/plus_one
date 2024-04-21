@@ -39,7 +39,11 @@ Rails.application.routes.draw do
     end
 
     resources :goals do
-      resources :small_goals
+      resources :small_goals do
+        member do
+          post :complete
+        end
+      end
     end
   end
   
