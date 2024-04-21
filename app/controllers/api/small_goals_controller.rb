@@ -1,7 +1,9 @@
 module Api
   class SmallGoalsController < ApplicationController
     before_action :authenticate_user
-    before_action :set_goal, only: [:index, :create]
+    before_action :set_goal, only: [:index, :create, :complete]
+    before_action :set_small_goal, only: [:complete, :update]
+    include DifficultyMultiplier
 
     def index
       @small_goals = @goal.small_goals.includes(:tasks)
@@ -17,10 +19,53 @@ module Api
       end
     end
 
+    def update
+      if @small_goal.update(small_goal_params)
+        render json: { status: 'success', message: 'Small goal was successfully updated.', small_goal: @small_goal }, status: :ok
+      else
+        render json: @small_goal.errors, status: :unprocessable_entity
+      end
+    end
+
+    def complete
+      if @small_goal.update(completed: true, completed_time: Time.current)
+        exp_gained = calculate_exp_for_small_goal(@small_goal)
+        current_user.total_exp ||= 0
+        current_user.total_exp += exp_gained
+        current_user.save
+  
+        current_user.activities.create(
+          goal_title: @small_goal.goal.title,
+          small_goal_title: @small_goal.title,
+          exp_gained: exp_gained,
+          completed_at: Time.current
+        )
+  
+        message = "#{@small_goal.title} completed successfully!"
+
+        render json: { status: 'success', message: message, exp_gained: exp_gained }, status: :ok
+      else
+        render json: { status: 'error', message: 'There was a problem completing the small goal.' }, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def set_goal
       @goal = current_user.goals.find(params[:goal_id])
+    end
+
+    def set_small_goal
+      @small_goal = current_user.goals.find(params[:goal_id]).small_goals.find(params[:id])
+    end
+
+    def calculate_exp_for_small_goal(small_goal)
+      task_count = small_goal.tasks.count
+      difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty] || 1.0
+      exp = (task_count * difficulty_multiplier).round(1)
+      logger.debug "Calculating exp for small goal: #{small_goal.id}"
+      logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
+      exp
     end
 
     def small_goal_params
