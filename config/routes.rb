@@ -32,6 +32,12 @@ Rails.application.routes.draw do
     get 'current_user', to: 'current_users#show'
     delete 'logout', to: 'sessions#destroy'
 
+    resources :current_users do
+      member do
+        post :update_rank
+      end
+    end
+
     resources :roulette_texts do
       collection do
         get :tickets
@@ -39,6 +45,9 @@ Rails.application.routes.draw do
     end
 
     resources :goals do
+      member do
+        post :complete
+      end
       resources :small_goals do
         member do
           post :complete

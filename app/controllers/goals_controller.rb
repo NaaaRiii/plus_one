@@ -80,7 +80,7 @@ class GoalsController < ApplicationController
         completed_at: Time.current
       )
 
-      redirect_to dashboard_path, notice: "Goal 達成おめでとう! 獲得EXP: #{total_exp_gained}"
+      redirect_to dashboard_path, notice: "Congratulations on your Goal! EXP gained: #{total_exp_gained}"
 
     end
   end
