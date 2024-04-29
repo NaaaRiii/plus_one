@@ -1,7 +1,8 @@
 module Api
   class GoalsController < ApplicationController
+    include DifficultyMultiplier
     before_action :authenticate_user
-    before_action :set_goal, only: [:show, :update, :destroy]
+    before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
     def index
       @goals = current_user.goals.includes(:small_goals)
@@ -33,6 +34,30 @@ module Api
       end
     end
 
+    def complete
+      @goal = Goal.find(params[:id])
+  
+      if @goal.small_goals.any? { |sg| !sg.completed }
+        # すべての小目標が完了していない場合はエラーメッセージを返す
+        render json: { success: false, message: "まだ完了していない小目標があります。" }, status: :unprocessable_entity
+      else
+        # すべての小目標が完了している場合
+        @goal.update(completed: true)
+        total_exp_gained = @goal.small_goals.sum(&:exp) * 3
+        current_user.total_exp = (current_user.total_exp || 0) + total_exp_gained
+        current_user.save
+  
+        Activity.create(
+          user: current_user,
+          goal: @goal,
+          exp_gained: total_exp_gained,
+          completed_at: Time.current
+        )
+  
+        render json: { success: true, message: "Congratulations on completing your goal! EXP gained: #{total_exp_gained}" }, status: :ok
+      end
+    end
+
     def destroy
       @goal = current_user.goals.find(params[:id])
       if @goal.destroy
@@ -51,5 +76,13 @@ module Api
     def goal_params
       params.require(:goal).permit(:title, :content, :deadline, small_goals_attributes: [:title, :content, :deadline])
     end
+
+    #最終的に必要かは吟味が必要
+    #def calculate_exp(goal)
+    #  goal.small_goals.sum do |sg| 
+    #    multiplier = DIFFICULTY_MULTIPLIERS[sg.difficulty] || 1.0
+    #    sg.completed && sg.exp ? (sg.exp * multiplier) : 0
+    #  end
+    #end
   end
 end

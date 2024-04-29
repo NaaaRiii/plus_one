@@ -13,12 +13,36 @@ end
 # サンプルユーザー(dbリセットした場合はコメントアウトを外す)
 #user = User.create!(name: "Sample User", email: "sample@example.com", password: "password", password_confirmation: "password", activated: true, activated_at: Time.zone.now)
 
-# サンプルGoal
-goal = user.goals.create!(title: "small goall達成のメッセージ", content: "This is a sample goal.", deadline: Time.zone.now + 7.days)
+# サンプルGoal1
+goal = user.goals.create!(title: "small goall達成のメッセージ1", content: "This is a sample goal.", deadline: Time.zone.now + 7.days)
 
 # 3つのサンプルSmall Goal および サンプルTasks の作成
 3.times do |sg_index|
-  goal.small_goals.create!(title: "達成メッセージ #{sg_index + 1}", difficulty: "普通", deadline: Time.zone.now + 5.days) do |small_goal|
+  goal.small_goals.create!(title: "達成メッセージ #{sg_index + 1}", difficulty: "とても難しい", deadline: Time.zone.now + 5.days) do |small_goal|
+    3.times do |task_index|
+      small_goal.tasks.build(content: "Task123 #{task_index + 1} for Small Goal #{sg_index + 1}")
+    end
+  end
+end
+
+# サンプルGoal2
+goal = user.goals.create!(title: "small goall達成のメッセージ2", content: "This is a sample goal.", deadline: Time.zone.now + 7.days)
+
+# 3つのサンプルSmall Goal および サンプルTasks の作成
+3.times do |sg_index|
+  goal.small_goals.create!(title: "達成メッセージ #{sg_index + 1}", difficulty: "とても難しい", deadline: Time.zone.now + 5.days) do |small_goal|
+    3.times do |task_index|
+      small_goal.tasks.build(content: "Task123 #{task_index + 1} for Small Goal #{sg_index + 1}")
+    end
+  end
+end
+
+# サンプルGoal3
+goal = user.goals.create!(title: "small goall達成のメッセージ3", content: "This is a sample goal.", deadline: Time.zone.now + 7.days)
+
+# 3つのサンプルSmall Goal および サンプルTasks の作成
+3.times do |sg_index|
+  goal.small_goals.create!(title: "達成メッセージ #{sg_index + 1}", difficulty: "とても難しい", deadline: Time.zone.now + 5.days) do |small_goal|
     3.times do |task_index|
       small_goal.tasks.build(content: "Task123 #{task_index + 1} for Small Goal #{sg_index + 1}")
     end

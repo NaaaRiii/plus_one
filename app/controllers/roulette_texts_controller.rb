@@ -59,6 +59,7 @@ class RouletteTextsController < ApplicationController
   end
 
   private
+
     def set_roulette_text
       @roulette_text = RouletteText.find_by(number: params[:number])
     end
