@@ -1,6 +1,6 @@
 class Task < ApplicationRecord
   belongs_to :small_goal
-  belongs_to :user
+  #belongs_to :user
 
   validates :content, length: { maximum: 50 }, presence: { message: "Please set the content" }
   

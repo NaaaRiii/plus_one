@@ -1,9 +1,12 @@
 module Api
   class SmallGoalsController < ApplicationController
-    before_action :authenticate_user
-    before_action :set_goal, only: [:index, :create, :complete]
-    before_action :set_small_goal, only: [:complete, :update]
     include DifficultyMultiplier
+
+    before_action :authenticate_user
+
+    # before_actionはそれぞれのアクションの前に呼ばれ、それぞれのアクションが特定の goal/small_goal に対して行われることを保証する。
+    before_action :set_goal, only: [:index, :create, :complete]
+    before_action :set_small_goal, only: [:show, :update, :complete, :destroy]
 
     def index
       @small_goals = @goal.small_goals.includes(:tasks)
@@ -19,11 +22,61 @@ module Api
       end
     end
 
+    def show
+      render json: @small_goal.as_json(include: :tasks)
+    end
+
+    #def update
+    #  if @small_goal.update(small_goal_params)
+    #    params[:small_goal][:tasks_attributes]&.each do |task_params|
+    #      task = @small_goal.tasks.find_by(id: task_params[:id])
+    #      next unless task  # 存在しない場合はスキップ
+
+    #      task.update(task_params.permit(:content, :completed, :_destroy))
+    #    end
+    #    render json: @small_goal.as_json(include: :tasks), status: :ok
+    #  else
+    #    render json: @small_goal.errors.full_messages, status: :unprocessable_entity
+    #  end
+    #end
+
+    #def update
+    #  if @small_goal.update(small_goal_params)
+    #    params[:small_goal][:tasks_attributes]&.each do |task_params|
+    #      if task_params[:_destroy].present? && task_params[:_destroy].to_bool
+    #        task = @small_goal.tasks.find_by(id: task_params[:id])
+    #        task&.destroy
+    #      else
+    #        task = @small_goal.tasks.find_by(id: task_params[:id])
+    #        task&.update(task_params.permit(:content, :completed))
+    #      end
+    #    end
+    #    render json: @small_goal.as_json(include: :tasks), status: :ok
+    #  else
+    #    render json: @small_goal.errors.full_messages, status: :unprocessable_entity
+    #  end
+    #end
+
     def update
+      logger.debug "Received parameters: #{params.inspect}"
       if @small_goal.update(small_goal_params)
-        render json: { status: 'success', message: 'Small goal was successfully updated.', small_goal: @small_goal }, status: :ok
+        params[:small_goal][:tasks_attributes]&.each do |task_params|
+          if task_params[:_destroy].to_s == 'true'
+            task = @small_goal.tasks.find_by(id: task_params[:id])
+            task&.destroy
+          end
+        end
+        render json: @small_goal, status: :ok
       else
         render json: @small_goal.errors, status: :unprocessable_entity
+      end
+    end
+
+    def destroy
+      if @small_goal.destroy
+        render json: { status: 'success', message: 'Small goal was successfully deleted.' }, status: :ok
+      else
+        render json: { status: 'error', message: 'Failed to delete small goal.' }, status: :unprocessable_entity
       end
     end
 
@@ -69,7 +122,8 @@ module Api
     end
 
     def small_goal_params
-      params.require(:small_goal).permit(:title, :difficulty, :deadline, :completed, :completed_time, tasks_attributes: [:content, :completed, :_destroy])
+      params.require(:small_goal).permit(:title, :difficulty, :deadline, tasks_attributes: [:id, :content, :_destroy])
     end
+
   end
 end
