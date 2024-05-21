@@ -54,8 +54,13 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    # 個別の small_goal に対する独立したアクセスパス（/api/small_goals/:id など）は通常不要。
+    # small_goals に直接アクセスする場合（ネストされた親リソース（goal）を経由しない場合）は、そのようなルーティングが必要。
+    get 'small_goals/:id', to: 'small_goals#show'
+    put 'small_goals/:id', to: 'small_goals#update'
+    delete 'small_goals/:id', to: 'small_goals#destroy'
   end
-  
 
   resources :users
   resources :account_activations, only: [:edit]
