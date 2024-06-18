@@ -1,6 +1,7 @@
 module Api
   class SmallGoalsController < ApplicationController
     include DifficultyMultiplier
+    include AuthHelper
 
     before_action :authenticate_user
 
@@ -16,7 +17,7 @@ module Api
     def create
       @small_goal = @goal.small_goals.build(small_goal_params)
       if @small_goal.save
-        render json: @small_goal.as_json(include: :tasks), status: :created
+        render json: { message: "Goal is saved. Let's check it out." }, status: :created
       else
         render json: @small_goal.errors, status: :unprocessable_entity
       end
@@ -25,37 +26,6 @@ module Api
     def show
       render json: @small_goal.as_json(include: :tasks)
     end
-
-    #def update
-    #  if @small_goal.update(small_goal_params)
-    #    params[:small_goal][:tasks_attributes]&.each do |task_params|
-    #      task = @small_goal.tasks.find_by(id: task_params[:id])
-    #      next unless task  # 存在しない場合はスキップ
-
-    #      task.update(task_params.permit(:content, :completed, :_destroy))
-    #    end
-    #    render json: @small_goal.as_json(include: :tasks), status: :ok
-    #  else
-    #    render json: @small_goal.errors.full_messages, status: :unprocessable_entity
-    #  end
-    #end
-
-    #def update
-    #  if @small_goal.update(small_goal_params)
-    #    params[:small_goal][:tasks_attributes]&.each do |task_params|
-    #      if task_params[:_destroy].present? && task_params[:_destroy].to_bool
-    #        task = @small_goal.tasks.find_by(id: task_params[:id])
-    #        task&.destroy
-    #      else
-    #        task = @small_goal.tasks.find_by(id: task_params[:id])
-    #        task&.update(task_params.permit(:content, :completed))
-    #      end
-    #    end
-    #    render json: @small_goal.as_json(include: :tasks), status: :ok
-    #  else
-    #    render json: @small_goal.errors.full_messages, status: :unprocessable_entity
-    #  end
-    #end
 
     def update
       logger.debug "Received parameters: #{params.inspect}"
@@ -82,7 +52,7 @@ module Api
 
     def complete
       if @small_goal.update(completed: true, completed_time: Time.current)
-        exp_gained = calculate_exp_for_small_goal(@small_goal)
+        exp_gained = calculate_exp_for_small_goal(@small_goal).round
         current_user.total_exp ||= 0
         current_user.total_exp += exp_gained
         current_user.save
@@ -124,6 +94,5 @@ module Api
     def small_goal_params
       params.require(:small_goal).permit(:title, :difficulty, :deadline, tasks_attributes: [:id, :content, :_destroy])
     end
-
   end
 end

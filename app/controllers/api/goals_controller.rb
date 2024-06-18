@@ -1,6 +1,8 @@
 module Api
   class GoalsController < ApplicationController
     include DifficultyMultiplier
+    include AuthHelper
+
     before_action :authenticate_user
     before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
@@ -10,8 +12,8 @@ module Api
     end
 
     def show
-      if @goal
-        render json: @goal.as_json(include: [:small_goals])
+      if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
+        render json: @goal.to_json(include: { small_goals: { include: :tasks } })
       else
         render json: { error: "Goal not found" }, status: :not_found
       end
@@ -43,9 +45,11 @@ module Api
       else
         # すべての小目標が完了している場合
         @goal.update(completed: true)
-        total_exp_gained = @goal.small_goals.sum(&:exp) * 3
+        total_exp_gained = @goal.small_goals.sum { |sg| calculate_exp_for_small_goal(sg) * 3 }.round
         current_user.total_exp = (current_user.total_exp || 0) + total_exp_gained
         current_user.save
+
+        current_user.update_tickets
   
         Activity.create(
           user: current_user,
@@ -77,12 +81,13 @@ module Api
       params.require(:goal).permit(:title, :content, :deadline, small_goals_attributes: [:title, :content, :deadline])
     end
 
-    #最終的に必要かは吟味が必要
-    #def calculate_exp(goal)
-    #  goal.small_goals.sum do |sg| 
-    #    multiplier = DIFFICULTY_MULTIPLIERS[sg.difficulty] || 1.0
-    #    sg.completed && sg.exp ? (sg.exp * multiplier) : 0
-    #  end
-    #end
+    def calculate_exp_for_small_goal(small_goal)
+      task_count = small_goal.tasks.count
+      difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty] || 1.0
+      exp = (task_count * difficulty_multiplier).round(1)
+      logger.debug "Calculating exp for small goal: #{small_goal.id}"
+      logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
+      exp
+    end
   end
 end

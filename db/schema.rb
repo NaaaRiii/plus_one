@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_06_121010) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_26_031542) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
     t.string "small_goal_title"
-    t.decimal "exp_gained", precision: 10, scale: 2, default: "0.0"
+    t.integer "exp_gained", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "small_goal_id"
@@ -56,7 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_121010) do
     t.string "task"
     t.boolean "completed", default: false
     t.datetime "completed_time"
-    t.decimal "exp", precision: 10, scale: 2
+    t.integer "exp"
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 
@@ -81,7 +81,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_121010) do
     t.string "activation_digest"
     t.boolean "activated", default: false
     t.datetime "activated_at"
-    t.decimal "total_exp", precision: 10, scale: 2, default: "0.0"
+    t.integer "total_exp", default: 0
     t.integer "last_roulette_rank"
     t.integer "tickets", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
