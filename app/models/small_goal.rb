@@ -27,8 +27,9 @@ class SmallGoal < ApplicationRecord
   def calculate_exp_for_small_goal(small_goal)
     task_count = small_goal.tasks.count
     difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]
-    task_count * difficulty_multiplier
+    (task_count * difficulty_multiplier).round
   end
+  
 
   def completed?
     tasks.all?(&:completed)
