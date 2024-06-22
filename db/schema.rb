@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_26_031542) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -35,6 +35,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_26_031542) do
     t.string "small_goal"
     t.boolean "completed"
     t.index ["user_id"], name: "index_goals_on_user_id"
+  end
+
+  create_table "jwt_blacklists", charset: "utf8mb3", force: :cascade do |t|
+    t.string "jti"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token"
+    t.index ["jti"], name: "index_jwt_blacklists_on_jti", unique: true
+    t.index ["token"], name: "index_jwt_blacklists_on_token", unique: true
   end
 
   create_table "roulette_texts", charset: "utf8mb3", force: :cascade do |t|

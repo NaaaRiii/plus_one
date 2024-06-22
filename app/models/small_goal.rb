@@ -1,7 +1,6 @@
 class SmallGoal < ApplicationRecord
   belongs_to :goal
   has_many :tasks, class_name: 'Task', dependent: :destroy
-  #accepts_nested_attributes_for :tasks, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :tasks, allow_destroy: true, reject_if: proc { |attributes|
     attributes['content'].blank? && attributes['_destroy'].blank?
   }
@@ -28,19 +27,13 @@ class SmallGoal < ApplicationRecord
     task_count = small_goal.tasks.count
     difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]
     (task_count * difficulty_multiplier).round
-  end
-  
+  end  
 
   def completed?
     tasks.all?(&:completed)
   end
 
   private
-
-  #def calculate_exp
-  #  # ここで exp 値の計算を行う
-  #  self.exp = tasks.count * (DIFFICULTY_MULTIPLIERS[difficulty] || 1.0)
-  #end
   
   def calculate_exp
     new_exp = tasks.count * (DIFFICULTY_MULTIPLIERS[difficulty] || 1.0)

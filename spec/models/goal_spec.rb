@@ -54,4 +54,49 @@ RSpec.describe Goal, type: :model do
       expect(goal.errors[:deadline]).to include("Please set the deadline")
     end
   end
+
+  describe 'nested attributes' do
+    it 'accepts nested attributes for small goals' do
+      user = FactoryBot.create(:user)
+      goal_attributes = {
+        title: "Test Goal",
+        content: "Test Content",
+        deadline: Date.today + 7.days,
+        small_goals_attributes: [
+          { title: "Small Goal 1", difficulty: "Easy", deadline: Date.today + 3.days },
+          { title: "Small Goal 2", difficulty: "Medium", deadline: Date.today + 5.days }
+        ]
+      }
+      goal = user.goals.create(goal_attributes)
+      expect(goal.small_goals.size).to eq(2)
+      expect(goal.small_goals.first.title).to eq("Small Goal 1")
+      expect(goal.small_goals.second.title).to eq("Small Goal 2")
+    end
+
+    it 'rejects nested attributes if all_blank' do
+      user = FactoryBot.create(:user)
+      goal_attributes = {
+        title: "Test Goal",
+        content: "Test Content",
+        deadline: Date.today + 7.days,
+        small_goals_attributes: [
+          { title: "", difficulty: "", deadline: nil }
+        ]
+      }
+      goal = user.goals.create(goal_attributes)
+      expect(goal.small_goals.size).to eq(0)
+    end
+  end
+
+  describe 'boundary values' do
+    it 'is valid with title of maximum length' do
+      goal = FactoryBot.build(:goal, title: "a" * 50)
+      expect(goal).to be_valid
+    end
+
+    it 'is valid with content of maximum length' do
+      goal = FactoryBot.build(:goal, content: "a" * 1000)
+      expect(goal).to be_valid
+    end
+  end
 end

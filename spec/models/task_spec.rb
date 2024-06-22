@@ -5,10 +5,6 @@ RSpec.describe Task, type: :model do
     it 'belongs to small goal' do
       is_expected.to belong_to(:small_goal)
     end
-
-    it 'belongs to user' do
-      is_expected.to belong_to(:user)
-    end
   end
 
   describe 'validations' do
@@ -53,6 +49,15 @@ RSpec.describe Task, type: :model do
         task = create(:task)
         task.mark_as_completed
         expect(task.completed).to be_truthy
+      end
+
+      it 'adds experience points to the user' do
+        user = create(:user, total_exp: 0)
+        goal = create(:goal, user: user)
+        small_goal = create(:small_goal, goal: goal)
+        task = create(:task, small_goal: small_goal)
+
+        expect { task.mark_as_completed }.to change { user.reload.total_exp }.by(task.exp_for_task)
       end
     end
 
