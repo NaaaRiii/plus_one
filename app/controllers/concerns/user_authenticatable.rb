@@ -1,29 +1,3 @@
-#module UserAuthenticatable
-#  extend ActiveSupport::Concern
-
-#  class_methods do
-#    def authenticate_user_for_actions(actions = [])
-#      before_action :logged_in_user, only: actions
-#    end
-#  end
-
-#  # ログイン済みユーザーかどうか確認
-#  def logged_in_user
-#    unless logged_in?
-#      store_location
-#      flash[:danger] = "Please log in."
-#      redirect_to login_url, status: :see_other
-#    end
-#  end
-
-#  # 正しいユーザーかどうか確認
-#  def correct_user
-#    @user = User.find(params[:id])
-#    redirect_to(root_url, status: :see_other) unless current_user?(@user)
-#  end
-
-#end
-
 module UserAuthenticatable
   extend ActiveSupport::Concern
 
@@ -46,38 +20,30 @@ module UserAuthenticatable
     render json: { error: "Please log in." }, status: :unauthorized
   end
 
-  #def authenticate_user
-  #  token = request.headers['Authorization'].to_s.split(' ').last
-  #  @current_user = User.find_by(auth_token: token)
-
-  #  unless @current_user
-  #    render json: { error: "Please log in." }, status: :unauthorized
-  #  end
-  #end
-
   def authenticate_user
     authorization_header = request.headers['Authorization']
-    if authorization_header.present?
-      token = authorization_header.split(' ').last
-      user_payload = decode_token(token) # decoded_token.first の呼び出しを削除しました。
-      Rails.logger.info "User payload: #{user_payload.inspect}"
-  
-      if user_payload.nil?
-        render json: { error: 'Unauthorized1' }, status: :unauthorized
-        return
-      end
-  
-      user_id = user_payload['user_id']
-      if user_id
-        @current_user = User.find_by(id: user_id)
-        Rails.logger.info "Found user: #{@current_user.inspect}"
-      else
-        Rails.logger.info "Failed to extract user_id from payload"
-        render json: { error: 'Unauthorized2' }, status: :unauthorized
-        return
-      end
+    return unless authorization_header.present?
 
+    token = authorization_header.split(' ').last
+    user_payload = decode_token(token) # decoded_token.first の呼び出しを削除しました。
+    Rails.logger.info "User payload: #{user_payload.inspect}"
+  
+    if user_payload.nil?
+      render json: { error: 'Unauthorized1' }, status: :unauthorized
+      return
     end
+  
+    user_id = user_payload['user_id']
+    if user_id
+      @current_user = User.find_by(id: user_id)
+      Rails.logger.info "Found user: #{@current_user.inspect}"
+    else
+      Rails.logger.info "Failed to extract user_id from payload"
+      render json: { error: 'Unauthorized2' }, status: :unauthorized
+      nil
+    end
+
+    
   end
 
   # トークンによってユーザーが正しいかどうかを確認
@@ -89,14 +55,14 @@ module UserAuthenticatable
   require 'jwt'
   
   def decode_token(token)
-    begin
-      decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, algorithm: 'HS256').first
-      Rails.logger.info "Decoded token: #{decoded_token}"
-      return decoded_token # ここでペイロード（ハッシュ）をそのまま返します。
-    rescue JWT::DecodeError => e
-      Rails.logger.error "JWT DecodeError: #{e.message}"
-      nil
-    end
+    
+    decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, algorithm: 'HS256').first
+    Rails.logger.info "Decoded token: #{decoded_token}"
+    decoded_token # ここでペイロード（ハッシュ）をそのまま返します。
+  rescue JWT::DecodeError => e
+    Rails.logger.error "JWT DecodeError: #{e.message}"
+    nil
+    
   end
     
 end

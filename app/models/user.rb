@@ -10,11 +10,10 @@ class User < ApplicationRecord
   before_save   :downcase_email
   before_create :create_activation_digest
   validates :name,  presence: true, length: { maximum: 50 }
-  #VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
-                          format: { with: VALID_EMAIL_REGEX },
-                          uniqueness: true
+                    format: { with: VALID_EMAIL_REGEX },
+                    uniqueness: true
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
@@ -25,14 +24,17 @@ class User < ApplicationRecord
   end
   
   # 渡された文字列のハッシュ値を返す
-  def User.digest(string)
-    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-                                                  BCrypt::Engine.cost
+  def self.digest(string)
+    cost = if ActiveModel::SecurePassword.min_cost
+             BCrypt::Engine::MIN_COST
+           else
+             BCrypt::Engine.cost
+           end
     BCrypt::Password.create(string, cost: cost)
   end
 
   # ランダムなトークンを返す
-  def User.new_token
+  def self.new_token
     SecureRandom.urlsafe_base64
   end
 
@@ -98,31 +100,31 @@ class User < ApplicationRecord
 
   def update_rank
     new_rank = calculate_rank
-    last_rank = self.last_roulette_rank || 0
+    last_rank = last_roulette_rank || 0
   
-    Rails.logger.debug "Updating rank: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
+    Rails.logger.debug "Updating rank: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{tickets}"
   
-    if new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
-      self.last_roulette_rank = new_rank
-      self.save
-    end
+    return unless new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
+
+    self.last_roulette_rank = new_rank
+    save
   end
 
   def update_tickets
     new_rank = calculate_rank
-    last_rank = self.last_roulette_rank || 0
+    last_rank = last_roulette_rank || 0
   
-    if new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
-      self.tickets += 1
-      self.save
+    return unless new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
+
+    self.tickets += 1
+    save
   
-      Rails.logger.debug "Tickets incremented: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
-    end
+    Rails.logger.debug "Tickets incremented: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
   end
 
   # チケットを使う
   def use_ticket
-    if tickets > 0
+    if tickets.positive?
       self.tickets -= 1
       save
     else
@@ -142,14 +144,14 @@ class User < ApplicationRecord
 
   private
 
-    # メールアドレスをすべて小文字にする
-    def downcase_email
-      self.email = email.downcase
-    end
+  # メールアドレスをすべて小文字にする
+  def downcase_email
+    self.email = email.downcase
+  end
 
-    # 有効化トークンとダイジェストを作成および代入する
-    def create_activation_digest
-      self.activation_token  = User.new_token
-      self.activation_digest = User.digest(activation_token)
-    end
+  # 有効化トークンとダイジェストを作成および代入する
+  def create_activation_digest
+    self.activation_token  = User.new_token
+    self.activation_digest = User.digest(activation_token)
+  end
 end

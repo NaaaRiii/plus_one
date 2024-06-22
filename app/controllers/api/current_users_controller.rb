@@ -5,6 +5,7 @@ module Api
     before_action :authenticate_user
 
     def show
+      Rails.logger.debug "Current user: #{@current_user.inspect}"
       if @current_user
         latest_completed_goals_within_24h = @current_user.small_goals
                                               .where(completed: true)
@@ -50,5 +51,15 @@ module Api
         render json: { success: false, message: 'Failed to update rank.' }, status: :unprocessable_entity
       end
     end
+
+    #private
+
+    #def find_current_user
+    #  token = request.headers['Authorization'].split(' ').last
+    #  decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, { algorithm: 'HS256' }).first
+    #  User.find_by(id: decoded_token['user_id'])
+    #rescue JWT::DecodeError
+    #  nil
+    #end
   end
 end

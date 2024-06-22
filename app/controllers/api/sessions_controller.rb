@@ -17,5 +17,15 @@ module Api
       cookies.delete(:jwt, httponly: true, secure: Rails.env.production?)
       render json: { success: true }
     end
+
+    private
+
+    def generate_jwt(user)
+      payload = {
+        user_id: user.id,
+        jti: SecureRandom.uuid # JTIを追加
+      }
+      JWT.encode(payload, Rails.application.secrets.secret_key_base, 'HS256')
+    end
   end
 end

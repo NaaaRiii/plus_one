@@ -6,15 +6,4 @@ class Goal < ApplicationRecord
   validates :title, length: { maximum: 50 }, presence: { message: "Please set the title" }
   validates :content, length: { maximum: 1000 }, presence: { message: "Please set the content" }
   validates :deadline, presence: { message: "Please set the deadline" }
-
-  #今はコメントアウト
-  #def complete
-  #  user.add_exp(total_exp_for_goal)
-  #end
-
-  #def total_exp_for_goal
-  #  total_exp = tasks.sum(&:exp_for_task)
-  #  total_exp += small_goals.sum(&:exp_for_small_goal)
-  #  (total_exp * 1.2).to_i
-  #end
 end

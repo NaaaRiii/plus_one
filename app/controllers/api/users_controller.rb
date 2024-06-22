@@ -1,15 +1,15 @@
 module Api
   class UsersController < ApplicationController
-    before_action :set_current_user
+    before_action :find_current_user
     before_action :authenticate_user
 
     def show
       if @current_user
         latest_completed_goals = @current_user.small_goals
-                                  .where(completed: true)
-                                  .where('completed_time > ?', 24.hours.ago)
-                                  .order(completed_time: :desc)
-                                  .limit(5)
+                                              .where(completed: true)
+                                              .where('completed_time > ?', 24.hours.ago)
+                                              .order(completed_time: :desc)
+                                              .limit(5)
   
         # レスポンスデータの構造を作成
         response_data = {
@@ -28,7 +28,7 @@ module Api
 
     private
 
-    def set_current_user
+    def find_current_user
       @current_user = User.find_by(id: params[:id])
     end
   end
