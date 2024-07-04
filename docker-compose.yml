@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: ./nextjs
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - rails
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000  # Railsアプリケーションのポートを指定
+
+  rails:
+    build:
+      context: ./rails
+      dockerfile: Dockerfile
+    ports:
+      - "4000:3000"
+    environment:
+      - DATABASE_DEV_USER=railsuser
+      - DATABASE_DEV_PASSWORD=railspassword
+      - DATABASE_URL=mysql2://railsuser:railspassword@db:3306/plusonedb_development
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: plusonedb_development
+      MYSQL_USER: railsuser
+      MYSQL_PASSWORD: railspassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
