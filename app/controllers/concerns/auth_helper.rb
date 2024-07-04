@@ -26,12 +26,32 @@ module AuthHelper
     user_id = user_payload['user_id']
     if user_id
       @current_user = User.find_by(id: user_id)
-      Rails.logger.debug "Found user: #{@current_user.inspect}"
+      unless @current_user
+        Rails.logger.debug "User not found"
+        render_unauthorized('Unauthorized2')
+      end
     else
       Rails.logger.debug "Failed to extract user_id from payload"
       render_unauthorized('Unauthorized2')
     end
   end
+  
+
+  #def find_current_user(user_payload)
+  #  user_id = user_payload['user_id']
+  #  if user_id
+  #    @current_user = User.find_by(id: user_id)
+  #    if @current_user
+  #      Rails.logger.debug "Found user: #{@current_user.inspect}"
+  #    else
+  #      Rails.logger.debug "User not found"
+  #      render_unauthorized('Unauthorized2')
+  #    end
+  #  else
+  #    Rails.logger.debug "Failed to extract user_id from payload"
+  #    render_unauthorized('Unauthorized2')
+  #  end
+  #end
 
   def render_unauthorized(message)
     render json: { error: message }, status: :unauthorized

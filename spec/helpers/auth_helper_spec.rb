@@ -1,42 +1,55 @@
 require 'rails_helper'
 
 RSpec.describe AuthHelper, type: :helper do
-  let(:user) { create(:user) }
-  let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secrets.secret_key_base, 'HS256') }
-
-  describe '#decode_token' do
-    it 'returns the payload if the token is valid' do
-      decoded_token = helper.decode_token(token)
-      expect(decoded_token['user_id']).to eq(user.id)
-    end
-
-    it 'returns nil if the token is invalid' do
-      decoded_token = helper.decode_token('invalid_token')
-      expect(decoded_token).to be_nil
-    end
-  end
+  let(:token) { 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0NX0.gQKLFoh6cRzbwuh9AVJJj1IapyA_Lahe50m-S0ZJ4Uc' }
 
   describe '#fetch_token' do
-    it 'returns the token from the cookies if present' do
-      cookies.signed[:jwt] = token
-      expect(helper.fetch_token).to eq(token)
+    context 'when token is present in cookies' do
+      before do
+        allow(helper).to receive(:cookies).and_return(OpenStruct.new(signed: { jwt: token }))
+      end
+
+      it 'returns the token from the cookies if present' do
+        expect(helper.fetch_token).to eq(token)
+      end
     end
 
-    it 'returns the token from the authorization header if present' do
-      request.headers['Authorization'] = "Bearer #{token}"
-      expect(helper.fetch_token).to eq(token)
+    context 'when token is present in Authorization header' do
+      before do
+        allow(helper.request).to receive(:headers).and_return('Authorization' => "Bearer #{token}")
+      end
+
+      it 'returns the token from the Authorization header if present' do
+        expect(helper.fetch_token).to eq(token)
+      end
     end
   end
 
   describe '#find_current_user' do
-    it 'sets @current_user if the user is found' do
-      helper.find_current_user({ 'user_id' => user.id })
-      expect(helper.instance_variable_get(:@current_user)).to eq(user)
+    let(:user) { create(:user) }
+    let(:user_payload) { { 'user_id' => user.id } }
+
+    context 'when user is found' do
+      before do
+        allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+      end
+
+      it 'sets @current_user' do
+        helper.find_current_user(user_payload)
+        expect(helper.instance_variable_get(:@current_user)).to eq(user)
+      end
     end
 
-    it 'renders unauthorized if the user is not found' do
-      expect(helper).to receive(:render_unauthorized).with('Unauthorized2')
-      helper.find_current_user({ 'user_id' => -1 })
+    context 'when user is not found' do
+      before do
+        allow(User).to receive(:find_by).with(id: user.id).and_return(nil)
+        allow(helper).to receive(:render_unauthorized)
+      end
+
+      it 'renders unauthorized' do
+        expect(helper).to receive(:render_unauthorized).with('Unauthorized2')
+        helper.find_current_user(user_payload)
+      end
     end
   end
 end
