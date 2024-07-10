@@ -3,10 +3,10 @@ version: '3.8'
 services:
   nextjs:
     build:
-      context: ./nextjs
+      context: ../roulettepopup
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "3000:3000"
     depends_on:
       - rails
     environment:
@@ -14,10 +14,10 @@ services:
 
   rails:
     build:
-      context: ./rails
+      context: .
       dockerfile: Dockerfile
     ports:
-      - "4000:3000"
+      - "3000:3000"
     environment:
       - DATABASE_DEV_USER=railsuser
       - DATABASE_DEV_PASSWORD=railspassword
