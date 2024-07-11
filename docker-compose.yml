@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - ../roulettepopup:/app  # ホストのディレクトリをコンテナにマウント
     depends_on:
       - rails
     environment:
@@ -17,7 +19,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3000"  # 異なるポートを指定して衝突を避ける
+    volumes:
+      - .:/myapp  # ホストのディレクトリをコンテナにマウント
     environment:
       - DATABASE_DEV_USER=railsuser
       - DATABASE_DEV_PASSWORD=railspassword
