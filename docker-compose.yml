@@ -1,4 +1,4 @@
-version: '3.8'
+#version: '3.8'
 
 services:
   nextjs:
@@ -6,22 +6,24 @@ services:
       context: ../roulettepopup
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"  # コンテナのポート 4000 をホストのポート 4000 にマッピング
     volumes:
       - ../roulettepopup:/app  # ホストのディレクトリをコンテナにマウント
+      - ../roulettepopup/.next:/app/.next  # ビルド済みの .next ディレクトリをマウント
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api  # Railsアプリケーションのポートを指定
     depends_on:
       - rails
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000  # Railsアプリケーションのポートを指定
 
   rails:
     build:
       context: .
       dockerfile: Dockerfile
+    command: bash -c "bundle exec rails db:create db:migrate && bundle exec rails db:seed && bundle exec rails server -b 0.0.0.0"
     ports:
-      - "3001:3000"  # 異なるポートを指定して衝突を避ける
+      - "3000:3000"  # コンテナのポート 3000 をホストのポート 3000 にマッピング
     volumes:
-      - .:/myapp  # ホストのディレクトリをコンテナにマウント
+      - .:/app
     environment:
       - DATABASE_DEV_USER=railsuser
       - DATABASE_DEV_PASSWORD=railspassword
@@ -37,7 +39,7 @@ services:
       MYSQL_USER: railsuser
       MYSQL_PASSWORD: railspassword
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 

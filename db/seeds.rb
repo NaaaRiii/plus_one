@@ -1,11 +1,18 @@
+User.create!(
+  email: 'sample@example.com',
+  password: 'password',
+  password_confirmation: 'password',
+  name: 'Sample User'
+)
+
 # サンプルユーザーの検索または作成
-user = User.find_or_create_by(email: "sample@example.com") do |u|
-  u.name = "Sample User"
-  u.password = "password"
-  u.password_confirmation = "password"
-  u.activated = true
-  u.activated_at = Time.zone.now
-end
+#user = User.find_or_create_by(email: "sample@example.com") do |u|
+#  u.name = "Sample User"
+#  u.password = "password"
+#  u.password_confirmation = "password"
+#  u.activated = true
+#  u.activated_at = Time.zone.now
+#end
 
 #user = User.find_or_initialize_by(email: "sample@example.com")
 #user.assign_attributes({
@@ -83,7 +90,7 @@ end
 
 #user.update(total_exp: 0.0)
 #user.update(last_roulette_rank: 0.0)
-user.update(tickets: 3)
+#user.update(tickets: 3)
 
 #User.find_each do |u|
 #  u.update(tickets: 0)
