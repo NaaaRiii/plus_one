@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
-  create_table "activities", charset: "utf8mb3", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2024_05_26_031542) do
+  create_table "activities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
     t.string "small_goal_title"
@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
     t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
-  create_table "goals", charset: "utf8mb3", force: :cascade do |t|
+  create_table "goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -37,16 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
     t.index ["user_id"], name: "index_goals_on_user_id"
   end
 
-  create_table "jwt_blacklists", charset: "utf8mb3", force: :cascade do |t|
-    t.string "jti"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "token"
-    t.index ["jti"], name: "index_jwt_blacklists_on_jti", unique: true
-    t.index ["token"], name: "index_jwt_blacklists_on_token", unique: true
-  end
-
-  create_table "roulette_texts", charset: "utf8mb3", force: :cascade do |t|
+  create_table "roulette_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "number"
     t.string "text"
     t.bigint "user_id", null: false
@@ -55,7 +46,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
     t.index ["user_id"], name: "index_roulette_texts_on_user_id"
   end
 
-  create_table "small_goals", charset: "utf8mb3", force: :cascade do |t|
+  create_table "small_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -69,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
     t.index ["goal_id"], name: "index_small_goals_on_goal_id"
   end
 
-  create_table "tasks", charset: "utf8mb3", force: :cascade do |t|
+  create_table "tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "small_goal_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -78,7 +69,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_065856) do
     t.index ["small_goal_id"], name: "index_tasks_on_small_goal_id"
   end
 
-  create_table "users", charset: "utf8mb3", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.datetime "created_at", null: false
