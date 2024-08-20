@@ -1,9 +1,8 @@
-User.create!(
-  email: 'sample@example.com',
-  password: 'password',
-  password_confirmation: 'password',
-  name: 'Sample User'
-)
+User.find_or_create_by!(email: 'sample@example.com') do |user|
+  user.name = 'Sample User'
+  user.password = 'password'
+  user.password_confirmation = 'password'
+end
 
 # サンプルユーザーの検索または作成
 #user = User.find_or_create_by(email: "sample@example.com") do |u|
