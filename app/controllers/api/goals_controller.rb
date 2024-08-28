@@ -6,14 +6,27 @@ module Api
     before_action :authenticate_user
     before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
+    #def index
+    #  @goals = current_user.goals.includes(:small_goals)
+    #  render json: @goals.as_json(include: [:small_goals])
+    #end
+
     def index
       @goals = current_user.goals.includes(:small_goals)
-      render json: @goals.as_json(include: [:small_goals])
+      render json: @goals.as_json(include: [:small_goals], methods: [:completed_time])
     end
+
+    #def show
+    #  if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
+    #    render json: @goal.to_json(include: { small_goals: { include: :tasks } })
+    #  else
+    #    render json: { error: "Goal not found" }, status: :not_found
+    #  end
+    #end
 
     def show
       if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
-        render json: @goal.to_json(include: { small_goals: { include: :tasks } })
+        render json: @goal.to_json(include: { small_goals: { include: :tasks } }, methods: [:completed_time])
       else
         render json: { error: "Goal not found" }, status: :not_found
       end
@@ -79,6 +92,10 @@ module Api
 
     def goal_params
       params.require(:goal).permit(:title, :content, :deadline, small_goals_attributes: [:title, :content, :deadline])
+    end
+
+    def small_goal_params
+      params.require(:small_goal).permit(:title, :difficulty, :deadline, tasks_attributes: [:id, :content, :_destroy])
     end
 
     def calculate_exp_for_small_goal(small_goal)
