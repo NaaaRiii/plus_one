@@ -6,4 +6,9 @@ class Goal < ApplicationRecord
   validates :title, length: { maximum: 50 }, presence: { message: "Please set the title" }
   validates :content, length: { maximum: 1000 }, presence: { message: "Please set the content" }
   validates :deadline, presence: { message: "Please set the deadline" }
+
+  def completed_time
+    updated_at if completed
+  end
+  
 end
