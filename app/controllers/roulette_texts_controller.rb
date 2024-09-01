@@ -1,8 +1,9 @@
 class RouletteTextsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_roulette_text, only: [:show, :edit, :update, :destroy]
 
   def index
-    @roulette_texts = RouletteText.all
+    @roulette_texts = current_user.roulette_texts
     render json: @roulette_texts
   end
   
@@ -60,11 +61,11 @@ class RouletteTextsController < ApplicationController
 
   private
 
-    def set_roulette_text
-      @roulette_text = RouletteText.find_by(number: params[:number])
-    end
+  def set_roulette_text
+    @roulette_text = RouletteText.find_by(number: params[:number])
+  end
 
-    def roulette_text_params
-      params.require(:roulette_text).permit(:number, :text)
-    end
+  def roulette_text_params
+    params.require(:roulette_text).permit(:number, :text)
+  end
 end
