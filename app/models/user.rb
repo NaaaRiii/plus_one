@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :tasks, through: :small_goals, dependent: :destroy
   has_many :roulette_texts, dependent: :destroy
 
+  after_create :create_default_roulette_texts
+
   attr_accessor :remember_token, :activation_token
 
   before_save   :downcase_email
@@ -153,5 +155,26 @@ class User < ApplicationRecord
   def create_activation_digest
     self.activation_token  = User.new_token
     self.activation_digest = User.digest(activation_token)
+  end
+
+  def create_default_roulette_texts
+    default_texts = {
+      1 => "5分お散歩をする",
+      2 => "お菓子を1つ食べる",
+      3 => "3分間ストレッチをする",
+      4 => "ジュースをコップ1杯飲む",
+      5 => "好きな動物の写真や動画を5分観る",
+      6 => "好きな曲を2曲聴く",
+      7 => "好きな本を4ページ読む",
+      8 => "5分間お昼寝をする",
+      9 => "深いことは考えずに3枚適当に写真を撮る",
+      10 => "5分間日記を書く",
+      11 => "コーヒーor紅茶or緑茶を飲む",
+      12 => "5分間瞑想をする"
+    }
+  
+    default_texts.each do |number, text|
+      roulette_texts.create(number: number, text: text) unless roulette_texts.exists?(number: number)
+    end
   end
 end
