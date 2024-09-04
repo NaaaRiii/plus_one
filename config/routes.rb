@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
     delete 'logout', to: 'sessions#destroy'
+    get 'check_login', to: 'authentication#check_login'
 
     resources :current_users do
       member do
