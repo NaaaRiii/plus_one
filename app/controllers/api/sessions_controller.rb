@@ -18,12 +18,20 @@ module Api
       render json: { success: true }
     end
 
+    def check
+      if logged_in_user
+        render json: { logged_in: true, user: logged_in_user }
+      else
+        render json: { logged_in: false }
+      end
+    end
+
     private
 
     def generate_jwt(user)
       payload = {
         user_id: user.id,
-        jti: SecureRandom.uuid # JTIを追加
+        jti: SecureRandom.uuid
       }
       JWT.encode(payload, Rails.application.secrets.secret_key_base, 'HS256')
     end
