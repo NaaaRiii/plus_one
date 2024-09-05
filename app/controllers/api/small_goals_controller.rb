@@ -4,6 +4,7 @@ module Api
     include AuthHelper
 
     before_action :authenticate_user
+    before_action :set_goal
 
     # before_actionはそれぞれのアクションの前に呼ばれ、それぞれのアクションが特定の goal/small_goal に対して行われることを保証する。
     before_action :set_goal, only: [:index, :create, :complete]
@@ -16,10 +17,11 @@ module Api
 
     def create
       @small_goal = @goal.small_goals.build(small_goal_params)
+
       if @small_goal.save
         render json: { message: "Goal is saved. Let's check it out." }, status: :created
       else
-        render json: @small_goal.errors, status: :unprocessable_entity
+        render json: { errors: @small_goal.errors.full_messages }, status: :unprocessable_entity
       end
     end
 

@@ -12,6 +12,7 @@ class SmallGoal < ApplicationRecord
   validates :difficulty, presence: { message: "Please set the difficulty" }
   validates :deadline, presence: { message: "Please set the deadline" }
   validate  :must_have_at_least_one_task
+  validate  :deadline_cannot_be_after_goal_deadline
 
   # 経験値の追加メソッド（難易度に応じて経験値を調整する）
   def add_experience(points, difficulty)
@@ -47,6 +48,13 @@ class SmallGoal < ApplicationRecord
     return unless tasks.reject(&:marked_for_destruction?).empty?
 
     errors.add(:base, "You must have at least one task.")
-    
+  end
+  
+  def deadline_cannot_be_after_goal_deadline
+    return if goal.nil?
+
+    return unless deadline.present? && deadline > goal.deadline
+
+    errors.add(:base, "Goalよりも後の日付を設定することはできません")
   end
 end
