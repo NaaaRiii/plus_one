@@ -5,18 +5,24 @@ module Api
     before_action :authenticate_user
 
     def weekly_exp
-      start_of_week = Date.today.beginning_of_week
-      end_of_week = Date.today.end_of_week
-
-      activities = Activity.where(completed_at: start_of_week..end_of_week)
+      # 今日の日付を基準に5日前から明日までの範囲を取得
+      today = Date.today
+      start_date = today - 5.days
+      end_date = today + 1.day
+    
+      # 該当範囲内の活動データを取得
+      activities = Activity.where(completed_at: start_date..end_date)
       exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
-
-      full_week_data = (start_of_week..end_of_week).map do |date|
+    
+      # 5日前から明日までの日付範囲でexpデータを生成
+      date_range = (start_date..end_date).map do |date|
         formatted_date = date.strftime("%a, %b %d")
         { date: formatted_date, exp: exp_by_day[date] || 0 }
       end
+    
+      # フロントエンドにデータを送信
 
-      render json: full_week_data
+      render json: date_range
     end
 
     def daily_exp

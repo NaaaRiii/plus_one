@@ -1,19 +1,19 @@
 Rails.application.routes.draw do
-  root                              "static_pages#home"
-  get     "/signup",            to: "users#new"
-  get     "/login",             to: "sessions#new"
-  post    "/login",             to: "sessions#create"
-  get     "/dashboard",         to: "dashboards#index"
-  delete  "/logout",            to: "sessions#destroy"
-  post    "/guest_login",       to: "guest_sessions#create"
+  #root                              "static_pages#home"
+  #get     "/signup",            to: "users#new"
+  #get     "/login",             to: "sessions#new"
+  #post    "/login",             to: "sessions#create"
+  #get     "/dashboard",         to: "dashboards#index"
+  #delete  "/logout",            to: "sessions#destroy"
+  #post    "/guest_login",       to: "guest_sessions#create"
   #put '/goals/:id/complete', to: 'goals#complete', as: 'complete_goal'
-  put     "/dashboard",         to: "dashboards#index"
-  get "roulette_texts/:number", to: "roulette_texts#show"
-  post "users/update_rank", to: "users#update_rank"
-  get "/users/tickets", to: "users#tickets"
+  #put     "/dashboard",         to: "dashboards#index"
+  #get "roulette_texts/:number", to: "roulette_texts#show"
+  #post "users/update_rank", to: "users#update_rank"
+  #get "/users/tickets", to: "users#tickets"
 
-  get '/api/weekly_exp', to: 'activities#weekly_exp'
-  get '/api/daily_exp',  to: 'activities#daily_exp'
+  #get '/api/weekly_exp', to: 'activities#weekly_exp' 教訓
+  #get '/api/daily_exp',  to: 'activities#daily_exp' 教訓
 
   resources :goals do
     member do
@@ -32,6 +32,8 @@ Rails.application.routes.draw do
     get 'current_user', to: 'current_users#show'
     delete 'logout', to: 'sessions#destroy'
     get 'check_login', to: 'authentication#check_login'
+    get 'weekly_exp', to: 'activities#weekly_exp'
+    get 'daily_exp', to: 'activities#daily_exp'
 
     resources :current_users do
       member do
