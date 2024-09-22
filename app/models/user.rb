@@ -73,7 +73,7 @@ class User < ApplicationRecord
   end
 
   # ランクアップに必要な経験値を計算するメソッド
-  def calculate_rank_up_experience(max_rank = 120)
+  def calculate_rank_up_experience(max_rank = 121)
     experiences = [0, 5]
     increment = 10
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_31_043028) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_20_121232) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -93,6 +93,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_31_043028) do
     t.integer "total_exp", default: 0
     t.integer "last_roulette_rank"
     t.integer "tickets", default: 0
+    t.integer "title_index", default: 0
+    t.string "current_title"
+    t.boolean "restart_without_title", default: false
+    t.datetime "legendary_hero_obtained_at"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

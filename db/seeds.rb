@@ -1,7 +1,17 @@
-User.find_or_create_by!(email: 'sample@example.com') do |user|
-  user.name = 'Sample User'
-  user.password = 'password'
-  user.password_confirmation = 'password'
+user = User.find_by(email: 'sample@example.com')
+
+if user
+  user.update(current_title: 'Beginner', title_index: 1)
+else
+  User.create!(
+    name: 'Sample User',
+    email: 'sample@example.com',
+    password: 'password',
+    password_confirmation: 'password',
+    current_title: 'Beginner',
+    title_index: 1,
+    total_exp: 8225
+  )
 end
 
 # サンプルユーザーの検索または作成
