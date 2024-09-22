@@ -26,6 +26,7 @@ module Api
         response_data = {
           id: @current_user.id,
           name: @current_user.name,
+          #currentTitle: @current_user.current_title,
           email: @current_user.email,
           totalExp: @current_user.total_exp,
           rank: @current_user.calculate_rank,
@@ -51,6 +52,24 @@ module Api
         render json: { success: false, message: 'Failed to update rank.' }, status: :unprocessable_entity
       end
     end
+
+    #def restart_without_title
+    #  if @current_user
+    #    @current_user.update(restart_without_title: true, total_exp: 0, current_title: nil)
+    #    render json: @current_user
+    #  else
+    #    render json: { error: 'User not found' }, status: :not_found
+    #  end
+    #end
+
+    #def restart_with_title
+    #  if @current_user
+    #    @current_user.update(legendary_hero_obtained_at: Time.current)
+    #    render json: @current_user
+    #  else
+    #    render json: { error: 'User not found' }, status: :not_found
+    #  end
+    #end
 
     #private
 

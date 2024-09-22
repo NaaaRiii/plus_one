@@ -17,6 +17,7 @@ module Api
           totalExp: @current_user.total_exp,
           rank: @current_user.calculate_rank,
           tickets: @current_user.tickets,
+          #currentTitle: @current_user.current_title,
           latestCompletedGoals: latest_completed_goals.as_json(only: [:id, :title, :completed_time])
         }
   
