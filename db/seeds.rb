@@ -1,18 +1,25 @@
-user = User.find_by(email: 'sample@example.com')
+# ユーザーのrankとexpをリセット
+#User.find_each do |user|
+#  user.update(last_roulette_rank: 0, total_exp: 0, title_index: 1, current_title: nil)
+#end
 
-if user
-  user.update(current_title: 'Beginner', title_index: 1)
-else
-  User.create!(
-    name: 'Sample User',
-    email: 'sample@example.com',
-    password: 'password',
-    password_confirmation: 'password',
-    current_title: 'Beginner',
-    title_index: 1,
-    total_exp: 8225
-  )
-end
+#puts "All user ranks and exp have been reset."
+
+#user = User.find_by(email: 'sample@example.com')
+
+#if user
+#  user.update(current_title: 'Beginner', title_index: 1)
+#else
+#  User.create!(
+#    name: 'Sample User',
+#    email: 'sample@example.com',
+#    password: 'password',
+#    password_confirmation: 'password',
+#    current_title: 'Beginner',
+#    title_index: 1,
+#    total_exp: 0
+#  )
+#end
 
 # サンプルユーザーの検索または作成
 #user = User.find_or_create_by(email: "sample@example.com") do |u|

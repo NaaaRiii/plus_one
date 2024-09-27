@@ -5,11 +5,20 @@ module Api
 
     def show
       if @current_user
-        latest_completed_goals = @current_user.small_goals
-                                              .where(completed: true)
-                                              .where('completed_time > ?', 24.hours.ago)
-                                              .order(completed_time: :desc)
-                                              .limit(5)
+        latest_completed_goals_within_24h = @current_user.small_goals
+                                                         .where(completed: true)
+                                                         .where('completed_time > ?', 24.hours.ago)
+                                                         .order(completed_time: :desc)
+                                                         .limit(10)
+      
+        latest_completed_goals = if latest_completed_goals_within_24h.empty?
+                                   @current_user.small_goals
+                                                .where(completed: true)
+                                                .order(completed_time: :desc)
+                                                .limit(10)
+                                 else
+                                   latest_completed_goals_within_24h
+                                 end
   
         # レスポンスデータの構造を作成
         response_data = {

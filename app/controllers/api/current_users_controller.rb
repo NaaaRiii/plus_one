@@ -5,23 +5,22 @@ module Api
     before_action :authenticate_user
 
     def show
-      Rails.logger.debug "Current user: #{@current_user.inspect}"
       if @current_user
-        latest_completed_goals_within_24h = @current_user.small_goals
-                                              .where(completed: true)
-                                              .where('completed_time > ?', 24.hours.ago)
-                                              .order(completed_time: :desc)
-                                              .limit(5)
 
-        if latest_completed_goals_within_24h.empty?
-          latest_completed_goal = @current_user.small_goals
-                                    .where(completed: true)
-                                    .order(completed_time: :desc)
-                                    .first
-          latest_completed_goals = latest_completed_goal.present? ? [latest_completed_goal] : []
-        else
-          latest_completed_goals = latest_completed_goals_within_24h
-        end
+        latest_completed_goals_within_24h = @current_user.small_goals
+                                                         .where(completed: true)
+                                                         .where('completed_time > ?', 24.hours.ago)
+                                                         .order(completed_time: :desc)
+                                                         .limit(10)
+      
+        latest_completed_goals = if latest_completed_goals_within_24h.empty?
+                                   @current_user.small_goals
+                                                .where(completed: true)
+                                                .order(completed_time: :desc)
+                                                .limit(10)
+                                 else
+                                   latest_completed_goals_within_24h
+                                 end
       
         response_data = {
           id: @current_user.id,
