@@ -6,23 +6,10 @@ module Api
     before_action :authenticate_user
     before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
-    #def index
-    #  @goals = current_user.goals.includes(:small_goals)
-    #  render json: @goals.as_json(include: [:small_goals])
-    #end
-
     def index
       @goals = current_user.goals.includes(:small_goals)
       render json: @goals.as_json(include: [:small_goals], methods: [:completed_time])
     end
-
-    #def show
-    #  if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
-    #    render json: @goal.to_json(include: { small_goals: { include: :tasks } })
-    #  else
-    #    render json: { error: "Goal not found" }, status: :not_found
-    #  end
-    #end
 
     def show
       if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
