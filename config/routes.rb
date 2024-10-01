@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
     get 'daily_exp', to: 'activities#daily_exp'
+    #get 'today_exp', to: 'activities#today_exp'
 
     resources :current_users do
       member do
