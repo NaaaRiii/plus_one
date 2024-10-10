@@ -21,8 +21,7 @@ class GoalTest < ActiveSupport::TestCase
 
   # Goal オブジェクトが有効であることを確認
   test "should be valid" do
-    puts @roulette_text.errors.full_messages if @roulette_text.invalid?  # デバッグ用出力
-    assert @roulette_text.valid?
+    assert @goal.valid?, "Goal should be valid with proper attributes"
   end
 
   # タイトルが存在することを確認
@@ -31,13 +30,6 @@ class GoalTest < ActiveSupport::TestCase
     assert_not @goal.valid?
     # 正規表現を括弧で囲む
     assert_match(/Please set the title/, @goal.errors[:title].join)
-  end
-
-  test "text should be present" do
-    @roulette_text.number = 2 # ユニークな number を設定
-    @roulette_text.text = " "  # 空白のみのテキスト
-    assert_not @roulette_text.valid?
-    assert_match(/Please set the content/, @roulette_text.errors.full_messages.join)
   end
 
   # タイトルの長さが50文字以内であることを確認
