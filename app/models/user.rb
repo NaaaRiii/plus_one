@@ -144,18 +144,7 @@ class User < ApplicationRecord
     UserMailer.account_activation(self).deliver_now
   end
 
-  private
-
-  # メールアドレスをすべて小文字にする
-  def downcase_email
-    self.email = email.downcase
-  end
-
-  # 有効化トークンとダイジェストを作成および代入する
-  def create_activation_digest
-    self.activation_token  = User.new_token
-    self.activation_digest = User.digest(activation_token)
-  end
+  protected
 
   def create_default_roulette_texts
     default_texts = {
@@ -176,5 +165,18 @@ class User < ApplicationRecord
     default_texts.each do |number, text|
       roulette_texts.create(number: number, text: text) unless roulette_texts.exists?(number: number)
     end
+  end
+
+  private
+
+  # メールアドレスをすべて小文字にする
+  def downcase_email
+    self.email = email.downcase
+  end
+
+  # 有効化トークンとダイジェストを作成および代入する
+  def create_activation_digest
+    self.activation_token  = User.new_token
+    self.activation_digest = User.digest(activation_token)
   end
 end
