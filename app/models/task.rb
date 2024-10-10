@@ -4,6 +4,9 @@ class Task < ApplicationRecord
   validates :content, length: { maximum: 50 }, presence: { message: "Please set the content" }
   
   def user
+    # small_goal が存在しない場合には nil を返す
+    return nil unless small_goal
+
     small_goal.goal.user
   end
 

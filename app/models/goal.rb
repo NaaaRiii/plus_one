@@ -4,7 +4,7 @@ class Goal < ApplicationRecord
   accepts_nested_attributes_for :small_goals, allow_destroy: true, reject_if: :all_blank, limit: 5
 
   validates :title, length: { maximum: 50 }, presence: { message: "Please set the title" }
-  validates :content, length: { maximum: 1000 }, presence: { message: "Please set the content" }
+  validates :content, length: { maximum: 200 }, presence: { message: "Please set the content" }
   validates :deadline, presence: { message: "Please set the deadline" }
 
   def completed_time
