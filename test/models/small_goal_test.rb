@@ -16,14 +16,15 @@ class SmallGoalTest < ActiveSupport::TestCase
     @small_goal = @goal.small_goals.build(
       title: "Learn ActiveRecord",
       difficulty: "Easy",
-      deadline: 1.week.from_now
+      deadline: 1.week.from_now,
+      task: "Initial Task"
     )
   end
 
   # SmallGoal オブジェクトが有効であることを確認
   test "should be valid" do
     # タスクを追加して、バリデーションエラーが発生しないようにする
-    @small_goal.tasks.build(content: "Initial Task")
+    @small_goal.tasks.build(content: "Initial Task2")
     if @small_goal.invalid?
       puts @small_goal.errors.full_messages  # エラーがある場合、エラーメッセージを表示
     end

@@ -67,36 +67,32 @@ class GoalTest < ActiveSupport::TestCase
   end
 
   # small_goals の関連付けテスト
-  #test "should have many small_goals" do
-  #  # small_goal を作成
-  #  sg1 = @goal.small_goals.build(title: "Small Goal 1", difficulty: "Easy", deadline: 1.week.from_now, task: "Task 1")
-  #  sg1.save!
-  
-  #  sg2 = @goal.small_goals.build(title: "Small Goal 2", difficulty: "Medium", deadline: 2.weeks.from_now, task: "Task 2")
-  #  sg2.save!
-  
-  #  @goal.save
-  
-  #  assert_equal 2, @goal.small_goals.count
-  #end
-
   test "should have many small_goals" do
     @goal.save
   
-    # small_goal を作成し、バリデーションが失敗した際に例外を捕捉する
-    assert_raises(ActiveRecord::RecordInvalid) do
-      sg1 = @goal.small_goals.build(title: "Small Goal 1", difficulty: "Easy", deadline: 1.week.from_now, task: "Task 1")
-      sg1.save!
-    end
-  
-    assert_raises(ActiveRecord::RecordInvalid) do
-      sg2 = @goal.small_goals.build(title: "Small Goal 2", difficulty: "Medium", deadline: 2.weeks.from_now, task: "Task 2")
-      sg2.save!
-    end
+    # small_goals を作成して保存
+    @goal.small_goals.create!(
+      title: "Small Goal 1", 
+      difficulty: "Easy", 
+      deadline: 1.week.from_now,
+      tasks_attributes: [
+        { content: "Task 1", completed: false }
+      ]
+    )
+    
+    @goal.small_goals.create!(
+      title: "Small Goal 2", 
+      difficulty: "Medium", 
+      deadline: 2.weeks.from_now,
+      tasks_attributes: [
+        { content: "Task 2", completed: false }
+      ]
+    )
   
     # small_goals の数を確認
-    assert_equal 0, @goal.small_goals.count  # エラー発生時には 0 であることを確認
+    assert_equal 2, @goal.small_goals.count  # 2つの small_goal が作成されていることを確認
   end
+  
 
   # ネストされた属性の受け入れテスト
   test "should accept nested attributes for small_goals" do
