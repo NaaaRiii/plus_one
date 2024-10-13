@@ -6,7 +6,6 @@ module Api
     before_action :authenticate_user
     before_action :set_goal
 
-    # before_actionはそれぞれのアクションの前に呼ばれ、それぞれのアクションが特定の goal/small_goal に対して行われることを保証する。
     before_action :set_goal, only: [:index, :create, :complete]
     before_action :set_small_goal, only: [:show, :update, :complete, :destroy]
 
