@@ -2,7 +2,7 @@ module Api
   class RouletteTextsController < ApplicationController
     include AuthHelper
 
-    before_action :set_roulette_text, only: [:show, :update, :destroy]
+    before_action :set_roulette_text, only: [:update, :destroy]
     before_action :authenticate_user
 
     def index
@@ -10,11 +10,20 @@ module Api
       render json: @roulette_texts
     end
     
+    #def show
+    #  if @roulette_text
+    #    render json: @roulette_text
+    #  else
+    #    render json: { error: "Not Found" }, status: :not_found
+    #  end
+    #end
+
     def show
+      @roulette_text = RouletteText.find_by(user_id: current_user.id, number: params[:number])
       if @roulette_text
         render json: @roulette_text
       else
-        render json: { error: "Not Found" }, status: :not_found
+        render json: { error: "Roulette text not found" }, status: :not_found
       end
     end
 
@@ -55,7 +64,7 @@ module Api
     private
     
     def set_roulette_text
-      @roulette_text = RouletteText.find(params[:id])
+      @roulette_text = RouletteText.find_by(user_id: current_user.id, number: params[:number])
     end
 
     def roulette_text_params
