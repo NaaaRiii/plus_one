@@ -42,7 +42,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :roulette_texts do
+    resources :roulette_texts, param: :number do
       collection do
         get :tickets
       end
@@ -75,5 +75,4 @@ Rails.application.routes.draw do
   resources :users
   resources :account_activations, only: [:edit]
   resources :tasks, only: [:update]
-  resources :roulette_texts
 end
