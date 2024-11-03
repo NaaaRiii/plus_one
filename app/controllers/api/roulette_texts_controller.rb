@@ -36,28 +36,59 @@ module Api
       end
     end
 
-    def update
-      if current_user.use_ticket
-        if @roulette_text.update(roulette_text_params)
-          render json: { roulette_text: @roulette_text, tickets: current_user.tickets }
-        else
-          render json: @roulette_text.errors, status: :unprocessable_entity
-        end
-      else
-        render json: { error: "You do not have enough tickets to edit." }, status: :forbidden
-      end
-    end
+    #def update
+    #  if current_user.use_ticket
+    #    if @roulette_text.update(roulette_text_params)
+    #      render json: { roulette_text: @roulette_text, tickets: current_user.tickets }
+    #    else
+    #      render json: @roulette_text.errors, status: :unprocessable_entity
+    #    end
+    #  else
+    #    render json: { error: "You do not have enough tickets to edit." }, status: :forbidden
+    #  end
+    #end
 
     def destroy
       @roulette_text.destroy
       head :no_content
     end
 
+    #def tickets
+    #  if @current_user
+    #    render json: { tickets: @current_user.tickets }
+    #  else
+    #    render json: { tickets: error }
+    #  end
+    #end
+
     def tickets
-      if @current_user
-        render json: { tickets: @current_user.tickets }
+      if current_user
+        render json: {
+          play_tickets: current_user.play_tickets,
+          edit_tickets: current_user.edit_tickets
+        }
       else
-        render json: { tickets: error }
+        render json: { error: "User not authenticated" }, status: :unauthorized
+      end
+    end
+
+    def spin
+      if current_user.use_play_ticket
+        render json: { message: "ルーレットを回しました", play_tickets: current_user.play_tickets }
+      else
+        render json: { error: "プレイチケットが足りません" }, status: :forbidden
+      end
+    end
+
+    def update
+      if current_user.use_edit_ticket
+        if @roulette_text.update(roulette_text_params)
+          render json: { roulette_text: @roulette_text, edit_tickets: current_user.edit_tickets }
+        else
+          render json: @roulette_text.errors, status: :unprocessable_entity
+        end
+      else
+        render json: { error: "編集チケットが足りません" }, status: :forbidden
       end
     end
 
