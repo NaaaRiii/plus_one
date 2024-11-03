@@ -125,14 +125,14 @@ class User < ApplicationRecord
   end
 
   # チケットを使う
-  def use_ticket
-    if tickets.positive?
-      self.tickets -= 1
-      save
-    else
-      false
-    end
-  end
+  #def use_ticket
+  #  if tickets.positive?
+  #    self.tickets -= 1
+  #    save
+  #  else
+  #    false
+  #  end
+  #end
 
   # アカウントを有効にする
   def activate
@@ -142,6 +142,26 @@ class User < ApplicationRecord
   # 有効化用のメールを送信する
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
+  end
+
+  # プレイチケットを使う
+  def use_play_ticket
+    if play_tickets.positive?
+      decrement!(:play_tickets)
+      true
+    else
+      false
+    end
+  end
+
+  # 編集チケットを使う
+  def use_edit_ticket
+    if edit_tickets.positive?
+      decrement!(:edit_tickets)
+      true
+    else
+      false
+    end
   end
 
   protected

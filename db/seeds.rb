@@ -1,7 +1,7 @@
 # ユーザーのrankとexpをリセット
-#User.find_each do |user|
-#  user.update(last_roulette_rank: 0, total_exp: 0, title_index: 1, current_title: nil)
-#end
+User.find_each do |user|
+  user.update(play_tickets: 5)
+end
 
 #puts "All user ranks and exp have been reset."
 

@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     resources :roulette_texts, param: :number do
       collection do
         get :tickets
+        patch :spin
       end
     end
 
