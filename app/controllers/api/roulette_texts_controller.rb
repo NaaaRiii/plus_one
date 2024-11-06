@@ -2,21 +2,13 @@ module Api
   class RouletteTextsController < ApplicationController
     include AuthHelper
 
-    before_action :set_roulette_text, only: [:update, :destroy]
     before_action :authenticate_user
+    before_action :set_roulette_text, only: [:update, :destroy]
 
     def index
       @roulette_texts = current_user.roulette_texts
       render json: @roulette_texts
     end
-    
-    #def show
-    #  if @roulette_text
-    #    render json: @roulette_text
-    #  else
-    #    render json: { error: "Not Found" }, status: :not_found
-    #  end
-    #end
 
     def show
       @roulette_text = RouletteText.find_by(user_id: current_user.id, number: params[:number])
@@ -36,30 +28,10 @@ module Api
       end
     end
 
-    #def update
-    #  if current_user.use_ticket
-    #    if @roulette_text.update(roulette_text_params)
-    #      render json: { roulette_text: @roulette_text, tickets: current_user.tickets }
-    #    else
-    #      render json: @roulette_text.errors, status: :unprocessable_entity
-    #    end
-    #  else
-    #    render json: { error: "You do not have enough tickets to edit." }, status: :forbidden
-    #  end
-    #end
-
     def destroy
       @roulette_text.destroy
       head :no_content
     end
-
-    #def tickets
-    #  if @current_user
-    #    render json: { tickets: @current_user.tickets }
-    #  else
-    #    render json: { tickets: error }
-    #  end
-    #end
 
     def tickets
       if current_user
@@ -80,7 +52,7 @@ module Api
       end
     end
 
-    def update
+    def update    
       if current_user.use_edit_ticket
         if @roulette_text.update(roulette_text_params)
           render json: { roulette_text: @roulette_text, edit_tickets: current_user.edit_tickets }
@@ -93,13 +65,18 @@ module Api
     end
 
     private
-    
+  
     def set_roulette_text
-      @roulette_text = RouletteText.find_by(user_id: current_user.id, number: params[:number])
+      @roulette_text = current_user.roulette_texts.find_by(number: params[:number])
+
+      return if @roulette_text
+
+      render json: { error: 'Roulette text not found' }, status: :not_found
+      
     end
 
     def roulette_text_params
-      params.require(:roulette_text).permit(:number, :text)
+      params.require(:roulette_text).permit(:text)
     end
   end
 end
