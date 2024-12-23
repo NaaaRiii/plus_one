@@ -1,6 +1,6 @@
 # ユーザーのrankとexpをリセット
 User.find_each do |user|
-  user.update(play_tickets: 5)
+  user.update(play_tickets: 5, edit_tickets: 5)
 end
 
 #puts "All user ranks and exp have been reset."
