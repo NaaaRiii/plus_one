@@ -1,26 +1,29 @@
-# Use the official Ruby image as the base image
+# 1. Rubyイメージをベースにする
 FROM ruby:3.2.2
 
-# Install dependencies
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+# 2. パッケージのインストール
+#    - nodejs / yarn はアセットコンパイルやWebpackerを使うなら必要
+#    - mysql-client は DB マイグレーションで使う
+RUN apt-get update -qq && \
+    apt-get install -y nodejs yarn mysql-client
 
-# Set working directory
+# 3. 作業ディレクトリ
 WORKDIR /app
 
-# Copy the Gemfile and Gemfile.lock
-COPY Gemfile* ./
-
-# Install the gems
+# 4. Gemfile / Gemfile.lock のコピーと bundle install
+COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-# Copy the rest of the application files
+# 5. アプリケーション全体をコピー
 COPY . .
 
-# Precompile the assets
-RUN bundle exec rake assets:precompile
+# 6. (フロントエンドのアセットがある場合はプリコンパイル)
+#    API-only の Rails なら不要
+# RUN bundle exec rake assets:precompile
 
-# Expose the port the app runs on
+# 7. ポートを公開 (Rails が立ち上がる 3000 番)
 EXPOSE 3000
 
-# Start the application
-CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+# 8. Rails サーバを起動するコマンド
+#    DB マイグレーションなどを起動前に実行したい場合は script にまとめるのもアリ
+CMD ["bash", "-c", "bundle exec rails db:migrate && bundle exec rails s -b 0.0.0.0 -p 3000"]
