@@ -1,19 +1,19 @@
 #version: '3.8'
 
 services:
-  nextjs:
-    build:
-      context: ../roulettepopup
-      dockerfile: Dockerfile
-    ports:
-      - "4000:4000"  # コンテナのポート 4000 をホストのポート 4000 にマッピング
-    volumes:
-      - ../roulettepopup:/app  # ホストのディレクトリをコンテナにマウント
-      - ../roulettepopup/.next:/app/.next  # ビルド済みの .next ディレクトリをマウント
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000/api  # Railsアプリケーションのポートを指定
-    depends_on:
-      - rails
+  #nextjs:
+  #  build:
+  #    context: ../roulettepopup
+  #    dockerfile: Dockerfile
+  #  ports:
+  #    - "4000:4000"  # コンテナのポート 4000 をホストのポート 4000 にマッピング
+  #  volumes:
+  #    - ../roulettepopup:/app  # ホストのディレクトリをコンテナにマウント
+  #    - ../roulettepopup/.next:/app/.next  # ビルド済みの .next ディレクトリをマウント
+  #  environment:
+  #    - NEXT_PUBLIC_API_URL=http://localhost:3000/api  # Railsアプリケーションのポートを指定
+  #  depends_on:
+  #    - rails
 
   rails:
     build:
@@ -25,8 +25,8 @@ services:
     volumes:
       - .:/app
     environment:
-      - DATABASE_DEV_USER=railsuser
-      - DATABASE_DEV_PASSWORD=railspassword
+      - DATABASE_DEV_USER=${DATABASE_DEV_USER}
+      - DATABASE_DEV_PASSWORD=${DATABASE_DEV_PASSWORD}
       - DATABASE_URL=mysql2://railsuser:railspassword@db:3306/plusonedb_development
     depends_on:
       - db
@@ -34,10 +34,10 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: plusonedb_development
-      MYSQL_USER: railsuser
-      MYSQL_PASSWORD: railspassword
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
