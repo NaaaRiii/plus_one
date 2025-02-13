@@ -1,10 +1,12 @@
 default: &default #アンカー
   adapter: mysql2
   encoding: utf8
-  #pool: 5
+  host: <%= ENV["RDS_ENDPOINT"] %>
+  port: 3306
+  database: plusonedb_production
   username: <%= ENV['DATABASE_DEV_USER'] %>
   password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
-  socket: /tmp/mysql.sock
+  #socket: /tmp/mysql.sock
 
 development:
   <<: *default #エイリアス・ハッシュのマージ
