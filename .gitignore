@@ -42,3 +42,7 @@
 /.rubocop.yml
 
 node_modules/
+
+/.MyKeyPairOne.pem
+
+/.task-definition.json
