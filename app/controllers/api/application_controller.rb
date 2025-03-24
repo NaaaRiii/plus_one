@@ -66,8 +66,6 @@ module Api
 
     private
 
-    # Cognito User Pool のリージョンとプールIDを環境変数から取得
-    # 例: AWS_REGION=ap-northeast-1, COGNITO_USER_POOL_ID=ap-northeast-1_xxxxxxxx
     COGNITO_REGION = ENV['AWS_REGION']
     COGNITO_USER_POOL_ID = ENV['COGNITO_USER_POOL_ID']
 

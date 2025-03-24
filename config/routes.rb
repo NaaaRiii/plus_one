@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   #get '/api/weekly_exp', to: 'activities#weekly_exp' 教訓
   #get '/api/daily_exp',  to: 'activities#daily_exp' 教訓
+  
+  get "/health", to: proc { [200, {}, ["OK"]] }
 
   resources :goals do
     member do
