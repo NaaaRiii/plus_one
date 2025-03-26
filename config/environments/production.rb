@@ -105,7 +105,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # 例: ALB のドメインが "rails-alb-xxxxxx.ap-northeast-1.elb.amazonaws.com" なら
-  config.hosts << "rails-alb-1866263660.ap-northeast-1.elb.amazonaws.com"
+  config.hosts << "rails-alb-1256781597.ap-northeast-1.elb.amazonaws.com"
 
   # もし Amplify のカスタムドメインや amplifyapp.com を使っているなら
   config.hosts << "main.d18nq8a8fxeby3.amplifyapp.com/"
