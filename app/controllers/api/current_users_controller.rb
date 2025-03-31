@@ -1,8 +1,8 @@
 module Api
   class CurrentUsersController < ApplicationController
-    include AuthHelper
+    #include AuthHelper
 
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
 
     def show
       if @current_user

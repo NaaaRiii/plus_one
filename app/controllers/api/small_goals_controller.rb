@@ -1,9 +1,9 @@
 module Api
   class SmallGoalsController < ApplicationController
     include DifficultyMultiplier
-    include AuthHelper
+    #include AuthHelper
 
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
     before_action :set_goal
 
     before_action :set_goal, only: [:index, :create, :complete]

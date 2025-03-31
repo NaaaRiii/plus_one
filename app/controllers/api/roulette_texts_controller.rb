@@ -1,8 +1,8 @@
 module Api
   class RouletteTextsController < ApplicationController
-    include AuthHelper
+    #include AuthHelper
 
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
     before_action :set_roulette_text, only: [:update, :destroy]
 
     def index

@@ -2,5 +2,8 @@
   "rubyLsp.formatter": "rubocop",
   "rubyLsp.rubyVersionManager": {
     "identifier": "rbenv"
-  }
+  },
+  "cSpell.words": [
+    "HEALTHCHECK"
+  ]
 }
