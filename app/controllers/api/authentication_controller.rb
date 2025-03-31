@@ -1,6 +1,6 @@
 module Api
   class AuthenticationController < ApplicationController
-    skip_before_action :authenticate_user, only: [:login]
+    skip_before_action :authenticate_user, only: [:login], except: [:health]
 
     def login
       Rails.logger.debug "Login request received with params: #{params.inspect}"

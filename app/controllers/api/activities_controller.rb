@@ -1,8 +1,8 @@
 module Api
   class ActivitiesController < ApplicationController
-    include AuthHelper
+    #include AuthHelper
     
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
 
     def weekly_exp
       # 今日の日付を基準に5日前から明日までの範囲を取得

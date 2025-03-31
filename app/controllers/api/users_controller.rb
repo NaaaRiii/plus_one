@@ -1,7 +1,7 @@
 module Api
   class UsersController < ApplicationController
     before_action :find_current_user
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
 
     def show
       if @current_user

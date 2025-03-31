@@ -1,6 +1,6 @@
 module Api
   class SessionsController < ApplicationController
-    include AuthHelper
+    #include AuthHelper
 
     def create
       user = User.find_by(email: params[:email])
