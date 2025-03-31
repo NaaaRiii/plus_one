@@ -62,7 +62,7 @@ require 'jwt'
 
 module Api
   class ApplicationController < ActionController::API
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
 
     private
 

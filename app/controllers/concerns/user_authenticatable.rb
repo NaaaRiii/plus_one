@@ -1,9 +1,9 @@
 module UserAuthenticatable
   extend ActiveSupport::Concern
-  include AuthHelper
+  #include AuthHelper
 
   included do
-    before_action :authenticate_user
+    before_action :authenticate_user, except: [:health]
   end
 
   class_methods do
