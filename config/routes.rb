@@ -1,21 +1,9 @@
 Rails.application.routes.draw do
-  #root                              "static_pages#home"
-  #get     "/signup",            to: "users#new"
-  #get     "/login",             to: "sessions#new"
-  #post    "/login",             to: "sessions#create"
-  #get     "/dashboard",         to: "dashboards#index"
-  #delete  "/logout",            to: "sessions#destroy"
-  #post    "/guest_login",       to: "guest_sessions#create"
-  #put '/goals/:id/complete', to: 'goals#complete', as: 'complete_goal'
-  #put     "/dashboard",         to: "dashboards#index"
-  #get "roulette_texts/:number", to: "roulette_texts#show"
-  #post "users/update_rank", to: "users#update_rank"
-  #get "/users/tickets", to: "users#tickets"
-
-  #get '/api/weekly_exp', to: 'activities#weekly_exp' 教訓
-  #get '/api/daily_exp',  to: 'activities#daily_exp' 教訓
   
-  get "/health", to: proc { [200, {}, ["OK"]] }
+  get "/health", to: proc {
+    Rails.logger.info "[HEALTHCHECK] accessed /health"
+    [200, {}, ["OK"]]
+  }
 
   resources :goals do
     member do
@@ -36,7 +24,6 @@ Rails.application.routes.draw do
     get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
     get 'daily_exp', to: 'activities#daily_exp'
-    #get 'today_exp', to: 'activities#today_exp'
 
     resources :current_users do
       member do
@@ -68,8 +55,6 @@ Rails.application.routes.draw do
       end
     end
 
-    # 個別の small_goal に対する独立したアクセスパス（/api/small_goals/:id など）は通常不要。
-    # small_goals に直接アクセスする場合（ネストされた親リソース（goal）を経由しない場合）は、そのようなルーティングが必要。
     get 'small_goals/:id', to: 'small_goals#show'
     put 'small_goals/:id', to: 'small_goals#update'
     delete 'small_goals/:id', to: 'small_goals#destroy'
