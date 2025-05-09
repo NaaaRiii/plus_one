@@ -10,11 +10,10 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'https://main.d18nq8a8fxeby3.amplifyapp.com/'  # Next.js の URL を許可
-
-    resource '*',
+    origins 'https://plusoneup.net', 'https://www.plusoneup.net'
+    resource '/api/*',
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head],
-      credentials: true  # 認証情報を含むリクエストも許可する場合
+      methods: %i[get post put patch delete options head],
+      credentials: true
   end
 end

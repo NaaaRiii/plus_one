@@ -4,8 +4,8 @@ FROM ruby:3.2.2
 # 2. パッケージのインストール
 #    - nodejs / yarn はアセットコンパイルやWebpackerを使うなら必要
 #    - mysql-client は DB マイグレーションで使う
-RUN apt-get update -qq && \
-		apt-get install -y nodejs yarn default-mysql-client
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 3. 作業ディレクトリ
 WORKDIR /app
