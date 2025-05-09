@@ -4,6 +4,7 @@
     "identifier": "rbenv"
   },
   "cSpell.words": [
-    "HEALTHCHECK"
+    "HEALTHCHECK",
+    "Webpacker"
   ]
 }
