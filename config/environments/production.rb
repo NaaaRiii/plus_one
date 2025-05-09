@@ -104,11 +104,10 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.hosts << "rails-alb-2146908755.ap-northeast-1.elb.amazonaws.com"
-
-  config.hosts << "main.d18nq8a8fxeby3.amplifyapp.com/"
+  config.hosts << "plusoneup.net"
+  config.hosts << "www.plusoneup.net"
 
   config.host_authorization = { 
-    exclude: -> (request) { request.path == '/health' }
+    exclude: ->(request) { request.path == '/health' }
   }
 end
