@@ -108,6 +108,6 @@ Rails.application.configure do
   config.hosts << "www.plusoneup.net"
 
   config.host_authorization = { 
-    exclude: ->(request) { request.path == '/health' }
+    exclude: ->(request) { request.path == '/api/health' }
   }
 end

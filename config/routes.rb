@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
-  
-  get "/health", to: proc {
-    Rails.logger.info "[HEALTHCHECK] accessed /health"
+  get "/api/health", to: proc {
     [200, {}, ["OK"]]
   }
 
@@ -18,12 +16,15 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    post 'login', to: 'authentication#login'
+    #post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
-    delete 'logout', to: 'sessions#destroy'
-    get 'check_login', to: 'authentication#check_login'
+    #delete 'logout', to: 'sessions#destroy'
+    #get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
     get 'daily_exp', to: 'activities#daily_exp'
+    post   'login',  to: 'sessions#create'
+    delete 'logout', to: 'sessions#destroy'
+    get    'current_user', to: 'sessions#show'
 
     resources :current_users do
       member do
