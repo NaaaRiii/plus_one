@@ -3,7 +3,7 @@ module Api
     include DifficultyMultiplier
     #include AuthHelper
 
-    before_action :authenticate_user, except: [:health]
+    before_action :authenticate_user, except: [:health], unless: -> { request.options? }
     before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
     def index
