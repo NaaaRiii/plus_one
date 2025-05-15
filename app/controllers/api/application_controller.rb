@@ -77,41 +77,83 @@
 #  end
 #end
 
-
 module Api
   class ApplicationController < ActionController::API
-    # Cookie＋セッションを使うために必要なモジュールを include
-    include ActionController::Cookies
-    include ActionController::RequestForgeryProtection
+    # トークン認証を必要としないエンドポイントを列挙
+    #skip_before_action :authenticate_user, only: [:health]  
 
-    # CSRF トークンをチェック（SPA＋Cookie なら with: :null_session でも可）
-    protect_from_forgery with: :exception
-
-    before_action :authenticate_user!
+    before_action :authenticate_user, unless: -> { request.options? }
 
     private
 
-    # セッションから user_id を引いて current_user をセット
-    def current_user
-      @current_user ||= User.find_by(id: session[:user_id])
-    end
-    helper_method :current_user
+    # 環境変数
+    COGNITO_REGION         = ENV.fetch('AWS_REGION')
+    COGNITO_USER_POOL_ID   = ENV.fetch('COGNITO_USER_POOL_ID')
+    COGNITO_APP_CLIENT_ID  = ENV.fetch('COGNITO_APP_CLIENT_ID')
 
-    # ログイン済みかチェック。未ログインなら 401 を返す
-    def authenticate_user!
-      unless current_user
-        render json: { error: 'ログインが必要です' }, status: :unauthorized
+    # ユーザー認証
+    def authenticate_user
+      Rails.logger.info ">> Authorization: #{request.headers['Authorization']}"
+      token = extract_token_from_header
+      return render_unauthorized unless token
+
+      begin
+        payload = decode_cognito_jwt(token)
+
+        return render_unauthorized unless payload['token_use'] == 'access'
+
+        @current_user = User.find_by!(cognito_sub: payload['sub'])
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'User not found' }, status: :unauthorized
+      rescue JWT::ExpiredSignature
+        render json: { error: 'Token has expired' }, status: :unauthorized
+      rescue JWT::DecodeError, JWT::VerificationError => e
+        Rails.logger.error "[JWT] #{e.class}: #{e.message}"
+        render json: { error: 'Invalid token' }, status: :unauthorized
       end
     end
 
-    # コントローラやテストから直接ログインさせたい場合に使うヘルパー
-    def sign_in!(user)
-      session[:user_id] = user.id
+    def render_unauthorized
+      render json: { error: 'Unauthorized' }, status: :unauthorized
     end
 
-    def sign_out!
-      session.delete(:user_id)
-      @current_user = nil
+    def extract_token_from_header
+      header = request.headers['Authorization']
+      return nil unless header&.start_with?('Bearer ')
+      header.split(' ', 2).last
     end
+
+    def decode_cognito_jwt(token)
+      issuer = "https://cognito-idp.#{COGNITO_REGION}.amazonaws.com/#{COGNITO_USER_POOL_ID}"
+      jwks   = Rails.cache.fetch('cognito_jwks', expires_in: 12.hours) do
+        uri   = URI("#{issuer}/.well-known/jwks.json")
+        JSON.parse(Net::HTTP.get(uri))['keys']
+      end
+
+      # ヘッダだけデコードして kid を抜く
+      unverified_header = JWT.decode(token, nil, false).last
+      jwk_data          = jwks.find { |k| k['kid'] == unverified_header['kid'] }
+      raise JWT::VerificationError, 'Unknown kid' unless jwk_data
+
+      # JWK → 公開鍵
+      public_key = JWT::JWK.import(jwk_data).public_key
+
+      # JWT の検証
+      JWT.decode(
+        token,
+        public_key,
+        true,
+        {
+          algorithm:    'RS256',
+          iss:          issuer,
+          verify_iss:   true,
+          aud:          COGNITO_APP_CLIENT_ID,
+          verify_aud:   true
+        }
+      ).first
+    end
+
+    # コントローラ／ビュー側で current_user を参照したいなら helper_method を宣言
+    attr_reader :current_user
   end
 end

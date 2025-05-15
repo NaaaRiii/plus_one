@@ -3,7 +3,7 @@ module UserAuthenticatable
   #include AuthHelper
 
   included do
-    before_action :authenticate_user, except: [:health]
+    before_action :authenticate_user, except: [:health], unless: -> { request.options? }
   end
 
   class_methods do

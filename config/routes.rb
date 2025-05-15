@@ -22,9 +22,9 @@ Rails.application.routes.draw do
     #get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
     get 'daily_exp', to: 'activities#daily_exp'
-    post   'login',  to: 'sessions#create'
-    delete 'logout', to: 'sessions#destroy'
-    get    'current_user', to: 'sessions#show'
+    #post   'login',  to: 'sessions#create'
+    #delete 'logout', to: 'sessions#destroy'
+    #get    'current_user', to: 'sessions#show'
 
     resources :current_users do
       member do

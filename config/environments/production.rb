@@ -110,4 +110,6 @@ Rails.application.configure do
   config.host_authorization = { 
     exclude: ->(request) { request.path == '/api/health' }
   }
+
+  config.log_level = :debug
 end
