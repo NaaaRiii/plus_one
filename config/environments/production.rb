@@ -106,10 +106,12 @@ Rails.application.configure do
 
   config.hosts << "plusoneup.net"
   config.hosts << "www.plusoneup.net"
+  config.hosts << "api-plusoneup.com"
 
   config.host_authorization = { 
     exclude: ->(request) { request.path == '/api/health' }
   }
 
+  config.logger = ActiveSupport::Logger.new($stdout)
   config.log_level = :debug
 end
