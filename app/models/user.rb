@@ -145,24 +145,24 @@ class User < ApplicationRecord
   end
 
   # プレイチケットを使う
-  def use_play_ticket
-    if play_tickets.positive?
-      decrement!(:play_tickets)
-      true
-    else
-      false
-    end
-  end
+  #def use_play_ticket
+  #  if play_tickets.positive?
+  #    decrement!(:play_tickets)
+  #    true
+  #  else
+  #    false
+  #  end
+  #end
 
   # 編集チケットを使う
-  def use_edit_ticket
-    if edit_tickets.positive?
-      decrement!(:edit_tickets)
-      true
-    else
-      false
-    end
-  end
+  #def use_edit_ticket
+  #  if edit_tickets.positive?
+  #    decrement!(:edit_tickets)
+  #    true
+  #  else
+  #    false
+  #  end
+  #end
 
   protected
 
