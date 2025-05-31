@@ -48,8 +48,13 @@ module Api
         current_user.total_exp = (current_user.total_exp || 0) + total_exp_gained
         current_user.save
 
+        new_rank  = current_user.calculate_rank
+        Rails.logger.debug ">>> complete action: current_user.rank=#{new_rank}"
+      
         current_user.update_tickets
-  
+      
+        Rails.logger.debug "<<< after update_tickets: tickets=#{current_user.reload.tickets}"
+        
         Activity.create(
           user: current_user,
           goal: @goal,

@@ -3,7 +3,7 @@ module Api
     #include AuthHelper
 
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
-    before_action :set_roulette_text, only: [:update, :destroy]
+    before_action :set_roulette_text, only: [:destroy]
 
     def index
       @roulette_texts = current_user.roulette_texts
@@ -36,8 +36,7 @@ module Api
     def tickets
       if current_user
         render json: {
-          play_tickets: current_user.play_tickets,
-          edit_tickets: current_user.edit_tickets
+          play_tickets: current_user.play_tickets
         }
       else
         render json: { error: "User not authenticated" }, status: :unauthorized
@@ -52,17 +51,17 @@ module Api
       end
     end
 
-    def update    
-      if current_user.use_edit_ticket
-        if @roulette_text.update(roulette_text_params)
-          render json: { roulette_text: @roulette_text, edit_tickets: current_user.edit_tickets }
-        else
-          render json: @roulette_text.errors, status: :unprocessable_entity
-        end
-      else
-        render json: { error: "編集チケットが足りません" }, status: :forbidden
-      end
-    end
+    #def update
+    #  if current_user.use_edit_ticket
+    #    if @roulette_text.update(roulette_text_params)
+    #      render json: { roulette_text: @roulette_text, edit_tickets: current_user.edit_tickets }
+    #    else
+    #      render json: @roulette_text.errors, status: :unprocessable_entity
+    #    end
+    #  else
+    #    render json: { error: "編集チケットが足りません" }, status: :forbidden
+    #  end
+    #end
 
     private
   
