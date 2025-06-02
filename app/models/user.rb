@@ -9,6 +9,8 @@ class User < ApplicationRecord
 
   attr_accessor :remember_token, :activation_token
 
+  validates :tickets, numericality: { greater_than_or_equal_to: 0 }
+
   before_save   :downcase_email
   before_create :create_activation_digest
   validates :name,  presence: true, length: { maximum: 50 }
@@ -101,38 +103,52 @@ class User < ApplicationRecord
   end
 
   def update_rank
-    new_rank = calculate_rank
+    new_rank  = calculate_rank
     last_rank = last_roulette_rank || 0
-  
-    Rails.logger.debug "Updating rank: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{tickets}"
-  
-    return unless new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
 
-    self.last_roulette_rank = new_rank
-    save
+    old_tens = (last_rank / 10).to_i
+    new_tens = (new_rank / 10).to_i
+    return unless new_tens > old_tens
+
+    with_lock do
+      self.last_roulette_rank = new_rank
+      save!
+    end
+
+    Rails.logger.debug "Rank updated: new_rank=#{new_rank}, last_rank=#{last_rank}"
   end
 
   def update_tickets
-    new_rank = calculate_rank
+    new_rank  = calculate_rank
     last_rank = last_roulette_rank || 0
-  
-    return unless new_rank >= 10 && (new_rank / 10).to_i > (last_rank / 10).to_i
 
-    self.tickets += 1
-    save
-  
+    # 十の位だけを比較して、進んでいればその差分だけチケットを追加
+    old_tens = (last_rank / 10).to_i
+    new_tens = (new_rank / 10).to_i
+    return unless new_tens > old_tens
+
+    with_lock do
+      # 2 → 4 のように十の位が2つ飛んでいれば+2、自動計算
+      self.tickets            += (new_tens - old_tens)
+      self.last_roulette_rank  = new_rank
+      save!
+    end
+
     Rails.logger.debug "Tickets incremented: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
   end
 
-  # チケットを使う
-  #def use_ticket
-  #  if tickets.positive?
-  #    self.tickets -= 1
-  #    save
-  #  else
-  #    false
-  #  end
-  #end
+  # チケットを 1 枚消費。成功なら true, 枚数不足なら false を返す
+  def use_ticket
+    with_lock do                    # ① 同一レコードで行ロック
+      return false unless tickets.positive?
+
+      # decrement! は UPDATE users SET tickets = tickets - 1, updated_at = NOW() ...
+      decrement!(:tickets)          # ② 成功時は true を返す
+    end
+    true
+  rescue ActiveRecord::RecordInvalid
+    false                           # validation に引っかかった場合も false
+  end
 
   # アカウントを有効にする
   def activate
