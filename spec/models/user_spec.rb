@@ -128,9 +128,9 @@ RSpec.describe User, type: :model do
       end
 
       it '1 回目は +1, 2 回目は変化なし' do
-        expect {
+        expect do
           user.update_tickets
-        }.to change { user.reload.tickets }.by(1)
+        end.to change { user.reload.tickets }.by(1)
 
         # 2 回目の呼び出しでは tickets は増えない
         expect do
@@ -188,9 +188,9 @@ RSpec.describe User, type: :model do
       user = User.create!(base_attrs.merge(tickets: 5, last_roulette_rank: 9))
       allow(user).to receive(:calculate_rank).and_return(10)
 
-      expect {
+      expect do
         user.update_rank
-      }.not_to change { user.reload.tickets }    # ← tickets 不変
+      end.not_to(change { user.reload.tickets })
       expect(user.last_roulette_rank).to eq 10   # rank は更新
     end
   end
