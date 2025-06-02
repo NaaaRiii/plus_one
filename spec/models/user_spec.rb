@@ -118,4 +118,112 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe '#update_tickets / #update_rank の冪等性' do
+    context '同ランクで 2 回呼んでも 2 回目以降 tickets は増えない' do
+      let!(:user) { User.create!(base_attrs.merge(last_roulette_rank: 9)) }
+
+      before do
+        allow(user).to receive(:calculate_rank).and_return(10)
+      end
+
+      it '1 回目は +1, 2 回目は変化なし' do
+        expect {
+          user.update_tickets
+        }.to change { user.reload.tickets }.by(1)
+
+        # 2 回目の呼び出しでは tickets は増えない
+        expect do
+          user.update_tickets
+        end.not_to(change { user.reload.tickets })
+      end
+
+      it 'update_rank も同じく 2 回目は last_roulette_rank を更新しない' do
+        expect do
+          user.update_rank
+        end.to change { user.reload.last_roulette_rank }.from(9).to(10)
+
+        # 2 回目の呼び出しでは変化なし
+        expect do
+          user.update_rank
+        end.not_to(change { user.reload.last_roulette_rank })
+      end
+    end
+  end
+
+  describe '#update_tickets の同時実行' do
+    it '2 スレッド同時でも tickets は +1 で止まる' do
+      user = User.create!(base_attrs.merge(last_roulette_rank: 9))
+
+      # ★ どのインスタンスでも rank=10 を返すようにスタブ
+      allow_any_instance_of(User).to receive(:calculate_rank).and_return(10)
+
+      threads = 2.times.map do
+        Thread.new { User.find(user.id).update_tickets }
+      end
+      threads.each(&:join)
+
+      user.reload
+      expect(user.tickets).to eq 1               # 1 枚だけ付与
+      expect(user.last_roulette_rank).to eq 10   # rank は更新
+    end
+  end
+
+  describe '#use_ticket の負数防止' do
+    it 'tickets が 0 のとき use_ticket は false を返し tickets はそのまま' do
+      user = User.create!(base_attrs.merge(tickets: 0))
+      expect(user.use_ticket).to be_falsey
+      expect(user.reload.tickets).to eq(0)
+    end
+
+    it 'tickets が正の場合 use_ticket は true を返し tickets を -1' do
+      user = User.create!(base_attrs.merge(tickets: 2))
+      expect(user.use_ticket).to be_truthy
+      expect(user.reload.tickets).to eq(1)
+    end
+  end
+
+  describe '#update_rank は tickets を増やさない' do
+    it 'update_rank は tickets を一切変更しない' do
+      user = User.create!(base_attrs.merge(tickets: 5, last_roulette_rank: 9))
+      allow(user).to receive(:calculate_rank).and_return(10)
+
+      expect {
+        user.update_rank
+      }.not_to change { user.reload.tickets }    # ← tickets 不変
+      expect(user.last_roulette_rank).to eq 10   # rank は更新
+    end
+  end
+
+  describe '#calculate_rank の境界値' do
+    let(:user) { User.create!(base_attrs.merge(total_exp: exp)) }
+
+    context 'total_exp = 4 (<5)' do
+      let(:exp) { 4 }
+      it 'rank は 1' do
+        expect(user.calculate_rank).to eq(1)
+      end
+    end
+
+    context 'total_exp = 5 (ちょうど 5 の閾値)' do
+      let(:exp) { 5 }
+      it 'rank は 2' do
+        expect(user.calculate_rank).to eq(2)
+      end
+    end
+
+    context 'total_exp = 14 (5 ≤ 14 < 15)' do
+      let(:exp) { 14 }
+      it 'rank は 2' do
+        expect(user.calculate_rank).to eq(2)
+      end
+    end
+
+    context 'total_exp = 15 (ちょうど 15 の閾値)' do
+      let(:exp) { 15 }
+      it 'rank は 3' do
+        expect(user.calculate_rank).to eq(3)
+      end
+    end
+  end
 end
