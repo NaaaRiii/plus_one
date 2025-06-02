@@ -103,38 +103,31 @@ class User < ApplicationRecord
   end
 
   def update_rank
-    new_rank  = calculate_rank
-    last_rank = last_roulette_rank || 0
-
-    old_tens = (last_rank / 10).to_i
-    new_tens = (new_rank / 10).to_i
-    return unless new_tens > old_tens
-
     with_lock do
+      new_rank = calculate_rank
+      next if (new_rank / 10) <= ((last_roulette_rank || 0) / 10)
+
       self.last_roulette_rank = new_rank
       save!
     end
-
-    Rails.logger.debug "Rank updated: new_rank=#{new_rank}, last_rank=#{last_rank}"
   end
 
   def update_tickets
-    new_rank  = calculate_rank
-    last_rank = last_roulette_rank || 0
-
-    # 十の位だけを比較して、進んでいればその差分だけチケットを追加
-    old_tens = (last_rank / 10).to_i
-    new_tens = (new_rank / 10).to_i
-    return unless new_tens > old_tens
-
     with_lock do
-      # 2 → 4 のように十の位が2つ飛んでいれば+2、自動計算
-      self.tickets            += (new_tens - old_tens)
+      new_rank  = calculate_rank
+      new_tens  = new_rank / 10
+      old_tens  = (last_roulette_rank || 0) / 10
+      inc_amount = new_tens - old_tens          # ★ ブロック内で定義
+  
+      return if inc_amount <= 0                 # 増分なしなら何もしない
+  
+      self.tickets            += inc_amount
       self.last_roulette_rank  = new_rank
-      save!
+      save!                                        # ← ここでコミット
+  
+      # ★ 参照もブロック内に置けば NameError は起きない
+      Rails.logger.debug "Tickets +#{inc_amount} (rank #{last_roulette_rank})"
     end
-
-    Rails.logger.debug "Tickets incremented: new_rank=#{new_rank}, last_rank=#{last_rank}, tickets=#{self.tickets}"
   end
 
   # チケットを 1 枚消費。成功なら true, 枚数不足なら false を返す
