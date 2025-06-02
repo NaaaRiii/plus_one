@@ -36,7 +36,7 @@ module Api
     def tickets
       if current_user
         render json: {
-          play_tickets: current_user.play_tickets
+          tickets: current_user.tickets
         }
       else
         render json: { error: "User not authenticated" }, status: :unauthorized
@@ -44,12 +44,12 @@ module Api
     end
 
     def spin
-      if current_user.use_play_ticket
-        render json: { message: "ルーレットを回しました", play_tickets: current_user.play_tickets }
+      if current_user.use_ticket
+        render json: { message: "ルーレットを回しました", tickets: current_user.tickets }
       else
-        render json: { error: "プレイチケットが足りません" }, status: :forbidden
+        render json: { error: "チケット不足", tickets: current_user.tickets }, status: :forbidden
       end
-    end
+    end    
 
     #def update
     #  if current_user.use_edit_ticket
@@ -75,7 +75,7 @@ module Api
     end
 
     def roulette_text_params
-      params.require(:roulette_text).permit(:text)
+      params.require(:roulette_text).permit(:number, :text)
     end
   end
 end

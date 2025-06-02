@@ -32,10 +32,12 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :roulette_texts, param: :number do
-      collection do
-        get :tickets
-        patch :spin
+    namespace :api do
+      resources :roulette_texts, param: :number, only: %i[index show create destroy] do
+        collection do
+          get :tickets
+          patch :spin
+        end
       end
     end
 
