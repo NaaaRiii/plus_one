@@ -25,7 +25,6 @@ module Api
         response_data = {
           id: @current_user.id,
           name: @current_user.name,
-          #currentTitle: @current_user.current_title,
           email: @current_user.email,
           totalExp: @current_user.total_exp,
           rank: @current_user.calculate_rank,
