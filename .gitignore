@@ -37,6 +37,8 @@
 
 /.env
 
+/.env.development
+
 /.rubocop_todo.yml
 
 /.rubocop.yml
