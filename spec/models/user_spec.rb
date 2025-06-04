@@ -1,7 +1,7 @@
 require 'rails_helper'
+require 'rspec-parameterized'
 
 RSpec.describe User, type: :model do
-  # 共通で使うユーザーの基本属性
   let(:base_attrs) do
     {
       name: 'TestUser',
@@ -10,6 +10,8 @@ RSpec.describe User, type: :model do
       tickets: 0
     }
   end
+
+  let(:user) { User.create!(base_attrs.merge(total_exp: 0)) }
 
   describe '#update_tickets' do
     context '9 → 10 を跨いだ場合' do
@@ -223,6 +225,92 @@ RSpec.describe User, type: :model do
       let(:exp) { 15 }
       it 'rank は 3' do
         expect(user.calculate_rank).to eq(3)
+      end
+    end
+  end
+
+  # ─────────── add_exp ───────────
+  describe '#add_exp' do
+    it '指定量だけ total_exp を加算し DB に保存する' do
+      expect do
+        user.add_exp(42)
+      end.to change { user.reload.total_exp }.by(42)
+    end
+  end
+
+  # ─────────── calculate_rank_up_experience ───────────
+  describe '#calculate_rank_up_experience' do    
+    subject(:table) { user.calculate_rank_up_experience(25) }
+    # （max_rank=25 程度まで作っておけば、21→22 までチェックできます）
+
+    it '先頭 2 要素は [0, 5] になる' do
+      expect(table[0..1]).to eq [0, 5]
+    end
+
+    it 'rank2→3 の閾値差は +10 になる' do
+      # table[1] == 5, table[2] == 15
+      expect(table[2] - table[1]).to eq 10
+    end
+
+    it 'rank1→2 の閾値差は +5 になる' do
+      expect(table[1] - table[0]).to eq 5
+    end
+
+    it 'rank6→7 の閾値差は +15 になる' do
+      # table[5] は rank6 の閾値 (45), table[6] は rank7 の閾値 (60)
+      expect(table[6] - table[5]).to eq 15
+    end
+
+    it 'rank11→12 の閾値差は +20 になる' do
+      # table[11] は rank11 の閾値 (120), table[12] は rank12 の閾値 (140)
+      expect(table[12] - table[11]).to eq 20
+    end
+
+    it 'rank16→17 の閾値差は +25 になる' do
+      # table[16] == 220, table[17] == 245
+      expect(table[17] - table[16]).to eq 25
+    end
+
+    it 'rank21→22 の閾値差は +30 になる' do
+      # table[21] == 345, table[22] == 375
+      expect(table[22] - table[21]).to eq 30
+    end
+  end
+
+  # ─────────── calculate_rank (境界値 & 加算後挙動) ───────────
+  describe '#calculate_rank' do
+    context '境界値チェック' do
+      where(:exp, :expected_rank) do
+        [
+          [0, 1],      # < 5
+          [4.9, 1],
+          [5, 2],      # ちょうど 5
+          [14.9, 2],
+          [15, 3],     # ちょうど 15
+          [24.9, 3],
+          [25, 4],
+          [34.9, 4],
+          [35, 5],
+          [44.9, 5],
+          [45, 6],
+          [59.9, 6],
+          [60, 7],
+          [74.9, 7],
+          [75, 8]
+        ]
+      end
+
+      with_them do
+        it { expect(User.new(total_exp: exp).calculate_rank).to eq expected_rank }
+      end
+    end
+
+    context 'EXP を加算したあと rank が上がること' do
+      it 'add_exp でランク 1 → 2 になる' do
+        expect(user.calculate_rank).to eq 1   # 初期値 0 EXP
+
+        user.add_exp(5)                       # +5 EXP
+        expect(user.calculate_rank).to eq 2   # ランクアップ
       end
     end
   end

@@ -3,13 +3,13 @@ require 'uri'
 
 module Api
   class ApplicationController < ActionController::API
-    # トークン認証を必要としないエンドポイントを列挙
-    #skip_before_action :authenticate_user, only: [:health]  
-
-    before_action :authenticate_user, unless: -> { request.options? }
 
     private
-
+  
+    #def skip_auth_in_dev_or_test?
+    #  Rails.env.development? || Rails.env.test?
+    #end
+  
     # 環境変数
     COGNITO_REGION         = ENV.fetch('AWS_REGION')
     COGNITO_USER_POOL_ID   = ENV.fetch('COGNITO_USER_POOL_ID')
@@ -17,6 +17,21 @@ module Api
 
     # ユーザー認証
     def authenticate_user
+      
+      token = request.headers['Authorization']&.split&.last
+
+      # ─── ① 開発用ダミートークンを検出したら、その場で通す ───
+      if Rails.env.development? && token == ENV['DUMMY_AUTH_TOKEN']
+        @current_user = User.find_or_create_by!(email: 'dummy@example.com') do |u|
+          u.name     = 'Dummy User'              # ← name を必ずセット
+          u.password = SecureRandom.hex(8)        # 必要なら他の属性も
+        end
+        return
+      end
+
+      Rails.logger.debug "[AUTH] called in #{self.class}##{action_name}"
+
+      
       Rails.logger.debug ">> request.env[HTTP_AUTHORIZATION]: #{request.env['HTTP_AUTHORIZATION'].inspect}"
 
       raw = request.headers['Authorization'] || request.env['HTTP_AUTHORIZATION']
@@ -35,7 +50,6 @@ module Api
           u.email    = payload['email']
           u.password = SecureRandom.hex(16)
         end
-
       rescue ActiveRecord::RecordNotFound
         Rails.logger.debug ">> [Auth] Token expired"
         render json: { error: 'User not found' }, status: :unauthorized
@@ -55,6 +69,7 @@ module Api
     def extract_token_from_header
       raw = request.headers['Authorization'] || request.env['HTTP_AUTHORIZATION']
       return nil unless raw&.start_with?('Bearer ')
+
       raw.split(' ', 2).last
     end
 
