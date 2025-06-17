@@ -74,6 +74,63 @@ RSpec.describe Api::ActivitiesController, type: :controller do
         tomorrow_exp = json_response.find { |day| day['date'] == formatted(end_date) }['exp']
         expect(tomorrow_exp).to eq(400)
       end
+
+      it '日付フォーマットが正しいこと ("Mon, Jan 01" 形式)' do
+        get :weekly_exp
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        date_regex = /\A[A-Z][a-z]{2}, [A-Z][a-z]{2,} \d{2}\z/
+        json_response.each do |day|
+          expect(day['date']).to match(date_regex)
+        end
+      end
+
+      it '活動がない日のexpが0として返されること' do
+        get :weekly_exp
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        # 2日前と4日前は活動データを作っていないので0になるはず
+        two_days_ago = formatted(today - 2.days)
+        four_days_ago = formatted(today - 4.days)
+
+        two_days_ago_exp = json_response.find { |day| day['date'] == two_days_ago }['exp']
+        four_days_ago_exp = json_response.find { |day| day['date'] == four_days_ago }['exp']
+
+        expect(two_days_ago_exp).to eq(0)
+        expect(four_days_ago_exp).to eq(0)
+      end
+
+      it '活動がある日のexpが正しく合計されること' do
+        # 同じ日に複数の活動がある場合のテスト
+        create(:activity,
+               user: user,
+               completed_at: Time.zone.local(today.year, today.month, today.day, 15, 0, 0), # 15:00に設定
+               exp_gained: 150,
+               goal: create(:goal, user: user))
+
+        get :weekly_exp
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        today_exp = json_response.find { |day| day['date'] == formatted(today) }['exp']
+
+        # 今日の活動の合計 (100 + 150 = 250)
+        expect(today_exp).to eq(250)
+      end
+    end
+
+    context '未認証ユーザーの場合' do
+      before do
+        # 認証モックを解除
+        allow(controller).to receive(:authenticate_user).and_call_original
+      end
+
+      it '401 Unauthorizedが返されること' do
+        get :weekly_exp
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end
