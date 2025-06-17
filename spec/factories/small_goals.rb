@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :small_goal do
     title { "My Small Goal" }
     difficulty { "難しい" }
-    deadline { Date.today + 10.days }
+    deadline { Date.today + 5.days }
     goal
 
     transient do
