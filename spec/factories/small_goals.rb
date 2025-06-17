@@ -3,7 +3,8 @@ FactoryBot.define do
     association :goal
     title       { 'Small Goal' }
     difficulty  { 'Easy' }
-    deadline    { nil }
+    deadline  { 2.days.from_now }
+    completed { false }
 
     transient do
       tasks_count { 1 } # デフォルトで1つのタスクを作成
