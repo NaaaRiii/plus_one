@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :task do
-    content { "Task content here" }
+    content { "Task Content" }
     completed { false } # 初期状態で未完了とする
-    small_goal
+    association :small_goal
   end
 end
