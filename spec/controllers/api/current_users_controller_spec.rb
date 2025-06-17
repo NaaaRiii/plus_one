@@ -99,7 +99,7 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
       # tasks
       expect(json['tasks'].map { |t| t['id'] }).to include task.id
       # rouletteTexts
-      expect(json['rouletteTexts'].map { |rt| rt['id'] }).to include rt.id
+      expect(json['rouletteTexts'].map { |rt_json| rt_json['id'] }).to include rt.id
       # tickets
       expect(json['tickets']).to eq 7
     end    
