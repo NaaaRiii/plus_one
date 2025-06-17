@@ -11,8 +11,10 @@ class Task < ApplicationRecord
   end
 
   def mark_as_completed
-    update(completed: true)
+    return false unless update(completed: true)
+    
     user.add_exp(exp_for_task) # タスクの完了時に経験値を加算
+    true
   end
 
   def exp_for_task

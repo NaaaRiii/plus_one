@@ -42,22 +42,40 @@ RSpec.describe Task, type: :model do
 
         expect(task.user).to eq(user)
       end
+
+      it 'returns nil when small_goal is nil' do
+        task = build(:task, small_goal: nil)
+        expect(task.user).to be_nil
+      end
     end
 
     describe '#mark_as_completed' do
+      let(:user) { create(:user, total_exp: 0) }
+      let(:goal) { create(:goal, user: user) }
+      let(:small_goal) { create(:small_goal, goal: goal) }
+      let(:task) { create(:task, small_goal: small_goal) }
+
       it 'marks the task as completed' do
-        task = create(:task)
         task.mark_as_completed
         expect(task.completed).to be_truthy
       end
 
       it 'adds experience points to the user' do
-        user = create(:user, total_exp: 0)
-        goal = create(:goal, user: user)
-        small_goal = create(:small_goal, goal: goal)
-        task = create(:task, small_goal: small_goal)
-
         expect { task.mark_as_completed }.to change { user.reload.total_exp }.by(task.exp_for_task)
+      end
+
+      context 'when update fails' do
+        before do
+          allow(task).to receive(:update).and_return(false)
+        end
+
+        it 'returns false' do
+          expect(task.mark_as_completed).to be false
+        end
+
+        it 'does not add experience points to the user' do
+          expect { task.mark_as_completed }.not_to(change { user.reload.total_exp })
+        end
       end
     end
 
