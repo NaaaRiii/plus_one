@@ -12,7 +12,8 @@ module Api
     end
 
     def show
-      if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
+      #if (@goal = current_user.goals.includes(small_goals: :tasks).find(params[:id]))
+      if @goal
         render json: @goal.to_json(include: { small_goals: { include: :tasks } }, methods: [:completed_time])
       else
         render json: { error: "Goal not found" }, status: :not_found
