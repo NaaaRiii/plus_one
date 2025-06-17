@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :small_goal do
-    title { "My Small Goal" }
-    difficulty { "難しい" }
-    deadline { Date.today + 5.days }
-    goal
+    association :goal
+    title       { 'Small Goal' }
+    difficulty  { 'Easy' }
+    deadline    { nil }
 
     transient do
       tasks_count { 1 } # デフォルトで1つのタスクを作成
@@ -18,5 +18,7 @@ FactoryBot.define do
         small_goal.tasks.clear
       end
     end
+
+    
   end
 end
