@@ -13,6 +13,161 @@ RSpec.describe User, type: :model do
 
   let(:user) { User.create!(base_attrs.merge(total_exp: 0)) }
 
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      expect(build(:user)).to be_valid
+    end
+
+    it 'is invalid without a name' do
+      user = build(:user, name: nil)
+      expect(user).not_to be_valid
+      expect(user.errors[:name]).to include("can't be blank")
+    end
+
+    it 'is invalid with a name that is too long' do
+      user = build(:user, name: 'a' * 51)
+      expect(user).not_to be_valid
+      expect(user.errors[:name]).to include('is too long (maximum is 50 characters)')
+    end
+
+    it 'is invalid without an email' do
+      user = build(:user, email: nil)
+      expect(user).not_to be_valid
+      expect(user.errors[:email]).to include("can't be blank")
+    end
+
+    it 'is invalid with an email that is too long' do
+      user = build(:user, email: 'a' * 256 + '@example.com')
+      expect(user).not_to be_valid
+      expect(user.errors[:email]).to include('is too long (maximum is 255 characters)')
+    end
+
+    it 'is invalid with an invalid email format' do
+      user = build(:user, email: 'invalid_email')
+      expect(user).not_to be_valid
+      expect(user.errors[:email]).to include('is invalid')
+    end
+
+    it 'is invalid with a duplicate email' do
+      create(:user, email: 'test@example.com')
+      user = build(:user, email: 'test@example.com')
+      expect(user).not_to be_valid
+      expect(user.errors[:email]).to include('has already been taken')
+    end
+
+    it 'is invalid with a password that is too short' do
+      user = build(:user, password: 'a' * 5)
+      expect(user).not_to be_valid
+      expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
+    end
+
+    it 'is valid when updating without changing password' do
+      user = create(:user)
+      user.name = "New Name"
+      expect(user).to be_valid
+    end
+
+    it 'is invalid with negative tickets' do
+      user = build(:user, tickets: -1)
+      expect(user).not_to be_valid
+      expect(user.errors[:tickets]).to include('must be greater than or equal to 0')
+    end
+  end
+
+  describe 'callbacks' do
+    it 'downcases email before saving' do
+      user = create(:user, email: 'TEST@EXAMPLE.COM')
+      expect(user.email).to eq('test@example.com')
+    end
+
+    it 'creates activation digest before creating' do
+      user = build(:user)
+      expect(user.activation_digest).to be_nil
+      user.save
+      expect(user.activation_digest).not_to be_nil
+    end
+
+    it 'creates default roulette texts after creating' do
+      user = create(:user)
+      expect(user.roulette_texts.count).to eq(12)
+      expect(user.roulette_texts.first.text).to eq('5分お散歩をする')
+    end
+  end
+
+  describe 'authentication methods' do
+    describe '#authenticated?' do
+      it 'returns false for nil digest' do
+        user = create(:user)
+        expect(user.authenticated?(:remember, '')).to be false
+      end
+
+      it 'returns true for valid token' do
+        user = create(:user)
+        user.remember
+        expect(user.authenticated?(:remember, user.remember_token)).to be true
+      end
+    end
+
+    describe '#remember' do
+      it 'sets remember token and digest' do
+        user = create(:user)
+        user.remember
+        expect(user.remember_token).not_to be_nil
+        expect(user.remember_digest).not_to be_nil
+      end
+    end
+
+    describe '#forget' do
+      it 'clears remember digest' do
+        user = create(:user)
+        user.remember
+        expect(user.remember_digest).not_to be_nil
+        user.forget
+        expect(user.remember_digest).to be_nil
+      end
+    end
+
+    describe '#session_token' do
+      it 'returns remember digest if exists' do
+        user = create(:user)
+        user.remember
+        expect(user.session_token).to eq(user.remember_digest)
+      end
+
+      it 'creates new remember digest if not exists' do
+        user = create(:user)
+        expect(user.session_token).not_to be_nil
+      end
+    end
+
+    describe '#activate' do
+      it 'activates user and sets activated_at' do
+        user = create(:user, activated: false)
+        user.activate
+        expect(user.activated).to be true
+        expect(user.activated_at).not_to be_nil
+      end
+    end
+
+    describe '#send_activation_email' do
+      it 'sends activation email' do
+        user = create(:user)
+        expect do
+          user.send_activation_email
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+    end
+  end
+
+  describe '#generate_auth_token' do
+    it 'generates a valid JWT token' do
+      user = create(:user)
+      token = user.generate_auth_token
+      decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, algorithm: 'HS256')[0]
+      expect(decoded_token['user_id']).to eq(user.id)
+    end
+  end
+
   describe '#update_tickets' do
     context '9 → 10 を跨いだ場合' do
       let!(:user) { User.create!(base_attrs.merge(last_roulette_rank: 9)) }
