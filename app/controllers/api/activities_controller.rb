@@ -61,11 +61,11 @@ module Api
       activities = current_user.activities.where(completed_at: start_of_month.beginning_of_day..end_of_month.end_of_day)
       exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
     
-      # デバッグ情報を追加
-      puts "Start of month: #{start_of_month}"
-      puts "End of month: #{end_of_month}"
-      puts "Activities: #{activities.inspect}"
-      puts "Exp by day: #{exp_by_day.inspect}"
+      # 以下はデバッグ用の出力です。本番環境では不要なため、コメントアウトしています。
+      # puts "Start of month: #{start_of_month}"      # 3ヶ月前の月初めの日付
+      # puts "End of month: #{end_of_month}"          # 今日の日付と今月末の日付の早い方
+      # puts "Activities: #{activities.inspect}"       # 取得された活動データの詳細
+      # puts "Exp by day: #{exp_by_day.inspect}"      # 日付ごとの経験値の合計
     
       formatted_exp_by_day = {}
       (start_of_month..end_of_month).each do |date|
