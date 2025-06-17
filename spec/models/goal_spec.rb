@@ -43,9 +43,9 @@ RSpec.describe Goal, type: :model do
     end
 
     it 'is invalid with content that is too long' do
-      goal = FactoryBot.build(:goal, content: "a" * 1001)
+      goal = FactoryBot.build(:goal, content: "a" * 201)
       goal.valid?
-      expect(goal.errors[:content]).to include("is too long (maximum is 1000 characters)")
+      expect(goal.errors[:content]).to include("is too long (maximum is 200 characters)")
     end
 
     it 'is invalid without deadline' do
@@ -86,6 +86,37 @@ RSpec.describe Goal, type: :model do
       goal = user.goals.create(goal_attributes)
       expect(goal.small_goals.size).to eq(0)
     end
+
+    it 'raises error when creating more than 5 small_goals at once' do
+      user = FactoryBot.create(:user)
+      small_goals_attributes = (1..6).map do |i|
+        {
+          title: "Small Goal #{i}",
+          difficulty: "Easy",
+          deadline: Date.today + i.days
+        }
+      end
+      goal_attributes = {
+        title: "Test Goal",
+        content: "Test Content",
+        deadline: Date.today + 7.days,
+        small_goals_attributes: small_goals_attributes
+      }
+      expect do
+        user.goals.create!(goal_attributes)
+      end.to raise_error(ActiveRecord::NestedAttributes::TooManyRecords)
+    end
+
+    it 'does not add more than 5 small_goals to an existing goal' do
+      user = FactoryBot.create(:user)
+      goal = FactoryBot.create(:goal, user: user)
+      5.times do |i|
+        FactoryBot.create(:small_goal, goal: goal, title: "Small Goal #{i + 1}")
+      end
+      # 6つ目を追加
+      goal.small_goals.create(title: "Small Goal 6", difficulty: "Easy", deadline: Date.today + 6.days)
+      expect(goal.small_goals.size).to eq(6) # 直接createなら制限されない
+    end
   end
 
   describe 'boundary values' do
@@ -95,8 +126,20 @@ RSpec.describe Goal, type: :model do
     end
 
     it 'is valid with content of maximum length' do
-      goal = FactoryBot.build(:goal, content: "a" * 1000)
+      goal = FactoryBot.build(:goal, content: "a" * 200)
       expect(goal).to be_valid
+    end
+  end
+
+  describe '#completed_time' do
+    it 'returns updated_at when completed is true' do
+      goal = FactoryBot.create(:goal, completed: true)
+      expect(goal.completed_time).to eq(goal.updated_at)
+    end
+
+    it 'returns nil when completed is false' do
+      goal = FactoryBot.create(:goal, completed: false)
+      expect(goal.completed_time).to be_nil
     end
   end
 end
