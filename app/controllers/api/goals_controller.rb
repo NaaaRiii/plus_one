@@ -3,6 +3,7 @@ module Api
     include DifficultyMultiplier
     #include AuthHelper
 
+    before_action :authenticate_user, except: [:health], unless: -> { request.options? }
     before_action :set_goal, only: [:show, :update, :destroy, :complete]
 
     def index
@@ -19,6 +20,11 @@ module Api
     end
 
     def create
+      unless current_user
+        render json: { error: "ログインが必要です" }, status: :unauthorized
+        return
+      end
+
       @goal = current_user.goals.build(goal_params)
       if @goal.save
         render json: { id: @goal.id, message: "Goal is saved. Next, let's create a small goal. This is a small goal to achieve your goal." }, status: :created
@@ -36,7 +42,11 @@ module Api
     end
 
     def complete
-      @goal = Goal.find(params[:id])
+      #@goal = Goal.find(params[:id])
+      unless @goal
+        render json: { error: "Goal not found" }, status: :not_found
+        return
+      end
   
       if @goal.small_goals.any? { |sg| !sg.completed }
         # すべての小目標が完了していない場合はエラーメッセージを返す

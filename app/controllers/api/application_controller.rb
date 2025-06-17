@@ -6,10 +6,6 @@ module Api
 
     private
   
-    #def skip_auth_in_dev_or_test?
-    #  Rails.env.development? || Rails.env.test?
-    #end
-  
     # 環境変数
     COGNITO_REGION         = ENV.fetch('AWS_REGION')
     COGNITO_USER_POOL_ID   = ENV.fetch('COGNITO_USER_POOL_ID')
@@ -18,16 +14,15 @@ module Api
     # ユーザー認証
     def authenticate_user
       
-      token = request.headers['Authorization']&.split&.last
+      #token = request.headers['Authorization']&.split&.last
 
-      # ─── ① 開発用ダミートークンを検出したら、その場で通す ───
-      if Rails.env.development? && token == ENV['DUMMY_AUTH_TOKEN']
-        @current_user = User.find_or_create_by!(email: 'dummy@example.com') do |u|
-          u.name     = 'Dummy User'              # ← name を必ずセット
-          u.password = SecureRandom.hex(8)        # 必要なら他の属性も
-        end
-        return
-      end
+      #if Rails.env.development? && token == ENV['DUMMY_AUTH_TOKEN']
+      #  @current_user = User.find_or_create_by!(email: 'dummy@example.com') do |u|
+      #    u.name     = 'Dummy User'              # ← name を必ずセット
+      #    u.password = SecureRandom.hex(8)        # 必要なら他の属性も
+      #  end
+      #  return
+      #end
 
       Rails.logger.debug "[AUTH] called in #{self.class}##{action_name}"
 
