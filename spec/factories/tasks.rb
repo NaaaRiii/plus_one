@@ -1,7 +1,10 @@
 FactoryBot.define do
   factory :task do
-    content { "Task Content" }
-    completed { false } # 初期状態で未完了とする
+    # belongs_to :small_goal のみ
     association :small_goal
+
+    content   { 'Sample task' }
+    #deadline  { 1.day.from_now }
+    completed { false }
   end
 end
