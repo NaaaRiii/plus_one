@@ -72,6 +72,5 @@ RSpec.describe SmallGoal, type: :model do
       small_goal.tasks.build(content: 'Test Task')
       expect(small_goal).to be_valid
     end
-
   end
 end
