@@ -3,5 +3,6 @@ FactoryBot.define do
     association :user
     association :goal
     association :small_goal
+    exp_gained { 10 }
   end
 end
