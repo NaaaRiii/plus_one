@@ -43,6 +43,7 @@ module Api
         #@current_user = User.find_by!(cognito_sub: payload['sub'])
         @current_user = User.find_or_create_by!(cognito_sub: payload['sub']) do |u|
           u.email    = payload['email']
+          u.name     = payload['name']
           u.password = SecureRandom.hex(16)
         end
       rescue ActiveRecord::RecordNotFound
@@ -63,9 +64,10 @@ module Api
 
     def extract_token_from_header
       raw = request.headers['Authorization'] || request.env['HTTP_AUTHORIZATION']
-      return nil unless raw&.start_with?('Bearer ')
+      return nil unless raw&.match?(/^Bearer\s+/i)
 
-      raw.split(' ', 2).last
+      token = raw.split(/\s+/, 2).last
+      token.empty? ? nil : token
     end
 
     def decode_cognito_jwt(token)
