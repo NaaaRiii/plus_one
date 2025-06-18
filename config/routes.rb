@@ -32,7 +32,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :roulette_texts, param: :number, only: %i[index show create destroy] do
+    resources :roulette_texts, param: :number, only: %i[index show create update destroy] do
       collection do
         get   :tickets   # GET  /api/roulette_texts/tickets
         patch :spin      # PATCH /api/roulette_texts/spin

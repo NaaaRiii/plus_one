@@ -336,4 +336,63 @@ RSpec.describe Api::RouletteTextsController, type: :controller do
       expect(rt.created_at).to be > 1.minute.ago
     end
   end
+
+  # ------------------ update アクション ------------------
+  describe 'update アクション' do
+    let!(:current_user) { create(:user) }
+    let!(:other_user)   { create(:user) }
+
+    before do
+      allow(controller).to receive(:authenticate_user).and_return(true)
+      allow(controller).to receive(:current_user).and_return(current_user)
+    end
+
+    context '自分のレコードを正常更新する場合' do
+      let(:rt)     { current_user.roulette_texts.first }          # number = 1
+      let(:params) { { number: rt.number, roulette_text: { text: '10分お散歩をする' } } }
+
+      it '200 OK・text が更新される' do
+        patch :update, params: params
+
+        expect(response).to have_http_status(:ok)
+        expect(rt.reload.text).to eq '10分お散歩をする'
+
+        json = JSON.parse(response.body)
+        expect(json['text']).to eq '10分お散歩をする'
+      end
+    end
+
+    context 'バリデーション NG（text が空）' do
+      let(:rt)     { current_user.roulette_texts.first }
+      let(:params) { { number: rt.number, roulette_text: { text: '' } } }
+
+      it '422 Unprocessable Entity と errors JSON が返る' do
+        patch :update, params: params
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        json = JSON.parse(response.body)
+        expect(json.keys).to include('text')
+        expect(rt.reload.text).not_to eq ''               # DB は更新されていない
+      end
+    end
+
+    context '他ユーザーのレコード number を指定した場合' do
+      let(:other_rt) { other_user.roulette_texts.first }
+
+      before do
+        # current_user が同じ number を持っていれば先に削除しておく
+        current_user.roulette_texts.find_by(number: other_rt.number)&.destroy
+      end
+
+      it '404 と JSON エラーが返る' do
+        patch :update,
+              params: { number: other_rt.number, roulette_text: { text: '侵入テスト' } }
+
+        expect(response).to have_http_status(:not_found)
+        json = JSON.parse(response.body)
+        expect(json).to eq('error' => 'Roulette text not found')
+        expect(other_rt.reload.text).not_to eq '侵入テスト'
+      end
+    end
+  end
 end 

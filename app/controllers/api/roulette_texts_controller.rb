@@ -2,7 +2,7 @@ module Api
   class RouletteTextsController < Api::ApplicationController
 
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
-    before_action :set_roulette_text, only: [:destroy]
+    before_action :set_roulette_text, only: %i[update destroy]
     
 
     def index
@@ -51,27 +51,21 @@ module Api
       end
     end    
 
-    #def update
-    #  if current_user.use_edit_ticket
-    #    if @roulette_text.update(roulette_text_params)
-    #      render json: { roulette_text: @roulette_text, edit_tickets: current_user.edit_tickets }
-    #    else
-    #      render json: @roulette_text.errors, status: :unprocessable_entity
-    #    end
-    #  else
-    #    render json: { error: "編集チケットが足りません" }, status: :forbidden
-    #  end
-    #end
+    def update
+      if @roulette_text.update(roulette_text_params)
+        render json: @roulette_text, status: :ok
+      else
+        render json: @roulette_text.errors, status: :unprocessable_entity
+      end
+    end
 
     private
   
     def set_roulette_text
       @roulette_text = current_user.roulette_texts.find_by(number: params[:number])
-
       return if @roulette_text
 
       render json: { error: 'Roulette text not found' }, status: :not_found
-      
     end
 
     def roulette_text_params
