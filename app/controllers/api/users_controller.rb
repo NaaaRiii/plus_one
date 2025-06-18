@@ -4,6 +4,9 @@ module Api
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
 
     def show
+      # 認可: URL で渡された id と認証済みユーザーが一致するかチェック
+      return render json: { error: 'User not found' }, status: :not_found unless @current_user && @current_user.id == params[:id].to_i
+
       if @current_user
         latest_completed_goals_within_24h = @current_user.small_goals
                                                          .where(completed: true)
