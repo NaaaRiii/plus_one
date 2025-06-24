@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   namespace :api do
     #post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
+    patch 'current_user', to: 'current_users#update'
     #delete 'logout', to: 'sessions#destroy'
     #get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
