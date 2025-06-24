@@ -279,4 +279,55 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #update' do
+    context '認証済みユーザーの場合' do
+      let(:user) { create(:user) }
+
+      before do
+        allow(controller).to receive(:authenticate_user).and_return(true)
+        controller.instance_variable_set(:@current_user, user)
+      end
+
+      it 'ユーザーネームが正常に更新されること' do
+        patch :update, params: { user: { name: 'New Name' } }
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['success']).to be true
+        expect(json['message']).to eq('User updated successfully.')
+        expect(json['user']['name']).to eq('New Name')
+        expect(json['user']['id']).to eq(user.id)
+        expect(json['user']['email']).to eq(user.email)
+
+        # DB の値も更新されているか確認
+        expect(user.reload.name).to eq('New Name')
+      end
+
+      it 'バリデーションエラーの場合は422が返ること' do
+        patch :update, params: { user: { name: '' } }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        json = JSON.parse(response.body)
+        expect(json['success']).to be false
+        expect(json['message']).to eq('Failed to update user.')
+        expect(json['errors']).to be_present
+      end
+    end
+
+    context '未認証ユーザーの場合' do
+      before do
+        request.headers['Authorization'] = nil
+      end
+
+      it '401 と JSON {error:"Unauthorized"} が返ること' do
+        patch :update, params: { user: { name: 'New Name' } }
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.content_type).to include('application/json')
+        json = JSON.parse(response.body)
+        expect(json.keys).to eq(['error'])
+        expect(json['error']).to eq('Unauthorized')
+      end
+    end
+  end
 end 

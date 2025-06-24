@@ -51,6 +51,30 @@ module Api
       end
     end
 
+    def update
+      if @current_user
+        if @current_user.update(user_params)
+          render json: { 
+            success: true, 
+            message: 'User updated successfully.',
+            user: {
+              id: @current_user.id,
+              name: @current_user.name,
+              email: @current_user.email
+            }
+          }
+        else
+          render json: { 
+            success: false, 
+            message: 'Failed to update user.',
+            errors: @current_user.errors.full_messages 
+          }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: 'User not found' }, status: :not_found
+      end
+    end
+
     #def restart_without_title
     #  if @current_user
     #    @current_user.update(restart_without_title: true, total_exp: 0, current_title: nil)
@@ -69,7 +93,11 @@ module Api
     #  end
     #end
 
-    #private
+    private
+
+    def user_params
+      params.require(:user).permit(:name)
+    end
 
     #def find_current_user
     #  token = request.headers['Authorization'].split(' ').last

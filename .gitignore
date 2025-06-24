@@ -48,3 +48,7 @@ node_modules/
 /.MyKeyPairOne.pem
 
 /.task-definition.json
+
+erd.pdf
+
+erd.png
