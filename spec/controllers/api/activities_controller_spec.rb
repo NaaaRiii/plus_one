@@ -119,6 +119,35 @@ RSpec.describe Api::ActivitiesController, type: :controller do
         # 今日の活動の合計 (100 + 150 = 250)
         expect(today_exp).to eq(250)
       end
+
+      it '他のユーザーの活動データが含まれないこと' do
+        # 他のユーザーを作成
+        other_user = create(:user)
+        
+        # 他のユーザーの活動データを作成（同じ日付）
+        create(:activity, :on_date,
+               date: Date.current,
+               user: other_user,
+               exp_gained: 999) # 大きな値で識別しやすくする
+        
+        create(:activity, :on_date,
+               date: 3.days.ago.to_date,
+               user: other_user,
+               exp_gained: 888)
+
+        get :weekly_exp
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        
+        # 現在のユーザーのデータのみが返されることを確認
+        today_exp = json_response.find { |day| day['date'] == formatted(today) }['exp']
+        three_days_ago_exp = json_response.find { |day| day['date'] == formatted(today - 3.days) }['exp']
+        
+        # 他のユーザーのデータ（999, 888）が含まれていないことを確認
+        expect(today_exp).to eq(100) # 元のユーザーのデータのみ
+        expect(three_days_ago_exp).to eq(200) # 元のユーザーのデータのみ
+      end
     end
 
     context '未認証ユーザーの場合' do
@@ -272,6 +301,37 @@ RSpec.describe Api::ActivitiesController, type: :controller do
         dates.each_cons(2) do |date1, date2|
           expect(Date.parse(date2) - Date.parse(date1)).to eq(1)
         end
+      end
+
+      it '他のユーザーの活動データが含まれないこと' do
+        # 他のユーザーを作成
+        other_user = create(:user)
+        
+        # 他のユーザーの活動データを作成（同じ日付）
+        create(:activity,
+               user: other_user,
+               completed_at: Time.zone.local(three_months_ago.year, three_months_ago.month, three_months_ago.day, 12),
+               exp_gained: 999, # 大きな値で識別しやすくする
+               goal: create(:goal, user: other_user))
+        
+        create(:activity,
+               user: other_user,
+               completed_at: Time.zone.local(Date.current.year, Date.current.month, Date.current.day, 12),
+               exp_gained: 888,
+               goal: create(:goal, user: other_user))
+
+        get :daily_exp
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        
+        # 現在のユーザーのデータのみが返されることを確認
+        three_months_ago_exp = json_response[three_months_ago.strftime('%Y-%m-%d')]
+        today_exp = json_response[Date.current.strftime('%Y-%m-%d')]
+        
+        # 他のユーザーのデータ（999, 888）が含まれていないことを確認
+        expect(three_months_ago_exp).to eq(100) # 元のユーザーのデータのみ
+        expect(today_exp).to eq(300) # 元のユーザーのデータのみ
       end
     end
 
