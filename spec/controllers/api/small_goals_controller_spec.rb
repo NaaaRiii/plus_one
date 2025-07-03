@@ -377,8 +377,8 @@ RSpec.describe Api::SmallGoalsController, type: :controller do
     end
   end
 
-  # ------------------ calculate_exp_for_small_goal (private) ------------------
-  describe '#calculate_exp_for_small_goal (private)' do
+  # ------------------ calculate_exp_for_small_goal (SmallGoal model method) ------------------
+  describe '#calculate_exp_for_small_goal (SmallGoal model method)' do
     let(:user) { create(:user) }
     let(:goal) { create(:goal, user: user) }
 
@@ -390,7 +390,7 @@ RSpec.describe Api::SmallGoalsController, type: :controller do
     it "tasks × 難易度係数を 1 桁丸めで返す (難しい, 3 タスク → 3.6)" do
       sg = create(:small_goal, goal: goal, difficulty: '難しい', tasks_count: 3)
 
-      exp = controller.send(:calculate_exp_for_small_goal, sg)
+      exp = sg.calculate_exp_for_small_goal
 
       expect(exp).to eq((3 * 1.2).round(1)) # 3.6
     end
@@ -398,7 +398,7 @@ RSpec.describe Api::SmallGoalsController, type: :controller do
     it '未知の難易度は係数 1.0 で計算される' do
       sg = create(:small_goal, goal: goal, difficulty: 'UNKNOWN', tasks_count: 4)
 
-      exp = controller.send(:calculate_exp_for_small_goal, sg)
+      exp = sg.calculate_exp_for_small_goal
 
       expect(exp).to eq((4 * 1.0).round(1))
     end

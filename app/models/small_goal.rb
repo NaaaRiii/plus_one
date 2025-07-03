@@ -14,21 +14,19 @@ class SmallGoal < ApplicationRecord
   validate  :deadline_cannot_be_after_goal_deadline
 
   validate  :must_have_at_least_one_task
-
-  # 経験値の追加メソッド（難易度に応じて経験値を調整する）
-  def add_experience(points, difficulty)
-    multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0
-    self.total_exp += points * multiplier
-  end
+  
 
   def user
     goal.user
   end
 
-  def calculate_exp_for_small_goal(small_goal)
-    task_count = small_goal.tasks.count
-    difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty]
-    (task_count * difficulty_multiplier).round
+  def calculate_exp_for_small_goal
+    task_count = tasks.count
+    difficulty_multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0
+    exp = (task_count * difficulty_multiplier).round(1)
+    Rails.logger.debug "Calculating exp for small goal: #{id}"
+    Rails.logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
+    exp
   end  
 
   def completed?
