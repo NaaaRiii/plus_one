@@ -55,7 +55,7 @@ module Api
       else
         # すべての小目標が完了している場合
         @goal.update(completed: true)
-        total_exp_gained = @goal.small_goals.sum { |sg| calculate_exp_for_small_goal(sg) * 3 }.round
+        total_exp_gained = @goal.small_goals.sum { |sg| sg.calculate_exp_for_small_goal * 3 }.round
         current_user.total_exp = (current_user.total_exp || 0) + total_exp_gained
         current_user.save
 
@@ -100,13 +100,5 @@ module Api
       params.require(:small_goal).permit(:title, :difficulty, :deadline, tasks_attributes: [:id, :content, :_destroy])
     end
 
-    def calculate_exp_for_small_goal(small_goal)
-      task_count = small_goal.tasks.count
-      difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty] || 1.0
-      exp = (task_count * difficulty_multiplier).round(1)
-      logger.debug "Calculating exp for small goal: #{small_goal.id}"
-      logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
-      exp
-    end
   end
 end
