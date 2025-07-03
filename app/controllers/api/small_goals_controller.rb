@@ -53,7 +53,7 @@ module Api
 
     def complete
       if @small_goal.update(completed: true, completed_time: Time.current)
-        exp_gained = calculate_exp_for_small_goal(@small_goal).round
+        exp_gained = @small_goal.calculate_exp_for_small_goal.round
         current_user.total_exp ||= 0
         current_user.total_exp += exp_gained
         current_user.save
@@ -81,15 +81,6 @@ module Api
 
     def set_small_goal
       @small_goal = current_user.goals.find(params[:goal_id]).small_goals.find(params[:id])
-    end
-
-    def calculate_exp_for_small_goal(small_goal)
-      task_count = small_goal.tasks.count
-      difficulty_multiplier = DIFFICULTY_MULTIPLIERS[small_goal.difficulty] || 1.0
-      exp = (task_count * difficulty_multiplier).round(1)
-      logger.debug "Calculating exp for small goal: #{small_goal.id}"
-      logger.debug "Task count: #{task_count}, Difficulty multiplier: #{difficulty_multiplier}, Calculated exp: #{exp}"
-      exp
     end
 
     def small_goal_params
