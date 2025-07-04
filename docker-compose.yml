@@ -27,7 +27,7 @@ services:
     environment:
       - DATABASE_DEV_USER=${DATABASE_DEV_USER}
       - DATABASE_DEV_PASSWORD=${DATABASE_DEV_PASSWORD}
-      - DATABASE_URL=mysql2://railsuser:railspassword@db:3306/plusonedb_development
+      - DATABASE_URL=mysql2://${DATABASE_DEV_USER}:${DATABASE_DEV_PASSWORD}@db:3306/plusonedb_development
     depends_on:
       - db
 
