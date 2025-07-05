@@ -29,8 +29,8 @@ test:
   encoding: utf8mb4
   host:     127.0.0.1     # もしくは localhost
   port:     3306
-  username: <%= ENV.fetch('DATABASE_DEV_USER') %>
-  password: <%= ENV['DATABASE_DEV_PASSWORD'] %>
+  username: <%= ENV.fetch('DATABASE_TEST_USER') %>
+  password: <%= ENV['DATABASE_TEST_PASSWORD'] %>
   database: plusonedb_test
   pool: 5
   timeout: 5000
