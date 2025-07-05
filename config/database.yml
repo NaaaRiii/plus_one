@@ -27,8 +27,8 @@ test:
   host:     127.0.0.1     # もしくは localhost
   port:     3306
   database: plusonedb_test
-  username: <%= ENV.fetch('DATABASE_TEST_USER') %>
-  password: <%= ENV['DATABASE_TEST_PASSWORD'] %>
+  username: <%= ENV['DATABASE_TEST_USER'] || 'root' %>
+  password: <%= ENV['DATABASE_TEST_PASSWORD'] || '' %>
   pool: 5
   timeout: 5000
 
