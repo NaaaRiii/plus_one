@@ -72,7 +72,8 @@ jobs:
         bundle exec rails db:migrate RAILS_ENV=test
       env:
         RAILS_ENV: test
-        DATABASE_URL: mysql2://root@127.0.0.1:3306/plusone_app_test
+        DATABASE_TEST_USER: ${{ secrets.DATABASE_TEST_USER }}
+        DATABASE_TEST_PASSWORD: ${{ secrets.DATABASE_TEST_PASSWORD }}
 
     - name: Run RSpec tests
       run: bundle exec rspec
