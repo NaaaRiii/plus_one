@@ -12,7 +12,10 @@ module Api
     
       # 該当範囲内の活動データを取得（current_userのactivitiesのみ）
       activities = current_user.activities.where(completed_at: start_date..end_date)
-      exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
+      exp_by_day = activities
+                   .group_by_day(:completed_at, time_zone: 'Asia/Tokyo')
+                   .sum(:exp_gained)
+                   .transform_keys(&:to_date)
     
       # 5日前から明日までの日付範囲でexpデータを生成
       date_range = (start_date..end_date).map do |date|
@@ -59,7 +62,10 @@ module Api
       end_of_month = [Date.today, Date.today.end_of_month.to_date].min
     
       activities = current_user.activities.where(completed_at: start_of_month.beginning_of_day..end_of_month.end_of_day)
-      exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
+      exp_by_day = activities
+                   .group_by_day(:completed_at, time_zone: 'Asia/Tokyo')
+                   .sum(:exp_gained)
+                   .transform_keys(&:to_date)
     
       # 以下はデバッグ用の出力です。本番環境では不要なため、コメントアウトしています。
       # puts "Start of month: #{start_of_month}"      # 3ヶ月前の月初めの日付
