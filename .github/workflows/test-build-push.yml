@@ -49,6 +49,7 @@ jobs:
         bundle exec rails db:migrate RAILS_ENV=test
       env:
         RAILS_ENV: test
+        DATABASE_TEST_HOST: mysql 
         DATABASE_TEST_USER: root
         DATABASE_TEST_PASSWORD: ""
 
@@ -56,6 +57,7 @@ jobs:
       run: bundle exec rspec
       env:
         RAILS_ENV: test
+        DATABASE_TEST_HOST: mysql 
         DATABASE_TEST_USER: root
         DATABASE_TEST_PASSWORD: ""
 
