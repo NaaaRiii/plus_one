@@ -117,6 +117,10 @@ jobs:
         DATABASE_TEST_USER: root
         DATABASE_TEST_PASSWORD: ""
 
+    - name: Debug MySQL connection
+      run: |
+        mysql -hmysql -uroot -e "SHOW DATABASES;"
+
   build-and-push:
     needs: [security-scan, test]
     runs-on: ubuntu-latest
