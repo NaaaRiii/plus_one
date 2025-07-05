@@ -66,16 +66,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y default-mysql-client
 
-    - name: Setup database
-      run: |
-        bundle exec rails db:create RAILS_ENV=test
-        bundle exec rails db:migrate RAILS_ENV=test
-      env:
-        RAILS_ENV: test
-        DATABASE_TEST_HOST: mysql 
-        DATABASE_TEST_USER: root
-        DATABASE_TEST_PASSWORD: ""
-
     - name: Wait for MySQL
       run: |
         for i in {1..30}; do
@@ -83,6 +73,16 @@ jobs:
           echo "Waiting for MySQL..."
           sleep 2
         done
+
+    - name: Setup database
+      run: |
+        bundle exec rails db:create RAILS_ENV=test
+        bundle exec rails db:migrate RAILS_ENV=test
+      env:
+        RAILS_ENV: test
+        DATABASE_TEST_HOST: mysql
+        DATABASE_TEST_USER: root
+        DATABASE_TEST_PASSWORD: ""
 
     - name: Run RSpec tests
       run: bundle exec rspec
