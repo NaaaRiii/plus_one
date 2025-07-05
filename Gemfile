@@ -80,8 +80,8 @@ gem 'mysql2'
 gem 'dotenv-rails'
 
 group :development do
-  gem 'rubocop'
-  gem 'rubocop-rails'
+  gem 'rubocop', '1.77.0'
+  gem 'rubocop-rails', '~> 2.25'
 end
 
 gem "bcrypt", "3.1.18"
