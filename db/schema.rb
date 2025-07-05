@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 20_250_604_060_231) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_04_060231) do
   create_table "activities", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -23,14 +23,6 @@ ActiveRecord::Schema[7.0].define(version: 20_250_604_060_231) do
     t.float "exp"
     t.datetime "completed_at"
     t.index ["user_id"], name: "index_activities_on_user_id"
-  end
-
-  create_table "ar_internal_metadata", charset: "utf8mb3", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["key"], name: "index_ar_internal_metadata_on_key", unique: true
   end
 
   create_table "goals", charset: "utf8mb3", force: :cascade do |t|
@@ -61,10 +53,6 @@ ActiveRecord::Schema[7.0].define(version: 20_250_604_060_231) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_roulette_texts_on_user_id"
-  end
-
-  create_table "schema_migrations", charset: "utf8mb3", force: :cascade do |t|
-    t.string "version"
   end
 
   create_table "small_goals", charset: "utf8mb3", force: :cascade do |t|
