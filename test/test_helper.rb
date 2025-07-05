@@ -12,9 +12,11 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 
   # テストユーザーがログイン中の場合にtrueを返す
-  def is_logged_in?
+  def logged_in?
     !session[:user_id].nil?
   end
+  
+  alias is_logged_in? logged_in?  # backward compatibility for existing tests
   
   # テストユーザーとしてログインする
   def log_in_as(user)
