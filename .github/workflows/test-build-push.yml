@@ -43,6 +43,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y default-mysql-client
 
+    - name: Wait for MySQL
+      run: |
+        for i in {1..30}; do
+          mysqladmin ping -hmysql -uroot --silent && break
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+
     - name: Setup database
       run: |
         bundle exec rails db:create RAILS_ENV=test
