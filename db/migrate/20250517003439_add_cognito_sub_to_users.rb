@@ -14,8 +14,8 @@ class AddCognitoSubToUsers < ActiveRecord::Migration[7.0]
       end
     end
 
-    # 3. ユニークインデックス
-    add_index :users, :cognito_sub, unique: true, algorithm: :concurrently
+    # 3. ユニークインデックスを作成
+    add_index :users, :cognito_sub, unique: true, algorithm: :inplace
 
     # 4. 将来的に null 禁止にするなら別マイグレーションで
     # change_column_null :users, :cognito_sub, false
