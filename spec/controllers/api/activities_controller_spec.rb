@@ -220,7 +220,7 @@ RSpec.describe Api::ActivitiesController, type: :controller do
 
         json_response = JSON.parse(response.body)
         date_regex = /\A\d{4}-\d{2}-\d{2}\z/
-        json_response.keys.each do |date|
+        json_response.each_key do |date|
           expect(date).to match(date_regex)
         end
       end
