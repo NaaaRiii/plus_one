@@ -76,6 +76,14 @@ jobs:
         DATABASE_TEST_USER: root
         DATABASE_TEST_PASSWORD: ""
 
+    - name: Wait for MySQL
+      run: |
+        for i in {1..30}; do
+          mysqladmin ping -hmysql -uroot --silent && break
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+
     - name: Run RSpec tests
       run: bundle exec rspec
       env:
@@ -97,6 +105,17 @@ jobs:
       with:
         name: brakeman-report
         path: brakeman-report.json
+
+    - name: Debug DB env
+      run: |
+        echo "HOST=$DATABASE_TEST_HOST"
+        echo "USER=$DATABASE_TEST_USER"
+        echo "PWD =$DATABASE_TEST_PASSWORD"
+      env:
+        RAILS_ENV: test
+        DATABASE_TEST_HOST: mysql
+        DATABASE_TEST_USER: root
+        DATABASE_TEST_PASSWORD: ""
 
   build-and-push:
     needs: [security-scan, test]
