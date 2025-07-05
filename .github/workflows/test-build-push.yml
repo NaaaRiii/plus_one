@@ -17,6 +17,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      RAILS_ENV: test
+      DATABASE_TEST_HOST: mysql
+      DATABASE_TEST_USER: root
+      DATABASE_TEST_PASSWORD: ""
     
     services:
       mysql:
@@ -55,19 +60,9 @@ jobs:
       run: |
         bundle exec rails db:create RAILS_ENV=test
         bundle exec rails db:migrate RAILS_ENV=test
-      env:
-        RAILS_ENV: test
-        DATABASE_TEST_HOST: mysql 
-        DATABASE_TEST_USER: root
-        DATABASE_TEST_PASSWORD: ""
 
     - name: Run RSpec tests
       run: bundle exec rspec
-      env:
-        RAILS_ENV: test
-        DATABASE_TEST_HOST: mysql 
-        DATABASE_TEST_USER: root
-        DATABASE_TEST_PASSWORD: ""
 
     - name: Run RuboCop
       run: bundle exec rubocop
