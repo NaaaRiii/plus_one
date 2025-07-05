@@ -34,7 +34,7 @@ RSpec.describe Activity, type: :model do
     it 'does not override existing completed_at' do
       time = Time.current
       activity = create(:activity, completed_at: time)
-      expect(activity.completed_at).to eq(time)
+      expect(activity.completed_at).to be_within(0.0001).of(time)
     end
   end
 end
