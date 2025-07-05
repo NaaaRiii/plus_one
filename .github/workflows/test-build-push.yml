@@ -56,8 +56,8 @@ jobs:
       run: bundle exec rspec
       env:
         RAILS_ENV: test
-        DATABASE_DEV_USER: root
-        DATABASE_DEV_PASSWORD: ""
+        DATABASE_TEST_USER: ${{ secrets.DATABASE_TEST_USER }}
+        DATABASE_TEST_PASSWORD: ${{ secrets.DATABASE_TEST_PASSWORD }}
 
     - name: Run RuboCop
       run: bundle exec rubocop
