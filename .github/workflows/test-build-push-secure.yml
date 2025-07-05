@@ -68,12 +68,12 @@ jobs:
 
     - name: Setup database
       run: |
+        export DATABASE_TEST_USER=${{ secrets.DATABASE_TEST_USER }}
+        export DATABASE_TEST_PASSWORD=${{ secrets.DATABASE_TEST_PASSWORD }}
         bundle exec rails db:create RAILS_ENV=test
         bundle exec rails db:migrate RAILS_ENV=test
       env:
         RAILS_ENV: test
-        DATABASE_TEST_USER: ${{ secrets.DATABASE_TEST_USER }}
-        DATABASE_TEST_PASSWORD: ${{ secrets.DATABASE_TEST_PASSWORD }}
 
     - name: Run RSpec tests
       run: bundle exec rspec
