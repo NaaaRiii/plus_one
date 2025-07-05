@@ -1,0 +1,64 @@
+# Pinned to RuboCop 1.77.0; newer Cops ignored
+
+inherit_from: .rubocop_todo.yml
+
+Style/Documentation:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Layout/TrailingEmptyLines:
+  Enabled: false
+
+Layout/LeadingCommentSpace:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Layout/ExtraSpacing:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Layout/TrailingWhitespace:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+
+Layout/FirstArrayElementIndentation:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+AllCops:
+  NewCops: disable
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Bundler/OrderedGems:
+  Enabled: false
+
