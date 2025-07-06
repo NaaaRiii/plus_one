@@ -2,10 +2,6 @@
 
 inherit_from: .rubocop_todo.yml
 
-AllCops:
-  Exclude:
-    - 'vendor/**/*'
-
 Style/Documentation:
   Enabled: false
 
@@ -61,6 +57,7 @@ AllCops:
   NewCops: disable
   Exclude:
     - 'db/schema.rb'
+    - 'vendor/**/*'
 
 Style/FrozenStringLiteralComment:
   Enabled: false
