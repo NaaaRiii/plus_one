@@ -200,7 +200,7 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
 
       times = latest.map { |g| g['completed_time'] }
       expect(times).to eq times.sort.reverse
-      expect(latest.first['id']).to eq recent.sort_by(&:completed_time).last.id
+      expect(latest.first['id']).to eq recent.max_by(&:completed_time).id
     end
 
     it '@current_user が nil の場合は 404 と JSON {error:"User not found"} が返ること' do
