@@ -1,6 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+# Dummy AWS Cognito env vars for test environment
+ENV['COGNITO_REGION'] ||= 'us-east-1'
+ENV['COGNITO_USER_POOL_ID'] ||= 'dummy_pool'
+ENV['COGNITO_APP_CLIENT_ID'] ||= 'dummy_client'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
