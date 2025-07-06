@@ -2,6 +2,10 @@
 
 inherit_from: .rubocop_todo.yml
 
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+
 Style/Documentation:
   Enabled: false
 
@@ -63,4 +67,3 @@ Style/FrozenStringLiteralComment:
 
 Bundler/OrderedGems:
   Enabled: false
-
