@@ -39,8 +39,6 @@
 
 /.env.development
 
-/.rubocop_todo.yml
-
 node_modules/
 
 /.MyKeyPairOne.pem
