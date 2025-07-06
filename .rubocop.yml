@@ -55,6 +55,8 @@ Metrics/ClassLength:
 
 AllCops:
   NewCops: disable
+  Exclude:
+    - 'db/schema.rb'
 
 Style/FrozenStringLiteralComment:
   Enabled: false
