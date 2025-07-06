@@ -10,7 +10,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-1
-  ECR_REPOSITORY: plusone-app
+  ECR_REPOSITORY: plusone-rails
   RUBY_VERSION: '3.2.2'
 
 jobs:
