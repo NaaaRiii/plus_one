@@ -1,6 +1,5 @@
 module Api
   class ActivitiesController < ApplicationController
-    #include AuthHelper
     
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
 
@@ -11,11 +10,14 @@ module Api
       end_date = today + 1.day
     
       # 該当範囲内の活動データを取得（current_userのactivitiesのみ）
-      activities = current_user.activities.where(completed_at: start_date..end_date)
+      activities = current_user.activities.where(
+        completed_at: start_date.beginning_of_day..end_date.end_of_day
+      )
+
+      # DB のタイムゾーン依存を避けるため、Ruby 側で日付（Asia/Tokyo）ごとに集計
       exp_by_day = activities
-                   .group_by_day(:completed_at, time_zone: 'Asia/Tokyo')
-                   .sum(:exp_gained)
-                   .transform_keys(&:to_date)
+                   .group_by { |a| a.completed_at.in_time_zone('Asia/Tokyo').to_date }
+                   .transform_values { |acts| acts.sum(&:exp_gained) }
     
       # 5日前から明日までの日付範囲でexpデータを生成
       date_range = (start_date..end_date).map do |date|
@@ -28,66 +30,46 @@ module Api
       render json: date_range
     end
 
-    #def daily_exp
-    #  start_of_month = Date.today.beginning_of_month
-    #  end_of_month = Date.today.end_of_month.end_of_day
-    
-    #  activities = current_user.activities.where(completed_at: start_of_month..end_of_month)
-    #  exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
-    
-    #  # デバッグ情報を追加
-    #  puts "Start of month: #{start_of_month}"
-    #  puts "End of month: #{end_of_month}"
-    #  puts "Activities: #{activities.inspect}"
-    #  puts "Exp by day: #{exp_by_day.inspect}"
-    
-    #  formatted_exp_by_day = {}
-    #  (start_of_month..end_of_month).each do |date|
-    #    formatted_date = date.strftime("%Y-%m-%d")
-    #    formatted_exp_by_day[formatted_date] = exp_by_day[date] || 0
-    #  end
-    
-    #  exp_by_day.each do |key, value|
-    #    formatted_key = key.is_a?(Date) ? key.strftime("%Y-%m-%d") : key
-    #    formatted_exp_by_day[formatted_key] ||= value
-    #  end
-    
-    #  sorted_exp_by_day = formatted_exp_by_day.sort_by { |key, _value| key }.to_h
-    
-    #  render json: sorted_exp_by_day
-    #end
-
     def daily_exp
-      start_of_month = 3.months.ago.beginning_of_month.to_date
-      end_of_month = [Date.today, Date.today.end_of_month.to_date].min
-    
-      activities = current_user.activities.where(completed_at: start_of_month.beginning_of_day..end_of_month.end_of_day)
-      exp_by_day = activities
-                   .group_by_day(:completed_at, time_zone: 'Asia/Tokyo')
-                   .sum(:exp_gained)
-                   .transform_keys(&:to_date)
-    
-      # 以下はデバッグ用の出力です。本番環境では不要なため、コメントアウトしています。
-      # puts "Start of month: #{start_of_month}"      # 3ヶ月前の月初めの日付
-      # puts "End of month: #{end_of_month}"          # 今日の日付と今月末の日付の早い方
-      # puts "Activities: #{activities.inspect}"       # 取得された活動データの詳細
-      # puts "Exp by day: #{exp_by_day.inspect}"      # 日付ごとの経験値の合計
-    
-      formatted_exp_by_day = {}
-      (start_of_month..end_of_month).each do |date|
-        formatted_date = date.strftime("%Y-%m-%d")
-        formatted_exp_by_day[formatted_date] = exp_by_day[date] || 0
-      end
-    
-      exp_by_day.each do |key, value|
-        formatted_key = key.is_a?(Date) ? key.strftime("%Y-%m-%d") : key
-        formatted_exp_by_day[formatted_key] ||= value
-      end
-    
-      sorted_exp_by_day = formatted_exp_by_day.sort_by { |key, _value| key }.to_h
-    
-      render json: sorted_exp_by_day
+      start_of_period, end_of_period = period_range_for_daily_exp
+
+      activities = fetch_activities(start_of_period, end_of_period)
+      exp_by_day  = aggregate_exp_by_date(activities)
+
+      response_hash = build_daily_exp_response(start_of_period, end_of_period, exp_by_day)
+
+      render json: response_hash
     end
 
+    private
+
+    # 3ヶ月前の月初〜今日または今月末の早い方
+    def period_range_for_daily_exp
+      start_date = 3.months.ago.beginning_of_month.to_date
+      end_date   = [Date.today, Date.today.end_of_month.to_date].min
+      [start_date, end_date]
+    end
+
+    # 指定期間の current_user の活動を取得
+    def fetch_activities(start_date, end_date)
+      current_user.activities.where(
+        completed_at: start_date.beginning_of_day..end_date.end_of_day
+      )
+    end
+
+    # Asia/Tokyo で日付毎に集計した Hash<Date => Integer>
+    def aggregate_exp_by_date(activities)
+      activities
+        .group_by { |a| a.completed_at.in_time_zone('Asia/Tokyo').to_date }
+        .transform_values { |acts| acts.sum(&:exp_gained) }
+    end
+
+    # レスポンス形式 "YYYY-MM-DD" => exp の連続 Hash に整形しソートして返す
+    def build_daily_exp_response(start_date, end_date, exp_by_day)
+      (start_date..end_date).each_with_object({}) do |date, hash|
+        key = date.strftime('%Y-%m-%d')
+        hash[key] = exp_by_day[date] || 0
+      end.sort.to_h
+    end
   end
 end
