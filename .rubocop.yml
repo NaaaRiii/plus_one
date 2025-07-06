@@ -1,5 +1,7 @@
 # Pinned to RuboCop 1.77.0; newer Cops ignored
 
+inherit_from: .rubocop_todo.yml
+
 Style/Documentation:
   Enabled: false
 
