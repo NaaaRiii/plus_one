@@ -37,7 +37,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'is invalid with an email that is too long' do
-      user = build(:user, email: 'a' * 256 + '@example.com')
+      user = build(:user, email: "#{'a' * 256}@example.com")
       expect(user).not_to be_valid
       expect(user.errors[:email]).to include('is too long (maximum is 255 characters)')
     end
