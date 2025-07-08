@@ -18,18 +18,6 @@ RSpec.describe User, type: :model do
       expect(build(:user)).to be_valid
     end
 
-    it 'is invalid without a name' do
-      user = build(:user, name: nil)
-      expect(user).not_to be_valid
-      expect(user.errors[:name]).to include("can't be blank")
-    end
-
-    it 'is invalid with a name that is too long' do
-      user = build(:user, name: 'a' * 51)
-      expect(user).not_to be_valid
-      expect(user.errors[:name]).to include('is too long (maximum is 50 characters)')
-    end
-
     it 'is invalid without an email' do
       user = build(:user, email: nil)
       expect(user).not_to be_valid

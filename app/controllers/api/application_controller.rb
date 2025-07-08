@@ -43,7 +43,7 @@ module Api
         #@current_user = User.find_by!(cognito_sub: payload['sub'])
         @current_user = User.find_or_create_by!(cognito_sub: payload['sub']) do |u|
           u.email    = payload['email']
-          u.name     = payload['name']
+          u.name     = payload['name'] || 'Unknown User'
           u.password = SecureRandom.hex(16)
         end
       rescue ActiveRecord::RecordNotFound
