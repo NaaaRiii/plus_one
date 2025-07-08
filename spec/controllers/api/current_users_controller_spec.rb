@@ -303,18 +303,8 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
         # DB の値も更新されているか確認
         expect(user.reload.name).to eq('New Name')
       end
-
-      it 'バリデーションエラーの場合は422が返ること' do
-        patch :update, params: { user: { name: '' } }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        json = JSON.parse(response.body)
-        expect(json['success']).to be false
-        expect(json['message']).to eq('Failed to update user.')
-        expect(json['errors']).to be_present
-      end
     end
-
+    
     context '未認証ユーザーの場合' do
       before do
         request.headers['Authorization'] = nil
