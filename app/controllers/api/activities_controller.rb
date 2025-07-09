@@ -8,23 +8,17 @@ module Api
       today = Date.today
       start_date = today - 5.days
       end_date = today + 1.day
-    
-      # 該当範囲内の活動データを取得（current_userのactivitiesのみ）
-      activities = current_user.activities.where(
-        completed_at: start_date.beginning_of_day..end_date.end_of_day
-      )
 
-      # DB のタイムゾーン依存を避けるため、Ruby 側で日付（Asia/Tokyo）ごとに集計
-      exp_by_day = activities
-                   .group_by { |a| a.completed_at.in_time_zone('Asia/Tokyo').to_date }
-                   .transform_values { |acts| acts.sum(&:exp_gained) }
-    
+      # 該当範囲内の活動データを取得（current_userのactivitiesのみ）
+      activities = current_user.activities.where(completed_at: start_date..end_date)
+      exp_by_day = activities.group_by_day(:completed_at, time_zone: 'Asia/Tokyo').sum(:exp_gained)
+
       # 5日前から明日までの日付範囲でexpデータを生成
       date_range = (start_date..end_date).map do |date|
         formatted_date = date.strftime("%a, %b %d")
         { date: formatted_date, exp: exp_by_day[date] || 0 }
       end
-    
+
       # フロントエンドにデータを送信
 
       render json: date_range
