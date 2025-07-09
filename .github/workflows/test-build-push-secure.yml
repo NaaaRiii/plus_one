@@ -1,5 +1,9 @@
 name: Test, Build and Push to ECR (Secure)
 
+permissions:
+  contents: read
+  security-events: write
+
 on:
   push:
     branches: [ main, master ]
@@ -19,9 +23,6 @@ env:
 jobs:
   security-scan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
