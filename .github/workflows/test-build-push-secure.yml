@@ -45,6 +45,7 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
+      continue-on-error: true
 
   test:
     runs-on: ubuntu-latest
@@ -188,6 +189,7 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-image-results.sarif'
+      continue-on-error: true
 
     - name: Output image URI
       run: |
