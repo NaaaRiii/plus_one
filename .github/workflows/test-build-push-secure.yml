@@ -2,6 +2,7 @@ name: Test, Build and Push to ECR (Secure)
 
 permissions:
   contents: read
+  actions: read
   security-events: write
 
 on:
@@ -23,6 +24,10 @@ env:
 jobs:
   security-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -114,7 +119,7 @@ jobs:
 
     - name: Debug MySQL connection
       run: |
-        mysql -hmysql -uroot -e "SHOW DATABASES;"
+        mysql -h127.0.0.1 -uroot -e "SHOW DATABASES;"
 
   build-and-push:
     needs: [security-scan, test]
@@ -124,6 +129,8 @@ jobs:
       contents: read
       packages: write
       id-token: write
+      actions: read
+      security-events: write
     
     steps:
     - name: Checkout code
