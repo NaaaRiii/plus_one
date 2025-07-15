@@ -115,9 +115,6 @@ GEM
       activesupport (>= 6.1)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    importmap-rails (1.2.1)
-      actionpack (>= 6.0.0)
-      railties (>= 6.0.0)
     io-console (0.6.0)
     irb (1.8.1)
       rdoc
@@ -288,39 +285,17 @@ GEM
       rexml
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     selenium-webdriver (4.10.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
-    sprockets (4.2.1)
-      concurrent-ruby (~> 1.0)
-      rack (>= 2.2.4, < 4)
-    sprockets-rails (3.4.2)
-      actionpack (>= 5.2)
-      activesupport (>= 5.2)
-      sprockets (>= 3.0.0)
     sqlite3 (1.6.4-x86_64-darwin)
     sqlite3 (1.6.4-x86_64-linux)
-    stimulus-rails (1.2.2)
-      railties (>= 6.0.0)
     stringio (3.0.8)
     thor (1.2.2)
-    tilt (2.3.0)
     timeout (0.4.0)
-    turbo-rails (1.4.0)
-      actionpack (>= 6.0.0)
-      activejob (>= 6.0.0)
-      railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -360,7 +335,6 @@ DEPENDENCIES
   factory_bot_rails
   graphviz
   groupdate
-  importmap-rails
   jbuilder
   jwt
   mysql2
@@ -373,13 +347,9 @@ DEPENDENCIES
   rspec-rails (~> 5.0)
   rubocop (= 1.77.0)
   rubocop-rails (~> 2.25)
-  sassc-rails
   selenium-webdriver
   shoulda-matchers (~> 4.0)
-  sprockets-rails
   sqlite3 (~> 1.4)
-  stimulus-rails
-  turbo-rails
   tzinfo-data
   web-console
   webdrivers
