@@ -1,6 +1,5 @@
 module UserAuthenticatable
   extend ActiveSupport::Concern
-  #include AuthHelper
 
   included do
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }

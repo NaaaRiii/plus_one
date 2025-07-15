@@ -1,4 +1,4 @@
-module AuthHelper
+#module AuthHelper
   #def authenticate_user
   #  token = fetch_token
   #  Rails.logger.debug "JWT token: #{token.inspect}"
@@ -65,4 +65,4 @@ module AuthHelper
   #  Rails.logger.error "JWT DecodeError: #{e.message}"
   #  nil
   #end
-end
+#end
