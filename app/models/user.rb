@@ -7,12 +7,12 @@ class User < ApplicationRecord
 
   after_create :create_default_roulette_texts
 
-  attr_accessor :remember_token, :activation_token
+  attr_accessor :remember_token
 
   validates :tickets, numericality: { greater_than_or_equal_to: 0 }
 
-  before_save   :downcase_email
-  before_create :create_activation_digest
+  before_save :downcase_email
+
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
@@ -131,10 +131,6 @@ class User < ApplicationRecord
     update_columns(activated: true, activated_at: Time.zone.now)
   end
 
-  def send_activation_email
-    UserMailer.account_activation(self).deliver_now
-  end
-
   protected
 
   def create_default_roulette_texts
@@ -164,8 +160,4 @@ class User < ApplicationRecord
     self.email = email.downcase
   end
 
-  def create_activation_digest
-    self.activation_token  = User.new_token
-    self.activation_digest = User.digest(activation_token)
-  end
 end
