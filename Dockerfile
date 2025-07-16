@@ -1,5 +1,5 @@
 # 1. Rubyイメージをベースにする
-FROM ruby:3.2.2
+FROM ruby:3.2.8
 
 # 2. パッケージのインストール
 #    - nodejs / yarn はアセットコンパイルやWebpackerを使うなら必要
@@ -11,6 +11,8 @@ RUN apt-get update -y && apt-get upgrade -y && \
 WORKDIR /app
 
 # 4. Gemfile / Gemfile.lock のコピーと bundle install
+ARG BUNDLER_VERSION=2.6.9
+RUN gem install bundler -v ${BUNDLER_VERSION}
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
