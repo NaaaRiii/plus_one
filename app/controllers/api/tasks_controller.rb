@@ -1,6 +1,5 @@
 module Api
   class TasksController < ApplicationController
-    #include AuthHelper
 
     before_action :set_task, only: [:update_completed]
 

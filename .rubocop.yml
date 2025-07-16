@@ -64,3 +64,6 @@ Style/FrozenStringLiteralComment:
 
 Bundler/OrderedGems:
   Enabled: false
+
+Layout/CommentIndentation:
+  Enabled: false

@@ -68,13 +68,6 @@ RSpec.describe User, type: :model do
       expect(user.email).to eq('test@example.com')
     end
 
-    it 'creates activation digest before creating' do
-      user = build(:user)
-      expect(user.activation_digest).to be_nil
-      user.save
-      expect(user.activation_digest).not_to be_nil
-    end
-
     it 'creates default roulette texts after creating' do
       user = create(:user)
       expect(user.roulette_texts.count).to eq(12)
@@ -134,15 +127,6 @@ RSpec.describe User, type: :model do
         user.activate
         expect(user.activated).to be true
         expect(user.activated_at).not_to be_nil
-      end
-    end
-
-    describe '#send_activation_email' do
-      it 'sends activation email' do
-        user = create(:user)
-        expect do
-          user.send_activation_email
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
   end

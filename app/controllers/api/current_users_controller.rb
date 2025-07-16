@@ -1,6 +1,5 @@
 module Api
   class CurrentUsersController < ApplicationController
-    #include AuthHelper
 
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
 
