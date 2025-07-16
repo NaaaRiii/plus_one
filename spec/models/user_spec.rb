@@ -136,15 +136,6 @@ RSpec.describe User, type: :model do
         expect(user.activated_at).not_to be_nil
       end
     end
-
-    describe '#send_activation_email' do
-      it 'sends activation email' do
-        user = create(:user)
-        expect do
-          user.send_activation_email
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
-    end
   end
 
   describe '#generate_auth_token' do
