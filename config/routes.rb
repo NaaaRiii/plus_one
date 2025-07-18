@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
+    post 'guest_login', to: 'guest_sessions#create'
     #post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
     patch 'current_user', to: 'current_users#update'
