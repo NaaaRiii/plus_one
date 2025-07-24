@@ -158,7 +158,7 @@ Small Goal : 基礎文法をマスターする
 
 ## インフラ構成図
 
-![インフラ構成図](public/images/インフラ構成図5.png)
+![インフラ構成図](public/images/インフラ構成図-072402.png)
 
 
 ## ER図
