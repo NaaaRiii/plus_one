@@ -21,7 +21,6 @@ RSpec.describe Api::GuestSessionsController, type: :controller do
       let!(:guest_user) { create(:user, email: guest_email, password: guest_password) }
 
       before do
-        # 固定トークンを返すようスタブし、検証を簡素化
         allow_any_instance_of(User).to receive(:generate_auth_token).and_return('dummy_token')
       end
 

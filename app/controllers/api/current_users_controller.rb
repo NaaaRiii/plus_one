@@ -74,36 +74,10 @@ module Api
       end
     end
 
-    #def restart_without_title
-    #  if @current_user
-    #    @current_user.update(restart_without_title: true, total_exp: 0, current_title: nil)
-    #    render json: @current_user
-    #  else
-    #    render json: { error: 'User not found' }, status: :not_found
-    #  end
-    #end
-
-    #def restart_with_title
-    #  if @current_user
-    #    @current_user.update(legendary_hero_obtained_at: Time.current)
-    #    render json: @current_user
-    #  else
-    #    render json: { error: 'User not found' }, status: :not_found
-    #  end
-    #end
-
     private
 
     def user_params
       params.require(:user).permit(:name)
     end
-
-    #def find_current_user
-    #  token = request.headers['Authorization'].split(' ').last
-    #  decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, { algorithm: 'HS256' }).first
-    #  User.find_by(id: decoded_token['user_id'])
-    #rescue JWT::DecodeError
-    #  nil
-    #end
   end
 end
