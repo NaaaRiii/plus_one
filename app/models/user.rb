@@ -62,6 +62,9 @@ class User < ApplicationRecord
   def add_exp(amount)
     self.total_exp += amount
     save
+
+    # EXP 加算に伴うチケット付与をここでも行う
+    update_tickets
   end
 
   def calculate_rank_up_experience(max_rank = 121)

@@ -351,14 +351,14 @@ RSpec.describe Api::SmallGoalsController, type: :controller do
         expect(user.reload.total_exp).to eq(prev_exp + expected_exp)
       end
 
-      it 'current_user の use_ticket や update_tickets が呼ばれないこと' do
+      it 'use_ticket は呼ばれず update_tickets が呼ばれること' do
         allow(user).to receive(:use_ticket)
         allow(user).to receive(:update_tickets)
 
         post :complete, params: { goal_id: goal.id, id: small_goal.id }
 
         expect(user).not_to have_received(:use_ticket)
-        expect(user).not_to have_received(:update_tickets)
+        expect(user).to have_received(:update_tickets)
       end
     end
 
