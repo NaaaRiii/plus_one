@@ -6,29 +6,11 @@ module Api
 
     private
   
-    # 環境変数
     COGNITO_REGION         = ENV.fetch('AWS_REGION')
     COGNITO_USER_POOL_ID   = ENV.fetch('COGNITO_USER_POOL_ID')
     COGNITO_APP_CLIENT_ID  = ENV.fetch('COGNITO_APP_CLIENT_ID')
 
-    # ユーザー認証
     def authenticate_user
-      
-      #token = request.headers['Authorization']&.split&.last
-
-      #if Rails.env.development? && token == ENV['DUMMY_AUTH_TOKEN']
-      #  @current_user = User.find_or_create_by!(email: 'dummy@example.com') do |u|
-      #    u.name     = 'Dummy User'              # ← name を必ずセット
-      #    u.password = SecureRandom.hex(8)        # 必要なら他の属性も
-      #  end
-      #  return
-      #end
-
-      Rails.logger.debug "[AUTH] called in #{self.class}##{action_name}"
-
-      
-      Rails.logger.debug ">> request.env[HTTP_AUTHORIZATION]: #{request.env['HTTP_AUTHORIZATION'].inspect}"
-
       raw = request.headers['Authorization'] || request.env['HTTP_AUTHORIZATION']
       unless raw&.start_with?('Bearer ')
         Rails.logger.debug ">> [Auth] Bearer token missing"
@@ -40,7 +22,6 @@ module Api
         payload = decode_cognito_jwt(token)
         Rails.logger.debug ">> [Auth] JWT payload: #{payload.inspect}"
 
-        #@current_user = User.find_by!(cognito_sub: payload['sub'])
         @current_user = User.find_or_create_by!(cognito_sub: payload['sub']) do |u|
           u.email    = payload['email']
           u.name     = payload['name'] || 'Unknown User'
@@ -81,7 +62,6 @@ module Api
         JSON.parse(response.body)['keys']
       end
 
-      # ヘッダだけデコードして kid を抜く
       unverified_header = JWT.decode(token, nil, false).last
       jwk_data          = jwks.find { |k| k['kid'] == unverified_header['kid'] }
       raise JWT::VerificationError, 'Unknown kid' unless jwk_data
@@ -101,7 +81,6 @@ module Api
       ).first
     end
 
-    # コントローラ／ビュー側で current_user を参照したいなら helper_method を宣言
     attr_reader :current_user
   end
 end

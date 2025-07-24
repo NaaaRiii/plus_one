@@ -17,16 +17,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     post 'guest_login', to: 'guest_sessions#create'
-    #post 'login', to: 'authentication#login'
     get 'current_user', to: 'current_users#show'
     patch 'current_user', to: 'current_users#update'
-    #delete 'logout', to: 'sessions#destroy'
-    #get 'check_login', to: 'authentication#check_login'
     get 'weekly_exp', to: 'activities#weekly_exp'
     get 'daily_exp', to: 'activities#daily_exp'
-    #post   'login',  to: 'sessions#create'
-    #delete 'logout', to: 'sessions#destroy'
-    #get    'current_user', to: 'sessions#show'
 
     resources :current_users do
       member do
@@ -36,8 +30,8 @@ Rails.application.routes.draw do
 
     resources :roulette_texts, param: :number, only: %i[index show create update destroy] do
       collection do
-        get   :tickets   # GET  /api/roulette_texts/tickets
-        patch :spin      # PATCH /api/roulette_texts/spin
+        get   :tickets
+        patch :spin
       end
     end
 

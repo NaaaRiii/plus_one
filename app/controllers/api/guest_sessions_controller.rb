@@ -1,10 +1,6 @@
 module Api
   class GuestSessionsController < ApplicationController
-    # POST /api/guest_login
-    # どの環境でもワンクリックでゲスト用 JWT を取得できる簡易エンドポイント
-    # 本番環境では RATE LIMIT や CAPTCHA など追加対策を推奨
-    # Api::ApplicationController または他のコントローラで before_action :authenticate_user が定義されていない場合に
-    # ArgumentError が発生しないよう、`raise: false` オプションを追加して安全にスキップする
+
     skip_before_action :authenticate_user, only: :create, raise: false
 
     def create
