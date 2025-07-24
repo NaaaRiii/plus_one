@@ -56,14 +56,19 @@ module Api
         current_user.total_exp ||= 0
         current_user.total_exp += exp_gained
         current_user.save
-  
+
+        # EXP 増加によってランクが 10 の倍数を跨いだ場合にチケットを付与する
+        current_user.update_tickets
+
+        Rails.logger.debug "<<< after update_tickets (SmallGoal complete): tickets=#{current_user.reload.tickets}"
+
         current_user.activities.create(
           goal_title: @small_goal.goal.title,
           small_goal_title: @small_goal.title,
           exp_gained: exp_gained,
           completed_at: Time.current
         )
-  
+
         message = "#{@small_goal.title} completed successfully!"
 
         render json: { status: 'success', message: message, exp_gained: exp_gained }, status: :ok
