@@ -62,7 +62,7 @@ Small Goal : 基礎文法をマスターする
 ・現在, 過去進行形の問題を10問解く
 ・間違えた問題をノートにまとめる
 
-![Small Goalの作成](public/images/Small_Goal-setting2.png)
+![Small Goalの作成](public/images/small-goalの設定.png)
 
 
 ## 4. Goalの達成
@@ -71,7 +71,7 @@ Small Goal : 基礎文法をマスターする
 - 達成するとEXP(経験値)が増え、またRankが上がります
 - Rankが10を超えると「ごほうびルーレット」を回せるようになります
 
-![グラフ](public/images/グラフ.png)
+![グラフ](public/images/expとrank.png)
 
 
 ---
