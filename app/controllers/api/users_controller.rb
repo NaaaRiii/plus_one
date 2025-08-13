@@ -1,6 +1,6 @@
 module Api
   class UsersController < ApplicationController
-    before_action :find_current_user
+    before_action :find_current_user, only: [:show]
     before_action :authenticate_user, except: [:health], unless: -> { request.options? }
 
     def show
@@ -36,6 +36,38 @@ module Api
         render json: response_data
       else
         render json: { error: "User not found" }, status: :not_found
+      end
+    end
+
+    def withdrawal
+      # authenticate_userで設定された@current_userを使用
+      return render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
+      
+      user_id = @current_user.id
+      
+      begin
+        ActiveRecord::Base.transaction do
+          @current_user.destroy!
+          Rails.logger.info "User withdrawal completed: user_id=#{user_id}"
+        end
+
+        render json: {
+          message: "ユーザーの退会処理が完了しました",
+          status: "success"
+        }, status: :ok
+
+      rescue ActiveRecord::RecordNotDestroyed => e
+        Rails.logger.error "User withdrawal failed: user_id=#{user_id}, error=#{e.message}"
+        render json: {
+          error: "退会処理中にエラーが発生しました",
+          status: "error"
+        }, status: :internal_server_error
+      rescue StandardError => e
+        Rails.logger.error "User withdrawal failed: user_id=#{user_id}, error=#{e.message}"
+        render json: {
+          error: "退会処理中にエラーが発生しました",
+          status: "error"
+        }, status: :internal_server_error
       end
     end
 

@@ -145,3 +145,8 @@ PATCH /api/roulette_texts/spin      # ルーレット回転
 - 本番環境ではMySQL、開発環境ではSQLiteを使用
 - コンテナ化デプロイ用のDockerfile
 - コードスタイル用の充実したRuboCop設定
+
+
+## Git操作のコマンド
+- `git add -A` を使用（`git add .` ではなく）
+- `git switch -c <branch-name>` を使用（`git checkout -b` ではなく）

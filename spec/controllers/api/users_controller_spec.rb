@@ -9,6 +9,7 @@ RSpec.describe Api::UsersController, type: :controller do
       namespace :api do
         get 'users/:id', to: 'users#show'
         match 'users/:id', to: 'users#show', via: :options # OPTIONS も許可
+        delete 'users/withdrawal', to: 'users#withdrawal'
       end
     end
   end
@@ -228,6 +229,100 @@ RSpec.describe Api::UsersController, type: :controller do
         expect(response).to have_http_status(:not_found)
         json = JSON.parse(response.body)
         expect(json).to eq('error' => 'User not found')
+      end
+    end
+  end
+
+  describe 'DELETE #withdrawal' do
+    context '認証済みユーザーの場合' do
+      before do
+        # authenticate_userを通過させ、@current_userを設定
+        allow(controller).to receive(:authenticate_user) do
+          controller.instance_variable_set(:@current_user, user)
+        end
+      end
+
+      it '正常に退会処理が完了する' do
+        delete :withdrawal
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+
+        # ユーザーが削除されていることを厳密に確認
+        expect(User.find_by(id: user.id)).to be_nil
+        
+        json = JSON.parse(response.body)
+        expect(json['status']).to eq('success')
+        expect(json['message']).to eq('ユーザーの退会処理が完了しました')
+      end
+
+      it '関連データも削除される' do
+        # テストデータ作成
+        goal = create(:goal, user: user)
+        small_goal = create(:small_goal, goal: goal)
+        # small_goal のファクトリでデフォルトで1件以上のタスクが紐づく場合があるため
+        # ここでの追加作成は行わない（削除件数の揺らぎを避ける）
+        activity = create(:activity, user: user)
+
+        expect {
+          delete :withdrawal
+        }.to change(User, :count).by(-1)
+         .and change(Goal, :count).by(-1)
+         .and change(SmallGoal, :count).by(-1)
+         .and change(Task, :count).by_at_most(-1)
+         .and change(Activity, :count).by(-1)
+         .and change(RouletteText, :count).by_at_most(-1)
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'ログが出力される' do
+        allow(Rails.logger).to receive(:info)
+
+        delete :withdrawal
+
+        expect(Rails.logger).to have_received(:info).with("User withdrawal completed: user_id=#{user.id}")
+      end
+
+      context '削除に失敗した場合' do
+        it 'エラーレスポンスが返される' do
+          allow_any_instance_of(User).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed.new('削除失敗'))
+          expect(Rails.logger).to receive(:error).with(/User withdrawal failed/)
+
+          delete :withdrawal
+
+          expect(response).to have_http_status(:internal_server_error)
+          json = JSON.parse(response.body)
+          expect(json['status']).to eq('error')
+          expect(json['error']).to eq('退会処理中にエラーが発生しました')
+        end
+      end
+    end
+
+    context '未認証ユーザーの場合' do
+      it '401エラーが返される' do
+        # authenticate_userが失敗する場合をシミュレート
+        delete :withdrawal
+
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body)
+        expect(json['error']).to eq('Unauthorized')
+      end
+    end
+
+    context '@current_userが設定されていない場合' do
+      before do
+        allow(controller).to receive(:authenticate_user).and_return(true)
+        # @current_userを意図的にnilにする
+        controller.instance_variable_set(:@current_user, nil)
+      end
+
+      it '401エラーが返される' do
+        delete :withdrawal
+
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body)
+        expect(json['error']).to eq('Unauthorized')
       end
     end
   end

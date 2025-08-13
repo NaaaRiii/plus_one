@@ -55,6 +55,8 @@ Rails.application.routes.draw do
     get 'small_goals/:id', to: 'small_goals#show'
     put 'small_goals/:id', to: 'small_goals#update'
     delete 'small_goals/:id', to: 'small_goals#destroy'
+
+    delete 'users/withdrawal', to: 'users#withdrawal'
   end
 
   resources :users
