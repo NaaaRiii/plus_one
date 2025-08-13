@@ -55,7 +55,6 @@ module Api
           message: "ユーザーの退会処理が完了しました",
           status: "success"
         }, status: :ok
-
       rescue ActiveRecord::RecordNotDestroyed => e
         Rails.logger.error "User withdrawal failed: user_id=#{user_id}, error=#{e.message}"
         render json: {

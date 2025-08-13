@@ -259,10 +259,10 @@ RSpec.describe Api::UsersController, type: :controller do
       it '関連データも削除される' do
         # テストデータ作成
         goal = create(:goal, user: user)
-        small_goal = create(:small_goal, goal: goal)
+        create(:small_goal, goal: goal)
         # small_goal のファクトリでデフォルトで1件以上のタスクが紐づく場合があるため
         # ここでの追加作成は行わない（削除件数の揺らぎを避ける）
-        activity = create(:activity, user: user)
+        create(:activity, user: user)
 
         # 関連削除の検証（存在ベースで確認）
         delete :withdrawal
