@@ -57,6 +57,7 @@ Rails.application.routes.draw do
     delete 'small_goals/:id', to: 'small_goals#destroy'
 
     delete 'users/withdrawal', to: 'users#withdrawal'
+    post 'users/restore', to: 'users#restore'
   end
 
   resources :users

@@ -445,4 +445,71 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe '論理削除機能' do
+    let(:user) { create(:user) }
+
+    describe '#discard' do
+      it 'ユーザーが論理削除される' do
+        expect {
+          user.discard
+        }.to change { user.discarded? }.from(false).to(true)
+      end
+
+      it 'deleted_atがセットされる' do
+        expect {
+          user.discard
+        }.to change { user.deleted_at }.from(nil)
+      end
+    end
+
+    describe '#undiscard' do
+      let(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
+
+      it 'ユーザーが復帰される' do
+        expect {
+          discarded_user.undiscard
+        }.to change { discarded_user.discarded? }.from(true).to(false)
+      end
+
+      it 'deleted_atがnilになる' do
+        expect {
+          discarded_user.undiscard
+        }.to change { discarded_user.deleted_at }.to(nil)
+      end
+    end
+
+    describe 'スコープ' do
+      let!(:active_user) { create(:user) }
+      let!(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
+
+      describe '.kept' do
+        it '削除されていないユーザーのみ返す' do
+          expect(User.kept).to include(active_user)
+          expect(User.kept).not_to include(discarded_user)
+        end
+      end
+
+      describe '.discarded' do
+        it '削除されたユーザーのみ返す' do
+          expect(User.discarded).to include(discarded_user)
+          expect(User.discarded).not_to include(active_user)
+        end
+      end
+    end
+
+    describe '物理削除の禁止' do
+      it 'destroy メソッドで例外が発生する' do
+        expect {
+          user.destroy
+        }.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+      end
+
+      it 'destroy! メソッドで例外が発生する' do
+        expect {
+          user.destroy!
+        }.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+      end
+    end
+  end
 end

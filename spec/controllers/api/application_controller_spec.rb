@@ -67,6 +67,25 @@ RSpec.describe Api::ApplicationController, type: :controller do
           expect(created_user.name).to eq(valid_payload['name'])
         end
       end
+
+      context '論理削除されたユーザーの場合' do
+        let!(:discarded_user) { create(:user, cognito_sub: valid_payload['sub'], email: valid_payload['email'], name: valid_payload['name'], deleted_at: 1.day.ago) }
+
+        it '401 Unauthorizedが返されること' do
+          request.headers['Authorization'] = "Bearer #{valid_token}"
+          get :index
+          expect(response).to have_http_status(:unauthorized)
+          expect(response.content_type).to include('application/json')
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq('Account has been deactivated')
+        end
+
+        it '@current_userが設定されないこと' do
+          request.headers['Authorization'] = "Bearer #{valid_token}"
+          get :index
+          expect(controller.instance_variable_get(:@current_user)).to be_nil
+        end
+      end
     end
 
     context '認証に失敗した場合' do
