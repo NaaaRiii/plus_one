@@ -303,15 +303,15 @@ RSpec.describe Api::UsersController, type: :controller do
 
       context '論理削除での退会処理' do
         it 'ユーザーが論理削除される' do
-          expect {
+          expect do
             delete :withdrawal
-          }.to change { user.reload.discarded? }.from(false).to(true)
+          end.to change { user.reload.discarded? }.from(false).to(true)
         end
 
         it 'deleted_atがセットされる' do
-          expect {
+          expect do
             delete :withdrawal
-          }.to change { user.reload.deleted_at }.from(nil)
+          end.to change { user.reload.deleted_at }.from(nil)
         end
 
         it 'ユーザーは kept スコープに含まれなくなる' do
@@ -371,15 +371,15 @@ RSpec.describe Api::UsersController, type: :controller do
 
     context '論理削除されたユーザーが復帰する場合' do
       it 'ユーザーが復帰される' do
-        expect {
+        expect do
           post :restore
-        }.to change { discarded_user.reload.discarded? }.from(true).to(false)
+        end.to change { discarded_user.reload.discarded? }.from(true).to(false)
       end
 
       it 'deleted_atがnilになる' do
-        expect {
+        expect do
           post :restore
-        }.to change { discarded_user.reload.deleted_at }.to(nil)
+        end.to change { discarded_user.reload.deleted_at }.to(nil)
       end
 
       it '成功レスポンスが返される' do

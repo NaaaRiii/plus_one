@@ -78,9 +78,9 @@ module Api
       begin
         ActiveRecord::Base.transaction do
           restored = @current_user.undiscard
-          unless restored
-            raise StandardError, 'undiscard failed'
-          end
+
+          raise StandardError, 'undiscard failed' unless restored
+
           Rails.logger.info "User restore completed: user_id=#{user_id}"
         end
 

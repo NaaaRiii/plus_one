@@ -446,20 +446,59 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#guest?' do
+    context 'when user email matches GUEST_EMAIL' do
+      let(:guest_email) { 'guest@example.com' }
+      let(:user) { create(:user, email: guest_email) }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(guest_email)
+      end
+
+      it 'returns true' do
+        expect(user.guest?).to be true
+      end
+    end
+
+    context 'when user email does not match GUEST_EMAIL' do
+      let(:user) { create(:user, email: 'regular@example.com') }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return('guest@example.com')
+      end
+
+      it 'returns false' do
+        expect(user.guest?).to be false
+      end
+    end
+
+    context 'when GUEST_EMAIL is not set' do
+      let(:user) { create(:user) }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(nil)
+      end
+
+      it 'returns false' do
+        expect(user.guest?).to be false
+      end
+    end
+  end
+
   describe '論理削除機能' do
     let(:user) { create(:user) }
 
     describe '#discard' do
       it 'ユーザーが論理削除される' do
-        expect {
+        expect do
           user.discard
-        }.to change { user.discarded? }.from(false).to(true)
+        end.to change { user.discarded? }.from(false).to(true)
       end
 
       it 'deleted_atがセットされる' do
-        expect {
+        expect do
           user.discard
-        }.to change { user.deleted_at }.from(nil)
+        end.to change { user.deleted_at }.from(nil)
       end
     end
 
@@ -467,15 +506,15 @@ RSpec.describe User, type: :model do
       let(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
 
       it 'ユーザーが復帰される' do
-        expect {
+        expect do
           discarded_user.undiscard
-        }.to change { discarded_user.discarded? }.from(true).to(false)
+        end.to change { discarded_user.discarded? }.from(true).to(false)
       end
 
       it 'deleted_atがnilになる' do
-        expect {
+        expect do
           discarded_user.undiscard
-        }.to change { discarded_user.deleted_at }.to(nil)
+        end.to change { discarded_user.deleted_at }.to(nil)
       end
     end
 
@@ -500,15 +539,15 @@ RSpec.describe User, type: :model do
 
     describe '物理削除の禁止' do
       it 'destroy メソッドで例外が発生する' do
-        expect {
+        expect do
           user.destroy
-        }.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+        end.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
       end
 
       it 'destroy! メソッドで例外が発生する' do
-        expect {
+        expect do
           user.destroy!
-        }.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+        end.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
       end
     end
   end

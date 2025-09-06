@@ -72,7 +72,7 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
         'email' => user.email
       )
 
-      %w[totalExp rank last_roulette_rank].each do |key|
+      %w[totalExp rank last_roulette_rank is_guest].each do |key|
         expect(json.keys).to include(key)
       end
     end
@@ -260,6 +260,40 @@ RSpec.describe Api::CurrentUsersController, type: :controller do
       expect(response).to have_http_status(:unprocessable_entity)
       json = JSON.parse(response.body)
       expect(json).to eq('success' => false, 'message' => 'Failed to update rank.')
+    end
+
+    context 'is_guest フラグ' do
+      let(:guest_email) { 'guest@example.com' }
+      
+      before do
+        allow(controller).to receive(:authenticate_user).and_return(true)
+      end
+
+      it 'ゲストユーザーの場合 is_guest: true が返る' do
+        guest_user = create(:user, email: guest_email)
+        controller.instance_variable_set(:@current_user, guest_user)
+        
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(guest_email)
+
+        get :show
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['is_guest']).to be true
+      end
+
+      it '通常ユーザーの場合 is_guest: false が返る' do
+        regular_user = create(:user, email: 'regular@example.com')
+        controller.instance_variable_set(:@current_user, regular_user)
+        
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(guest_email)
+
+        get :show
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['is_guest']).to be false
+      end
     end
 
     context '内部で例外が発生した場合' do
