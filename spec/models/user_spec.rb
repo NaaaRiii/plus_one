@@ -445,4 +445,110 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe '#guest?' do
+    context 'when user email matches GUEST_EMAIL' do
+      let(:guest_email) { 'guest@example.com' }
+      let(:user) { create(:user, email: guest_email) }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(guest_email)
+      end
+
+      it 'returns true' do
+        expect(user.guest?).to be true
+      end
+    end
+
+    context 'when user email does not match GUEST_EMAIL' do
+      let(:user) { create(:user, email: 'regular@example.com') }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return('guest@example.com')
+      end
+
+      it 'returns false' do
+        expect(user.guest?).to be false
+      end
+    end
+
+    context 'when GUEST_EMAIL is not set' do
+      let(:user) { create(:user) }
+
+      before do
+        allow(ENV).to receive(:[]).with('GUEST_EMAIL').and_return(nil)
+      end
+
+      it 'returns false' do
+        expect(user.guest?).to be false
+      end
+    end
+  end
+
+  describe '論理削除機能' do
+    let(:user) { create(:user) }
+
+    describe '#discard' do
+      it 'ユーザーが論理削除される' do
+        expect do
+          user.discard
+        end.to change { user.discarded? }.from(false).to(true)
+      end
+
+      it 'deleted_atがセットされる' do
+        expect do
+          user.discard
+        end.to change { user.deleted_at }.from(nil)
+      end
+    end
+
+    describe '#undiscard' do
+      let(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
+
+      it 'ユーザーが復帰される' do
+        expect do
+          discarded_user.undiscard
+        end.to change { discarded_user.discarded? }.from(true).to(false)
+      end
+
+      it 'deleted_atがnilになる' do
+        expect do
+          discarded_user.undiscard
+        end.to change { discarded_user.deleted_at }.to(nil)
+      end
+    end
+
+    describe 'スコープ' do
+      let!(:active_user) { create(:user) }
+      let!(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
+
+      describe '.kept' do
+        it '削除されていないユーザーのみ返す' do
+          expect(User.kept).to include(active_user)
+          expect(User.kept).not_to include(discarded_user)
+        end
+      end
+
+      describe '.discarded' do
+        it '削除されたユーザーのみ返す' do
+          expect(User.discarded).to include(discarded_user)
+          expect(User.discarded).not_to include(active_user)
+        end
+      end
+    end
+
+    describe '物理削除の禁止' do
+      it 'destroy メソッドで例外が発生する' do
+        expect do
+          user.destroy
+        end.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+      end
+
+      it 'destroy! メソッドで例外が発生する' do
+        expect do
+          user.destroy!
+        end.to raise_error(ActiveRecord::RecordNotDestroyed, /物理削除は禁止されています/)
+      end
+    end
+  end
 end

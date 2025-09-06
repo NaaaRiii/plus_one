@@ -1,9 +1,12 @@
 class User < ApplicationRecord
-  has_many :activities, dependent: :destroy
-  has_many :goals, class_name: 'Goal', dependent: :destroy
-  has_many :small_goals, through: :goals, dependent: :destroy
-  has_many :tasks, through: :small_goals, dependent: :destroy
-  has_many :roulette_texts, dependent: :destroy
+  include Discard::Model
+  self.discard_column = :deleted_at
+
+  has_many :activities, dependent: :nullify
+  has_many :goals, class_name: 'Goal', dependent: :nullify
+  has_many :small_goals, through: :goals
+  has_many :tasks, through: :small_goals
+  has_many :roulette_texts, dependent: :nullify
 
   after_create :create_default_roulette_texts
 
@@ -130,8 +133,21 @@ class User < ApplicationRecord
     false
   end
 
+  def guest?
+    email == ENV['GUEST_EMAIL']
+  end
+
   def activate
     update_columns(activated: true, activated_at: Time.zone.now)
+  end
+
+  # データ喪失リスク対策：destroy メソッドを一時的に無効化
+  def destroy
+    raise ActiveRecord::RecordNotDestroyed.new("物理削除は禁止されています。論理削除を使用してください。", self)
+  end
+
+  def destroy!
+    raise ActiveRecord::RecordNotDestroyed.new("物理削除は禁止されています。論理削除を使用してください。", self)
   end
 
   protected

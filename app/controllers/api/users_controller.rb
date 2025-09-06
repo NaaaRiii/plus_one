@@ -47,7 +47,7 @@ module Api
       
       begin
         ActiveRecord::Base.transaction do
-          @current_user.destroy!
+          @current_user.discard!
           Rails.logger.info "User withdrawal completed: user_id=#{user_id}"
         end
 
@@ -65,6 +65,33 @@ module Api
         Rails.logger.error "User withdrawal failed: user_id=#{user_id}, error=#{e.message}"
         render json: {
           error: "退会処理中にエラーが発生しました",
+          status: "error"
+        }, status: :internal_server_error
+      end
+    end
+
+    def restore
+      return render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
+
+      user_id = @current_user.id
+
+      begin
+        ActiveRecord::Base.transaction do
+          restored = @current_user.undiscard
+
+          raise StandardError, 'undiscard failed' unless restored
+
+          Rails.logger.info "User restore completed: user_id=#{user_id}"
+        end
+
+        render json: {
+          message: "ユーザーの復帰処理が完了しました",
+          status: "success"
+        }, status: :ok
+      rescue StandardError => e
+        Rails.logger.error "User restore failed: user_id=#{user_id}, error=#{e.message}"
+        render json: {
+          error: "復帰処理中にエラーが発生しました",
           status: "error"
         }, status: :internal_server_error
       end

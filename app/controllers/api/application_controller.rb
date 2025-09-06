@@ -22,11 +22,19 @@ module Api
         payload = decode_cognito_jwt(token)
         Rails.logger.debug ">> [Auth] JWT payload: #{payload.inspect}"
 
-        @current_user = User.find_or_create_by!(cognito_sub: payload['sub']) do |u|
+        user = User.find_or_create_by!(cognito_sub: payload['sub']) do |u|
           u.email    = payload['email']
           u.name     = payload['name'] || 'Unknown User'
           u.password = SecureRandom.hex(16)
         end
+
+        # 論理削除されたユーザーの場合は認証失敗
+        if user.discarded?
+          Rails.logger.debug ">> [Auth] User is discarded: #{user.id}"
+          return render json: { error: 'Account has been deactivated' }, status: :unauthorized
+        end
+
+        @current_user = user
       rescue ActiveRecord::RecordNotFound
         Rails.logger.debug ">> [Auth] Token expired"
         render json: { error: 'User not found' }, status: :unauthorized

@@ -32,7 +32,8 @@ module Api
           tasks: @current_user.tasks,
           rouletteTexts: @current_user.roulette_texts,
           tickets: @current_user.tickets,
-          latestCompletedGoals: latest_completed_goals.as_json(only: [:id, :title, :completed_time])
+          latestCompletedGoals: latest_completed_goals.as_json(only: [:id, :title, :completed_time]),
+          is_guest: @current_user.guest?
         }
     
         render json: response_data

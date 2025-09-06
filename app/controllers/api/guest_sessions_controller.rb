@@ -14,7 +14,7 @@ module Api
       return render json: { error: 'Guest user not found' }, status: :not_found unless user&.authenticate(guest_password)
 
       token = user.generate_auth_token
-      render json: { token: token, user: { id: user.id, email: user.email, name: user.name } }, status: :ok
+      render json: { token: token, user: { id: user.id, email: user.email, name: user.name, is_guest: user.guest? } }, status: :ok
     end
   end
 end 

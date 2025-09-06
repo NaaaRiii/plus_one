@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_04_060231) do
+ActiveRecord::Schema[7.0].define(version: 2025_08_15_050848) do
   create_table "activities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "goal_title"
@@ -89,7 +89,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_04_060231) do
     t.boolean "restart_without_title", default: false
     t.datetime "legendary_hero_obtained_at"
     t.string "cognito_sub"
+    t.datetime "deleted_at"
     t.index ["cognito_sub"], name: "index_users_on_cognito_sub", unique: true
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

@@ -10,6 +10,7 @@ RSpec.describe Api::UsersController, type: :controller do
         get 'users/:id', to: 'users#show'
         match 'users/:id', to: 'users#show', via: :options # OPTIONS も許可
         delete 'users/withdrawal', to: 'users#withdrawal'
+        post 'users/restore', to: 'users#restore'
       end
     end
   end
@@ -248,8 +249,8 @@ RSpec.describe Api::UsersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
 
-        # ユーザーが削除されていることを確認
-        expect(User.find_by(id: user.id)).to be_nil
+        # ユーザーが論理削除されていることを確認
+        expect(User.find_by(id: user.id).discarded?).to be true
         
         json = JSON.parse(response.body)
         expect(json['status']).to eq('success')
@@ -267,12 +268,12 @@ RSpec.describe Api::UsersController, type: :controller do
         # 関連削除の検証（存在ベースで確認）
         delete :withdrawal
 
-        # 各関連データが削除されていることを確認
-        expect(User.find_by(id: user.id)).to be_nil
-        expect(Goal.exists?(user: user)).to be_falsey
-        expect(SmallGoal.joins(:goal).where(goals: { user: user })).to be_empty
-        expect(Activity.exists?(user: user)).to be_falsey
-        expect(RouletteText.exists?(user: user)).to be_falsey
+        # ユーザーが論理削除され、関連データは保持されることを確認
+        expect(User.find_by(id: user.id).discarded?).to be true
+        expect(Goal.exists?(user: user)).to be_truthy # dependent: :nullify なので存在する
+        expect(SmallGoal.joins(:goal).where(goals: { user: user })).not_to be_empty
+        expect(Activity.exists?(user: user)).to be_truthy # dependent: :nullify なので存在する
+        expect(RouletteText.exists?(user: user)).to be_truthy # dependent: :nullify なので存在する
 
         expect(response).to have_http_status(:ok)
       end
@@ -288,7 +289,7 @@ RSpec.describe Api::UsersController, type: :controller do
 
       context '削除に失敗した場合' do
         it 'エラーレスポンスが返される' do
-          allow_any_instance_of(User).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed.new('削除失敗'))
+          allow_any_instance_of(User).to receive(:discard!).and_raise(StandardError.new('削除失敗'))
           expect(Rails.logger).to receive(:error).with(/User withdrawal failed/)
 
           delete :withdrawal
@@ -297,6 +298,36 @@ RSpec.describe Api::UsersController, type: :controller do
           json = JSON.parse(response.body)
           expect(json['status']).to eq('error')
           expect(json['error']).to eq('退会処理中にエラーが発生しました')
+        end
+      end
+
+      context '論理削除での退会処理' do
+        it 'ユーザーが論理削除される' do
+          expect do
+            delete :withdrawal
+          end.to change { user.reload.discarded? }.from(false).to(true)
+        end
+
+        it 'deleted_atがセットされる' do
+          expect do
+            delete :withdrawal
+          end.to change { user.reload.deleted_at }.from(nil)
+        end
+
+        it 'ユーザーは kept スコープに含まれなくなる' do
+          delete :withdrawal
+
+          expect(User.kept).not_to include(user.reload)
+          expect(User.discarded).to include(user.reload)
+        end
+
+        it 'ログが出力される' do
+          allow(Rails.logger).to receive(:info)
+
+          delete :withdrawal
+
+          expect(Rails.logger).to have_received(:info)
+            .with("User withdrawal completed: user_id=#{user.id}")
         end
       end
     end
@@ -325,6 +356,73 @@ RSpec.describe Api::UsersController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
         json = JSON.parse(response.body)
         expect(json['error']).to eq('Unauthorized')
+      end
+    end
+  end
+
+  # ------------------ restore アクション ------------------
+  describe 'restore アクション' do
+    let(:discarded_user) { create(:user, deleted_at: 1.day.ago) }
+
+    before do
+      allow(controller).to receive(:authenticate_user).and_return(true)
+      controller.instance_variable_set(:@current_user, discarded_user)
+    end
+
+    context '論理削除されたユーザーが復帰する場合' do
+      it 'ユーザーが復帰される' do
+        expect do
+          post :restore
+        end.to change { discarded_user.reload.discarded? }.from(true).to(false)
+      end
+
+      it 'deleted_atがnilになる' do
+        expect do
+          post :restore
+        end.to change { discarded_user.reload.deleted_at }.to(nil)
+      end
+
+      it '成功レスポンスが返される' do
+        post :restore
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザーの復帰処理が完了しました')
+        expect(json['status']).to eq('success')
+      end
+
+      it 'ログが出力される' do
+        allow(Rails.logger).to receive(:info)
+
+        post :restore
+
+        expect(Rails.logger).to have_received(:info)
+          .with("User restore completed: user_id=#{discarded_user.id}")
+      end
+    end
+
+    context '復帰に失敗した場合' do
+      it 'エラーレスポンスが返される' do
+        allow_any_instance_of(User).to receive(:undiscard).and_return(false)
+        expect(Rails.logger).to receive(:error).with(/User restore failed/)
+
+        post :restore
+
+        expect(response).to have_http_status(:internal_server_error)
+        json = JSON.parse(response.body)
+        expect(json['status']).to eq('error')
+        expect(json['error']).to eq('復帰処理中にエラーが発生しました')
+      end
+    end
+
+    context '未認証ユーザーの場合' do
+      it '401エラーが返される' do
+        allow(controller).to receive(:authenticate_user).and_return(false)
+        controller.instance_variable_set(:@current_user, nil)
+
+        post :restore
+
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

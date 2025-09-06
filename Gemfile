@@ -40,6 +40,7 @@ gem 'rails-controller-testing'
 gem 'rack-cors'
 gem 'groupdate'
 gem 'jwt'
+gem 'discard', '~> 1.3'
 
 # Unified groups to avoid duplication
 

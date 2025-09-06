@@ -34,7 +34,8 @@ RSpec.describe Api::GuestSessionsController, type: :controller do
         expect(json['user']).to include(
           'id' => guest_user.id,
           'email' => guest_user.email,
-          'name' => guest_user.name
+          'name' => guest_user.name,
+          'is_guest' => true
         )
       end
     end
